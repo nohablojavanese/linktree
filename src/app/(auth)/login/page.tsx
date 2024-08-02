@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import AuthForm from "../../components/AuthForm";
+import AuthForm from "../../../components/AuthForm";
 import { login } from "./action";
 import { headers } from "next/headers";
 import { signup } from "./action";
@@ -25,7 +25,7 @@ export default async function LoginPage() {
     const ip = headersList.get("x-forwarded-for") || "unknown";
 
     const result =
-      action === "login" 
+      action === "login"
         ? await login(formData, ip)
         : await signup(formData, ip);
 
@@ -49,12 +49,12 @@ export default async function LoginPage() {
       };
     }
 
-    return { success: true};
+    return { success: true };
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-tr from-black to-gray-900">
-      <AuthForm onSubmit={handleSubmit}  />
+      <AuthForm onSubmit={handleSubmit} />
     </div>
   );
 }

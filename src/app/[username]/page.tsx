@@ -48,12 +48,13 @@ export default async function UserPage({ params }: { params: { username: string 
 
     return (
       <div className="container mx-auto p-4">
-        <h1 className="text-2xl font-bold mb-4">{profile.username} Profile</h1>
+        {/* <h1 className="text-2xl font-bold mb-4">{profile.username} Profile</h1> */}
 
         <UserProfile
           username={profile.username}
           randomId={profile.random_id}
           createdAt={profile.created_at}
+          imageUrl={profile.image_link}
         />
 
         <h2 className="text-xl font-semibold mb-4">Links</h2>

@@ -16,14 +16,26 @@ export const EditableSocialLink: React.FC<EditableSocialLinkProps> = ({ id, plat
   };
 
   return (
-    <Card className="w-full">
+    <Card className="w-full bg-white dark:bg-gray-800 shadow-md">
       <form action={onUpdate}>
         <input type="hidden" name="id" value={id} />
-        <CardBody className="flex flex-row gap-4 items-center">
-          <Input label="Platform" name="platform" defaultValue={platform} className="flex-grow" />
-          <Input label="URL" name="url" defaultValue={url} className="flex-grow" />
-          <Button type="submit" color="primary" size="sm">Update</Button>
-          <Button onClick={handleDelete} color="danger" size="sm">Delete</Button>
+        <CardBody className="gap-4">
+          <Input
+            label="Platform"
+            name="platform"
+            defaultValue={platform}
+            className="dark:text-white"
+          />
+          <Input
+            label="URL"
+            name="url"
+            defaultValue={url}
+            className="dark:text-white"
+          />
+          <div className="flex justify-between mt-2">
+            <Button type="submit" color="primary" size="sm">Update</Button>
+            <Button onClick={handleDelete} color="danger" size="sm">Delete</Button>
+          </div>
         </CardBody>
       </form>
     </Card>

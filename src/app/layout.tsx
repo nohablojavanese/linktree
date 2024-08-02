@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { NextUIProvider } from "@nextui-org/react";
+import { ThemeProvider as NextThemesProvider } from "next-themes";
+import { ThemeSwitcher } from "@/components/DarkMode";
+
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,7 +22,12 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <NextUIProvider>
-          <main className="dark text-foreground bg-background">{children}</main>
+          <NextThemesProvider attribute="class" defaultTheme="dark">
+            {/* <main className="dark text-foreground bg-background"> */}
+              {children}
+              <ThemeSwitcher/>
+            {/* </main> */}
+          </NextThemesProvider>
         </NextUIProvider>
       </body>
     </html>
