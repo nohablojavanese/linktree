@@ -10,16 +10,18 @@ const usernameSchema = z
   .min(3)
   .max(20)
   .regex(/^[a-zA-Z0-9_]+$/);
-const urlSchema = z.string().refine(
-  (url) => {
-    const urlPattern =
-      /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d+)?(\/.*)?$/;
-    return urlPattern.test(url);
-  },
-  {
-    message: "Invalid URL format",
-  }
-);
+
+const urlSchema = z
+  .string()
+  .url("Invalid URL format ex: https://websource.com/picture.png")
+  .transform((url) => {
+    if (!/^https?:\/\//.test(url)) {
+      return `http://${url}`;
+    }
+    return url;
+  })
+  .optional();
+
 async function getAuthenticatedUser() {
   const supabase = createClient();
   const session = await supabase.auth.getSession();
@@ -37,17 +39,17 @@ export async function updateProfile(formData: FormData) {
   const supabase = createClient();
 
   const username = formData.get("username") as string;
-  const imageUrl = formData.get("imageUrl") as string;
+  const imageUrl = formData.get("imageUrl");
 
   try {
     usernameSchema.parse(username);
-    urlSchema.parse(imageUrl);
+    const validatedImageUrl = imageUrl ? urlSchema.parse(imageUrl as string) : null;
 
     const { error } = await supabase
       .from("user_profiles")
       .update({
         username: username,
-        image_url: imageUrl,
+        image_url: validatedImageUrl,
       })
       .eq("id", user.id);
 
