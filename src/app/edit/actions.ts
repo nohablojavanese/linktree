@@ -6,8 +6,13 @@ import { redirect } from 'next/navigation';
 import { z } from "zod";
 
 const usernameSchema = z.string().min(3).max(20).regex(/^[a-zA-Z0-9_]+$/);
-const urlSchema = z.string().url();
-
+const urlSchema = z.string().refine((url) => {
+  if (!url) return false; // Reject empty strings
+  const urlPattern = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d+)?(\/.*)?$/;
+  return urlPattern.test(url);
+}, {
+  message: "Invalid URL format",
+});
 async function getAuthenticatedUser() {
   const supabase = createClient();
   const session = await supabase.auth.getSession();
