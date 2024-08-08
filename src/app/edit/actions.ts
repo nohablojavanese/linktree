@@ -13,10 +13,10 @@ const usernameSchema = z
 
 const urlSchema = z
   .string()
-  .url("Invalid URL format ex: https://websource.com/picture.png")
+  // .url("Invalid URL format ex: https://websource.com/picture.png")
   .transform((url) => {
     if (!/^https?:\/\//.test(url)) {
-      return `http://${url}`;
+      return `https://${url}`;
     }
     return url;
   })

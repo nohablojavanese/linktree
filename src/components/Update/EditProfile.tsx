@@ -18,15 +18,15 @@ const usernameSchema = z
       !censoredWords.some((word) => username.toLowerCase().includes(word)),
     "Username contains inappropriate language"
   );
-
-  const imageUrlSchema = z
+  const urlSchema = z
   .string()
   // .url("Invalid URL format ex: https://websource.com/picture.png")
-  .transform((url) => {
-    if (!/^https?:\/\//.test(url)) {
-      return `https://${url}`;
-    }
-    return url;
+  .optional()
+  .refine((url) => {
+    if (!url) return true; // Skip if the URL is not provided (optional case)
+    return /\.(png|jpe?g|gif|bmp|webp|svg)$/i.test(url); // Check for image file extension
+  }, {
+    message: "URL must end with an image file extension (png, jpg, etc.)",
   });
 
 export type EditProfileProps = {
@@ -57,7 +57,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({
       }
     }
     try {
-      imageUrlSchema.parse(newImageUrl);
+      urlSchema.parse(newImageUrl);
       setImageUrlError("");
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -102,6 +102,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({
               <Input
                 name="username"
                 label="Username"
+                isRequired
                 defaultValue={username}
                 className="flex-1"
                 isInvalid={!!usernameError}
@@ -123,12 +124,6 @@ export const EditProfile: React.FC<EditProfileProps> = ({
               isInvalid={!!imageUrlError}
               errorMessage={imageUrlError}
               placeholder="https://"
-              // startContent={
-              //   <div className="pointer-events-none flex items-center">
-              //     <span className="text-default-400 text-small">https://</span>
-              //   </div>
-              // }
-  
             />
             <div className="flex justify-between">
               <Button type="submit" color="primary" className="text-gray-400">

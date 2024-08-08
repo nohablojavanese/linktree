@@ -1,7 +1,6 @@
 "use client";
 import React, { useState } from "react";
 import { Button, Input, Textarea, Card, CardBody } from "@nextui-org/react";
-import { EditableLinkItem } from "@/components/Update/EditableLinkItems";
 import { createLink } from "@/app/edit/actions";
 import { z } from "zod";
 
@@ -22,7 +21,7 @@ const linkSchema = z.object({
   ),
   description: z
     .string()
-    .max(500, "Description must be 500 characters or less")
+    .max(30, "Description must be 30 characters or less")
     .optional(),
 });
 
@@ -88,6 +87,7 @@ export const AddLink: React.FC<YourLinksProps> = ({ links }) => {
           <form action={handleSubmit} className="space-y-4">
             <Input
               name="title"
+              isRequired
               label="Title"
               placeholder="Enter link title"
               className="dark:text-white"
@@ -96,6 +96,7 @@ export const AddLink: React.FC<YourLinksProps> = ({ links }) => {
             />
             <Input
               name="url"
+              isRequired
               label="URL"
               placeholder="Enter link URL"
               className="dark:text-white"

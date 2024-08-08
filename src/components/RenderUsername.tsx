@@ -23,9 +23,9 @@ const UserPageReturn: React.FC<UserPageProp> = ({
           />
 
           <div className="space-y-4">
-            {links?.map((link) => (
-              <LinkItem key={link.id} {...link} />
-            ))}
+            {links?.map(
+              (link) => link.isVisible && <LinkItem key={link.id} {...link} />
+            )}
           </div>
 
           <div className="flex justify-center space-x-4">
@@ -33,9 +33,7 @@ const UserPageReturn: React.FC<UserPageProp> = ({
               <SocialLink key={socialLink.id} {...socialLink} />
             ))}
           </div>
-          <Watermark
-          username={profile.username} 
-          verified={profile.verified} />
+          <Watermark username={profile.username} verified={profile.verified} />
         </div>
       </div>
     </div>

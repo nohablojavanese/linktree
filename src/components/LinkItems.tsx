@@ -3,19 +3,38 @@ import React from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 
+
+type Theme = "default" | "simple" | "elegant" | "minimal" | "colorful";
+
+const themeStyles: Record<Theme, string> = {
+  default:
+    "bg-white dark:bg-gray-800 bg-opacity-70 dark:bg-opacity-70 text-gray-800 dark:text-white",
+  simple:
+    "bg-gray-100 dark:bg-gray-700 bg-opacity-70 dark:bg-opacity-70 text-gray-700 dark:text-gray-200",
+  elegant:
+    "bg-gray-800 dark:bg-white bg-opacity-70 dark:bg-opacity-70 text-white dark:text-gray-800",
+  minimal:
+    "bg-gray-200 dark:bg-gray-600 bg-opacity-70 dark:bg-opacity-70 text-gray-600 dark:text-gray-300",
+  colorful:
+    "bg-gradient-to-r from-purple-400 to-pink-500 bg-opacity-70 text-white"
+};
+
 export type LinkItemProps = {
   id: string;
   title: string;
   url: string;
-  imageUrl?: string;
+  imageUrl: string;
   description?: string;
+  isVisible: boolean;
+  theme?: string;
 };
 
 export const LinkItem: React.FC<LinkItemProps> = ({
   title,
   url,
   imageUrl,
-  description,
+  // description,
+  theme
 }) => {
   const formattedUrl =
     url.startsWith("http://") || url.startsWith("https://")
@@ -33,7 +52,6 @@ export const LinkItem: React.FC<LinkItemProps> = ({
       <motion.a
         href={formattedUrl}
         target="_blank"
-        // rel="noopener noreferrer"
         className="w-full p-4 bg-white dark:bg-gray-800 bg-opacity-70 dark:bg-opacity-70 backdrop-filter backdrop-blur-lg rounded-full shadow-md hover:shadow-lg transition-all duration-300 flex items-center"
         whileHover={{ scale: 1.03 }}
         whileTap={{ scale: 0.98 }}
@@ -41,7 +59,7 @@ export const LinkItem: React.FC<LinkItemProps> = ({
         {imageUrl && (
           <div className="mr-4 flex-shrink-0">
             <Image
-              src={imageUrl}
+              src={imageUrl} 
               alt={title}
               width={40}
               height={40}
@@ -52,6 +70,7 @@ export const LinkItem: React.FC<LinkItemProps> = ({
         <span className="text-sm md:text-lg font-semibold text-gray-800 dark:text-white">
           {title}
         </span>
+  
       </motion.a>
     </motion.div>
   );

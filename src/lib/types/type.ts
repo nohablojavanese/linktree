@@ -12,6 +12,7 @@ export interface Profile {
     title: string;
     url: string;
     imageUrl: string;
+    isVisible: boolean;
   }
   
   export  interface SocialLinkType {

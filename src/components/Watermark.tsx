@@ -33,11 +33,11 @@ const Watermark: React.FC<WatermarkProps> = ({ verified, username }) => {
         >
           {verified ? (
             <div className="flex justify-center items-center">
-              <span>Welcome to {username} </span>
+              <span>Welcome to @{username} </span>
             </div>
           ) : (
             <div className="flex justify-center items-center">
-              <span>Create a link like this </span>
+              <span>Built by LokerAI, create your own Links.id/you </span>
               <a
                 href="/login"
                 className="ml-2 bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-2 rounded"
