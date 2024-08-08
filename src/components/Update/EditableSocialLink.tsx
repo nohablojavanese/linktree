@@ -1,7 +1,7 @@
 'use client'
 import React, { useState } from 'react';
 import { Card, CardBody, Input, Button } from "@nextui-org/react";
-import { SocialLinkProps } from './SocialLinks';
+import { SocialLinkProps } from '../SocialLinks';
 import { z } from "zod";
 
 const socialLinkSchema = z.object({

@@ -1,8 +1,7 @@
 import React from "react";
-import { Button, Input, Textarea } from "@nextui-org/react";
 import { createClient } from "@/lib/supabase/server";
-import { EditableLinkItem } from "@/components/EditableLinkItems";
-import { EditableSocialLink } from "@/components/EditableSocialLink";
+import { EditableLinkItem } from "@/components/Update/EditableLinkItems";
+import { EditableSocialLink } from "@/components/Update/EditableSocialLink";
 import { UserProfile } from "@/components/UserProfile";
 import {
   // createLink,
@@ -13,9 +12,9 @@ import {
   deleteSocialLink,
 } from "./actions";
 import { redirect } from "next/navigation";
-import { EditProfile } from "@/components/EditProfile";
-import { AddLink } from "@/components/AddLink";
-import { AddSocial } from "@/components/AddSocial";
+import { EditProfile } from "@/components/Update/EditProfile";
+import { AddLink } from "@/components/Create/AddLink";
+import { AddSocial } from "@/components/Create/AddSocial";
 
 async function fetchUserData() {
   const supabase = createClient();

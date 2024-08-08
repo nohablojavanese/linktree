@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { Button, Input, Textarea, Card, CardBody } from "@nextui-org/react";
-import { EditableLinkItem } from "@/components/EditableLinkItems";
+import { EditableLinkItem } from "@/components/Update/EditableLinkItems";
 import { createLink } from "@/app/edit/actions";
 import { z } from "zod";
 

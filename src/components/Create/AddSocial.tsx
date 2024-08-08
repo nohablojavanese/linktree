@@ -1,7 +1,6 @@
 'use client'
 import React, { useState } from 'react';
 import { Button, Input, Card, CardBody } from "@nextui-org/react";
-import { EditableSocialLink } from "@/components/EditableSocialLink";
 import { createSocialLink } from '@/app/edit/actions';
 import { z } from "zod";
 

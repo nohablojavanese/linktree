@@ -8,7 +8,7 @@ import {
   Textarea,
   Button,
 } from "@nextui-org/react";
-import { LinkItemProps } from "./LinkItems";
+import { LinkItemProps } from "../LinkItems";
 import { z } from "zod";
 
 const linkItemSchema = z.object({
