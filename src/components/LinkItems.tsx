@@ -26,20 +26,23 @@ export type LinkItemProps = {
   imageUrl: string;
   description?: string;
   isVisible: boolean;
-  theme?: string;
+  theme: "default" | "simple" | "elegant" | "minimal" | "colorful";
 };
 
 export const LinkItem: React.FC<LinkItemProps> = ({
   title,
   url,
   imageUrl,
-  // description,
   theme
+  // description,
 }) => {
   const formattedUrl =
     url.startsWith("http://") || url.startsWith("https://")
       ? url
       : `https://${url}`;
+
+      const themeClass = themeStyles[theme];
+
 
   return (
     <motion.div
@@ -52,7 +55,7 @@ export const LinkItem: React.FC<LinkItemProps> = ({
       <motion.a
         href={formattedUrl}
         target="_blank"
-        className="w-full p-4 bg-white dark:bg-gray-800 bg-opacity-70 dark:bg-opacity-70 backdrop-filter backdrop-blur-lg rounded-full shadow-md hover:shadow-lg transition-all duration-300 flex items-center"
+        className={`w-full p-4 backdrop-filter backdrop-blur-lg rounded-full shadow-md hover:shadow-lg transition-all duration-300 flex items-center ${themeClass}`}
         whileHover={{ scale: 1.03 }}
         whileTap={{ scale: 0.98 }}
       >

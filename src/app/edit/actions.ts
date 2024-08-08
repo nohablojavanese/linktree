@@ -195,3 +195,17 @@ export async function deleteSocialLink(formData: FormData) {
   if (error) throw error;
   revalidatePath("/edit");
 }
+
+export async function updateLinkVisibility(id: string, isVisible: boolean) {
+  const user = await getAuthenticatedUser();
+  const supabase = createClient();
+
+  const { error } = await supabase
+    .from("links")
+    .update({ isVisible: isVisible })
+    .eq("id", id)
+    .eq("user_id", user.id);
+
+  if (error) throw error;
+  revalidatePath("/edit");
+}

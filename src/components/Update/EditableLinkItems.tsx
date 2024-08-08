@@ -1,6 +1,8 @@
 "use client";
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { BiSolidShow, BiSolidHide } from "react-icons/bi";
+
 import {
   Card,
   CardBody,
@@ -8,6 +10,7 @@ import {
   Input,
   Textarea,
   Button,
+  Switch,
 } from "@nextui-org/react";
 import { LinkItemProps } from "../LinkItems";
 import { z } from "zod";
@@ -36,16 +39,18 @@ const linkItemSchema = z.object({
 type EditableLinkItemProps = LinkItemProps & {
   onUpdate: (formData: FormData) => void;
   onDelete: (formData: FormData) => void;
+  onVisible: (id: string, isVisible: boolean) => void;
 };
 
 export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
   id,
   title,
   url,
-  isVisible,
   description,
+  isVisible,
   onUpdate,
   onDelete,
+  onVisible,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -56,6 +61,8 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
         title: formData.get("title"),
         url: formData.get("url"),
         description: formData.get("description"),
+        isVisible: formData.get("isVisible") === "true",
+
       });
       setErrors({});
       onUpdate(formData);
@@ -71,12 +78,17 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
         setErrors(newErrors);
       }
     }
+    // onVisible(id, formData.get("isVisible") === "true");
   };
 
   const handleDelete = () => {
     const formData = new FormData();
     formData.append("id", id);
     onDelete(formData);
+  };
+
+  const handleVisibilityChange = (checked: boolean) => {
+    onVisible(id, checked);
   };
 
   return (
@@ -91,6 +103,20 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
             transition={{ duration: 1 }}
           >
             <CardBody>
+              <div className="absolute top-2 right-2 flex items-center">
+                <Switch
+                  onChange={(e) => handleVisibilityChange(e.target.checked)}
+                  // onValueChange={handleVisibilityChange}
+                  isSelected={isVisible}
+                  // defaultSelected 
+                  size="lg"
+                  color={isVisible ? "success" : undefined}                  startContent={<BiSolidShow size={16} />}
+                  endContent={<BiSolidHide size={16} />}
+                />
+                <span className="text-gray-500 dark:text-gray-400">
+                  {isVisible ? "Visible" : "Hidden"}
+                </span>
+              </div>
               <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                 {title}
               </h3>
@@ -98,6 +124,7 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
               <p className="mt-2 text-gray-700 dark:text-gray-300">
                 {description}
               </p>
+
               <Button
                 onClick={() => setIsEditing(true)}
                 color="primary"

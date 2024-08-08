@@ -1,3 +1,4 @@
+'use server'
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
@@ -7,7 +8,6 @@ const loginSchema = z.object({
   email: z.string().email("Invalid email format"),
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
-
 export async function login(formData: FormData, ip: string) {
   const supabase = createClient();
 

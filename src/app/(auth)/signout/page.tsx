@@ -1,3 +1,4 @@
+"use server"
 import { signOut } from "./action"
 
 export default async function SignOutPage() {

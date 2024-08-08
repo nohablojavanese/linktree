@@ -24,7 +24,18 @@ const UserPageReturn: React.FC<UserPageProp> = ({
 
           <div className="space-y-4">
             {links?.map(
-              (link) => link.isVisible && <LinkItem key={link.id} {...link} />
+              (link) =>
+                link.isVisible && (
+                  <LinkItem
+                    theme={profile.theme || "default"}
+                    id={link.id}
+                    title={link.title}
+                    url={link.url}
+                    imageUrl={link.imageUrl}
+                    isVisible={link.isVisible}
+                    // description={link.description}
+                  />
+                )
             )}
           </div>
 

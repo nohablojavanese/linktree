@@ -5,6 +5,7 @@ export interface Profile {
     created_at: string;
     image_url?: string;
     verified?: boolean;
+    theme: "default" | "simple" | "elegant" | "minimal" | "colorful";
   }
   
   export  interface Link {

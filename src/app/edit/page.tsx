@@ -8,6 +8,7 @@ import {
   updateLink,
   deleteLink,
   // createSocialLink,
+  updateLinkVisibility,
   updateSocialLink,
   deleteSocialLink,
 } from "./actions";
@@ -80,6 +81,7 @@ export default async function EditPage() {
               {...link}
               onUpdate={updateLink}
               onDelete={deleteLink}
+              onVisible={updateLinkVisibility}
             />
           ))}
         </div>
