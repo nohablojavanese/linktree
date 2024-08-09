@@ -2,7 +2,6 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { BiSolidShow, BiSolidHide } from "react-icons/bi";
-
 import {
   Card,
   CardBody,
@@ -12,8 +11,9 @@ import {
   Button,
   Switch,
 } from "@nextui-org/react";
-import { LinkItemProps } from "../LinkItems";
+import { LinkType } from "@/lib/types/type";
 import { z } from "zod";
+import { Link } from "lucide-react";
 
 const linkItemSchema = z.object({
   title: z
@@ -32,11 +32,11 @@ const linkItemSchema = z.object({
   ),
   description: z
     .string()
-    .max(500, "Description must be 500 characters or less")
+    .max(30, "Description must be 30 characters or less")
     .optional(),
 });
 
-type EditableLinkItemProps = LinkItemProps & {
+type EditableLinkItemProps = LinkType & {
   onUpdate: (formData: FormData) => void;
   onDelete: (formData: FormData) => void;
   onVisible: (id: string, isVisible: boolean) => void;
@@ -62,7 +62,6 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
         url: formData.get("url"),
         description: formData.get("description"),
         isVisible: formData.get("isVisible") === "true",
-
       });
       setErrors({});
       onUpdate(formData);
@@ -103,23 +102,36 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
             transition={{ duration: 1 }}
           >
             <CardBody>
-              <div className="absolute top-2 right-2 flex items-center">
+              <div className="absolute top-2 right-2 flex flex-col items-center">
                 <Switch
                   onChange={(e) => handleVisibilityChange(e.target.checked)}
                   // onValueChange={handleVisibilityChange}
                   isSelected={isVisible}
-                  // defaultSelected 
+                  // defaultSelected
                   size="lg"
-                  color={isVisible ? "success" : undefined}                  startContent={<BiSolidShow size={16} />}
+                  color={isVisible ? "success" : undefined}
+                  startContent={<BiSolidShow size={16} />}
                   endContent={<BiSolidHide size={16} />}
                 />
                 <span className="text-gray-500 dark:text-gray-400">
                   {isVisible ? "Visible" : "Hidden"}
                 </span>
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                {title}
-              </h3>
+
+              <a
+                href={url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center space-x-2 group"
+              >
+                <Link
+                  size={16}
+                  className="text-gray-900 dark:text-gray-100 group-hover:text-blue-500"
+                />
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                  {title}
+                </h3>
+              </a>
               <p className="text-sm text-gray-500 dark:text-gray-400">{url}</p>
               <p className="mt-2 text-gray-700 dark:text-gray-300">
                 {description}

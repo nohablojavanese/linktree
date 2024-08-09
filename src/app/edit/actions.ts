@@ -209,3 +209,21 @@ export async function updateLinkVisibility(id: string, isVisible: boolean) {
   if (error) throw error;
   revalidatePath("/edit");
 }
+
+export async function updateTheme(formData: FormData) {
+  const user = await getAuthenticatedUser();
+  const supabase = createClient();
+
+  const ThemeData = {
+    theme: formData.get("theme") as string,
+    font_family: formData.get("font_family") as string,
+  };
+
+  const { error } = await supabase
+    .from("themes")
+    .update(ThemeData)
+    .eq("user_id", user.id);
+
+  if (error) throw error;
+  revalidatePath("/edit");
+}

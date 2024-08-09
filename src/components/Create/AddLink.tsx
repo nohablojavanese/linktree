@@ -1,6 +1,8 @@
 "use client";
 import React, { useState } from "react";
 import { Button, Input, Textarea, Card, CardBody } from "@nextui-org/react";
+import { Link } from "lucide-react";
+
 import { createLink } from "@/app/edit/actions";
 import { z } from "zod";
 
@@ -80,6 +82,7 @@ export const AddLink: React.FC<YourLinksProps> = ({ links }) => {
               color="primary"
               className="w-full "
             >
+              <Link size={16} />
               Add New Link
             </Button>
           </div>

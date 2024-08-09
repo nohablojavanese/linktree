@@ -2,47 +2,37 @@
 import React from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
-
-
-type Theme = "default" | "simple" | "elegant" | "minimal" | "colorful";
-
-const themeStyles: Record<Theme, string> = {
-  default:
-    "bg-white dark:bg-gray-800 bg-opacity-70 dark:bg-opacity-70 text-gray-800 dark:text-white",
-  simple:
-    "bg-gray-100 dark:bg-gray-700 bg-opacity-70 dark:bg-opacity-70 text-gray-700 dark:text-gray-200",
-  elegant:
-    "bg-gray-800 dark:bg-white bg-opacity-70 dark:bg-opacity-70 text-white dark:text-gray-800",
-  minimal:
-    "bg-gray-200 dark:bg-gray-600 bg-opacity-70 dark:bg-opacity-70 text-gray-600 dark:text-gray-300",
-  colorful:
-    "bg-gradient-to-r from-purple-400 to-pink-500 bg-opacity-70 text-white"
-};
+import { ThemeTypes } from "@/lib/types/type";
+import { FormatFont, FormatTheme, getThemeClass } from "@/lib/theme/basic";
 
 export type LinkItemProps = {
-  id: string;
+  id: string ;
   title: string;
   url: string;
+  // description: string;
   imageUrl: string;
-  description?: string;
   isVisible: boolean;
-  theme: "default" | "simple" | "elegant" | "minimal" | "colorful";
+  themes: ThemeTypes;
 };
-
 export const LinkItem: React.FC<LinkItemProps> = ({
   title,
   url,
   imageUrl,
-  theme
-  // description,
+  themes,
 }) => {
   const formattedUrl =
     url.startsWith("http://") || url.startsWith("https://")
       ? url
       : `https://${url}`;
+  const themeClass = getThemeClass(themes.theme, FormatTheme, "default");
+  const fontClass = getThemeClass(themes.font_family, FormatFont, "sans");
 
-      const themeClass = themeStyles[theme];
-
+  const linkStyle = {
+    fontFamily: themes.font_family,
+    theme: themes.theme,
+    // color: themes.text_color,
+    // backgroundColor: themes.background_color,
+  };
 
   return (
     <motion.div
@@ -55,14 +45,14 @@ export const LinkItem: React.FC<LinkItemProps> = ({
       <motion.a
         href={formattedUrl}
         target="_blank"
-        className={`w-full p-4 backdrop-filter backdrop-blur-lg rounded-full shadow-md hover:shadow-lg transition-all duration-300 flex items-center ${themeClass}`}
+        className={`w-full p-4 backdrop-filter backdrop-blur-lg rounded-full shadow-md hover:shadow-lg transition-all duration-300 flex items-center ${themeClass} ${fontClass}`}
         whileHover={{ scale: 1.03 }}
         whileTap={{ scale: 0.98 }}
       >
         {imageUrl && (
           <div className="mr-4 flex-shrink-0">
             <Image
-              src={imageUrl} 
+              src={imageUrl}
               alt={title}
               width={40}
               height={40}
@@ -73,7 +63,6 @@ export const LinkItem: React.FC<LinkItemProps> = ({
         <span className="text-sm md:text-lg font-semibold text-gray-800 dark:text-white">
           {title}
         </span>
-  
       </motion.a>
     </motion.div>
   );

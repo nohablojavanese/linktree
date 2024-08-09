@@ -51,9 +51,17 @@ export default async function UserPage({
       .select("*")
       .eq("user_id", profile.id);
 
-    if (linksError || socialLinksError) {
+      const { data: theme, error: themeError } = await supabase
+      .from("themes")
+      .select("*")
+      .eq("user_id", profile.id)
+      .single()
+
+
+    if (linksError || socialLinksError || themeError ) {
       console.error("Error fetching links:", linksError);
       console.error("Error fetching social links:", socialLinksError);
+      console.error("Error fetching social links:", themeError);
       return <div>Error loading data. Please try again later.</div>;
     }
 
@@ -62,6 +70,7 @@ export default async function UserPage({
         profile={profile}
         links={links}
         socialLinks={socialLinks}
+        themes={theme}
       />
     );
   } catch (error) {

@@ -2,6 +2,8 @@
 import React, { useState } from "react";
 import { Card, CardBody, CardHeader, Input, Button } from "@nextui-org/react";
 import { updateProfile } from "@/app/edit/actions";
+import { UserPen } from "lucide-react";
+
 import { z } from "zod";
 
 const censoredWords = ["badword", "offensive", "inappropriate"];
@@ -18,16 +20,19 @@ const usernameSchema = z
       !censoredWords.some((word) => username.toLowerCase().includes(word)),
     "Username contains inappropriate language"
   );
-  const urlSchema = z
+const urlSchema = z
   .string()
   // .url("Invalid URL format ex: https://websource.com/picture.png")
   .optional()
-  .refine((url) => {
-    if (!url) return true; // Skip if the URL is not provided (optional case)
-    return /\.(png|jpe?g|gif|bmp|webp|svg)$/i.test(url); // Check for image file extension
-  }, {
-    message: "URL must end with an image file extension (png, jpg, etc.)",
-  });
+  .refine(
+    (url) => {
+      if (!url) return true; // Skip if the URL is not provided (optional case)
+      return /\.(png|jpe?g|gif|bmp|webp|svg)$/i.test(url); // Check for image file extension
+    },
+    {
+      message: "URL must end with an image file extension (png, jpg, etc.)",
+    }
+  );
 
 export type EditProfileProps = {
   username: string;
@@ -94,6 +99,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({
             color="primary"
             className="w-full text-gray-400 dark:text-gray-400"
           >
+            <UserPen size={16} />
             Edit Profile
           </Button>
         ) : (

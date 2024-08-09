@@ -4,10 +4,8 @@ import { EditableLinkItem } from "@/components/Update/EditableLinkItems";
 import { EditableSocialLink } from "@/components/Update/EditableSocialLink";
 import { UserProfile } from "@/components/UserProfile";
 import {
-  // createLink,
   updateLink,
   deleteLink,
-  // createSocialLink,
   updateLinkVisibility,
   updateSocialLink,
   deleteSocialLink,
@@ -16,6 +14,7 @@ import { redirect } from "next/navigation";
 import { EditProfile } from "@/components/Update/EditProfile";
 import { AddLink } from "@/components/Create/AddLink";
 import { AddSocial } from "@/components/Create/AddSocial";
+import { UpdateTheme } from "@/components/Update/UpdateTheme";
 
 async function fetchUserData() {
   const supabase = createClient();
@@ -28,21 +27,28 @@ async function fetchUserData() {
     return { error: "User not authenticated" };
   }
 
-  const [profileResult, linksResult, socialLinksResult] = await Promise.all([
-    supabase.from("user_profiles").select("*").eq("id", user.id).single(),
-    supabase.from("links").select("*").eq("user_id", user.id),
-    supabase.from("social_links").select("*").eq("user_id", user.id),
-  ]);
+  const [profileResult, linksResult, socialLinksResult, themeResult] =
+    await Promise.all([
+      supabase.from("user_profiles").select("*").eq("id", user.id).single(),
+      supabase.from("links").select("*").eq("user_id", user.id),
+      supabase.from("social_links").select("*").eq("user_id", user.id),
+      supabase.from("themes").select("*").eq("user_id", user.id).single(),
+    ]);
 
   return {
     profile: profileResult.data,
     links: linksResult.data,
     socialLinks: socialLinksResult.data,
-    error: profileResult.error || linksResult.error || socialLinksResult.error,
+    theme: themeResult.data,
+    error:
+      profileResult.error ||
+      linksResult.error ||
+      socialLinksResult.error ||
+      themeResult.error,
   };
 }
 export default async function EditPage() {
-  const { profile, links, socialLinks, error } = await fetchUserData();
+  const { profile, links, socialLinks, theme, error } = await fetchUserData();
 
   if (error) {
     console.error("Error fetching data:", error);
@@ -70,6 +76,11 @@ export default async function EditPage() {
           createdAt={profile.created_at}
           imageUrl={profile.image_url}
         />
+        <UpdateTheme
+          currentTheme={theme?.theme || "default"}
+          currentFontFamily={theme?.font_family || ""}
+        />
+
         <EditProfile username={profile.username} imageUrl={profile.image_url} />
 
         <AddLink links={links || []} />

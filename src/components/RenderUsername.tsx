@@ -9,6 +9,7 @@ const UserPageReturn: React.FC<UserPageProp> = ({
   profile,
   links,
   socialLinks,
+  themes,
 }) => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-400 to-pink-500 flex items-center justify-center p-4">
@@ -27,7 +28,7 @@ const UserPageReturn: React.FC<UserPageProp> = ({
               (link) =>
                 link.isVisible && (
                   <LinkItem
-                    theme={profile.theme || "default"}
+                    themes={themes}
                     id={link.id}
                     title={link.title}
                     url={link.url}

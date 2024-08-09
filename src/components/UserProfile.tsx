@@ -50,11 +50,11 @@ export const UserProfile: React.FC<UserProfileProps> = ({
             <h2 className="text-2xl font-bold mb-2 text-gray-500 dark:text-gray-400 flex items-center justify-center">
               @{username}
               {verified !== undefined && (
-                <Tooltip content={verified ? "Verified" : "Unverified"}>
+                <Tooltip className="text-black dark:text-gray-100" content={verified ? "Verified" : "Unverified"}>
                   <span>
                     <MdVerified
                       className={`ml-2 ${
-                        verified ? "text-blue-500" : "text-gray-200"
+                        verified ? "text-blue-500" : "text-gray-800"
                       } cursor-help`}
                       size={20}
                     />
@@ -66,7 +66,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({
               href={`/${username}`}
               className="text-md font-bold mb-2 text-gray-500 dark:text-gray-400 hover:text-blue-400"
             >
-              link.id/{username}
+              Link
             </a>
           </div>
         ) : (
