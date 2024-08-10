@@ -89,6 +89,10 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
   const handleVisibilityChange = (checked: boolean) => {
     onVisible(id, checked);
   };
+  const formattedUrl =
+  url.startsWith("http://") || url.startsWith("https://")
+    ? url
+    : `https://${url}`;
 
   return (
     <AnimatePresence>
@@ -119,7 +123,7 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
               </div>
 
               <a
-                href={url}
+                href={formattedUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center space-x-2 group"
