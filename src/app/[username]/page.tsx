@@ -57,7 +57,6 @@ export default async function UserPage({
       .eq("user_id", profile.id)
       .single()
 
-
     if (linksError || socialLinksError || themeError ) {
       console.error("Error fetching links:", linksError);
       console.error("Error fetching social links:", socialLinksError);

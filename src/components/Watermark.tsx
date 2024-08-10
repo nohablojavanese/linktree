@@ -29,7 +29,7 @@ const Watermark: React.FC<WatermarkProps> = ({ verified, username }) => {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 20 }}
           transition={{ duration: 0.5 }}
-          className="fixed bottom-0 left-0 w-full bg-gray-800 p-4 text-center text-white"
+          className="fixed bottom-0 left-0 w-full bg-gray-800 p-4 text-center text-white text-xs md:text-md"
         >
           {verified ? (
             <div className="flex justify-center items-center">
@@ -37,12 +37,8 @@ const Watermark: React.FC<WatermarkProps> = ({ verified, username }) => {
             </div>
           ) : (
             <div className="flex justify-center items-center">
-              <span>Built by LokerAI, create your own Links.id/you </span>
-              <a
-                href="/login"
-                className="ml-2 bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-2 rounded"
-              >
-                Create Now
+              <a href="/login" className="">
+                <span>Built by LokerAI, create your own Links.id/you </span>
               </a>
             </div>
           )}

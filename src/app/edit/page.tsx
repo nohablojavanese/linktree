@@ -75,6 +75,8 @@ export default async function EditPage() {
           randomId={profile.random_id}
           createdAt={profile.created_at}
           imageUrl={profile.image_url}
+          verified={profile.verified}
+
         />
         <UpdateTheme
           currentTheme={theme?.theme || "default"}

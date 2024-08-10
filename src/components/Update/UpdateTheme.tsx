@@ -89,12 +89,12 @@ export const UpdateTheme: React.FC<UpdateThemeProps> = ({
               label="Theme"
               placeholder="Select a theme"
               defaultSelectedKeys={[currentTheme]}
-              className="mb-4"
+              className="mb-4 "
               isInvalid={!!themeError}
               errorMessage={themeError}
             >
               {Object.keys(FormatTheme).map((theme) => (
-                <SelectItem key={theme} value={theme}>
+                <SelectItem className="text-gray-400" key={theme} value={theme}>
                   {theme.charAt(0).toUpperCase() + theme.slice(1)}
                 </SelectItem>
               ))}
@@ -109,7 +109,7 @@ export const UpdateTheme: React.FC<UpdateThemeProps> = ({
               errorMessage={fontFamilyError}
             >
               {Object.keys(FormatFont).map((font) => (
-                <SelectItem key={font} value={font}>
+                <SelectItem className="text-gray-400" key={font} value={font}>
                   {font.charAt(0).toUpperCase() + font.slice(1)}
                 </SelectItem>
               ))}
