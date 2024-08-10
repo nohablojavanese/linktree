@@ -28,6 +28,7 @@ const UserPageReturn: React.FC<UserPageProp> = ({
               (link) =>
                 link.isVisible && (
                   <LinkItem
+                    key={link.id}
                     themes={themes}
                     id={link.id}
                     title={link.title}
