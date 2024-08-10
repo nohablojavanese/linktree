@@ -1,4 +1,6 @@
 import React from "react";
+import type { Metadata } from "next";
+
 import { createClient } from "@/lib/supabase/server";
 import { EditableLinkItem } from "@/components/Update/EditableLinkItems";
 import { EditableSocialLink } from "@/components/Update/EditableSocialLink";
@@ -16,6 +18,8 @@ import { AddLink } from "@/components/Create/AddLink";
 import { AddSocial } from "@/components/Create/AddSocial";
 import { UpdateTheme } from "@/components/Update/UpdateTheme";
 import { ThemeSwitcher } from "@/components/DarkMode";
+
+
 
 async function fetchUserData() {
   const supabase = createClient();
@@ -46,6 +50,14 @@ async function fetchUserData() {
       linksResult.error ||
       socialLinksResult.error ||
       themeResult.error,
+  };
+}
+export async function generateMetadata(): Promise<Metadata> {
+  const { profile } = await fetchUserData();
+
+  return {
+    title: profile ? `Edit | ${profile.username}` : "Edit",
+    description: "Edit Page",
   };
 }
 export default async function EditPage() {

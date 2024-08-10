@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/client";
 import { UserNotFound } from "@/components/NotFound";
 import { redirect } from "next/navigation";
 import UserPageReturn from "@/components/RenderUsername";
+import { Metadata, ResolvingMetadata } from "next";
 
 export const dynamicParams = true;
 export const revalidate = 0; // Disable static generation for this route
@@ -18,6 +19,59 @@ export async function generateStaticParams() {
       username,
     })) || []
   );
+}
+type Props = {
+  params: { username: string };
+  searchParams: { [key: string]: string | string[] | undefined };
+};
+
+export async function generateMetadata(
+  { params, searchParams }: Props,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  const supabase = createClient();
+
+  const { data: profile } = await supabase
+    .from("user_profiles")
+    .select("*")
+    .eq("username", params.username)
+    .single();
+
+  if (!profile) {
+    return {
+      title: "User Not Found",
+    };
+  }
+
+  return {
+    title: `${profile.username} Links`,
+    description: profile.bio || `Check out ${profile.username}'s profile`,
+    openGraph: {
+      title: `${profile.display_name || profile.username}'s Profile`,
+      description: profile.bio || `Check out ${profile.username}'s profile`,
+      url: `https://yourdomain.com/${profile.username}`,
+      siteName: "Linked.id",
+      images: [
+        {
+          url:
+            profile.image_url || "https://yourdomain.com/default-avatar.png",
+          width: 1200,
+          height: 630,
+          alt: `${profile.username}'s profile picture`,
+        },
+      ],
+      locale: "en_US",
+      type: "profile",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${profile.display_name || profile.username}'s Profile`,
+      description: profile.bio || `Check out ${profile.username}'s profile`,
+      images: [
+        profile.image_url || "/image.png",
+      ],
+    },
+  };
 }
 
 export default async function UserPage({
@@ -51,13 +105,13 @@ export default async function UserPage({
       .select("*")
       .eq("user_id", profile.id);
 
-      const { data: theme, error: themeError } = await supabase
+    const { data: theme, error: themeError } = await supabase
       .from("themes")
       .select("*")
       .eq("user_id", profile.id)
-      .single()
+      .single();
 
-    if (linksError || socialLinksError || themeError ) {
+    if (linksError || socialLinksError || themeError) {
       console.error("Error fetching links:", linksError);
       console.error("Error fetching social links:", socialLinksError);
       console.error("Error fetching social links:", themeError);
