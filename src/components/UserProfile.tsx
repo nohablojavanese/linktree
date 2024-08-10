@@ -18,6 +18,20 @@ export type UserProfileProps = {
   verified?: boolean;
 };
 
+const DefaultAvatar: React.FC<{ username: string }> = ({ username }) => {
+  const letter = username.charAt(0).toUpperCase();
+  const color = `hsl(${Math.random() * 360}, 70%, 70%)`;
+
+  return (
+    <div 
+      className="w-24 h-24 rounded-full flex items-center justify-center text-white text-4xl font-bold"
+      style={{ backgroundColor: color }}
+    >
+      {letter}
+    </div>
+  );
+};
+
 export const UserProfile: React.FC<UserProfileProps> = ({
   username,
   randomId,
@@ -31,17 +45,24 @@ export const UserProfile: React.FC<UserProfileProps> = ({
     <Card className="w-full max-w-md mx-auto mb-4 dark:bg-gray-800">
       <CardHeader className="flex justify-center pb-0">
         <div className="relative w-24 h-24">
-          {!imageLoaded && <Skeleton className="rounded-full w-24 h-24" />}
-          <Image
-            src={imageUrl ?? "/image.png"}
-            alt={`${username}'s profile picture`}
-            width={96}
-            height={96}
-            className={`rounded-full ${
-              imageLoaded ? "opacity-100" : "opacity-0"
-            }`}
-            onLoad={() => setImageLoaded(true)}
-          />
+          {imageUrl ? (
+            <>
+              {!imageLoaded && <Skeleton className="rounded-full w-24 h-24" />}
+              <Image
+                src={imageUrl}
+                alt={`${username}'s Profile Picture`}
+                width={96}
+                height={96}
+                style={{ objectFit: "cover" }}
+                className={`rounded-full cover w-24 h-24 ${
+                  imageLoaded ? "opacity-100 " : "opacity-0 "
+                }`}
+                onLoad={() => setImageLoaded(true)}
+              />
+            </>
+          ) : (
+            <DefaultAvatar username={username} />
+          )}
         </div>
       </CardHeader>
       <CardBody className="text-center">
@@ -50,11 +71,14 @@ export const UserProfile: React.FC<UserProfileProps> = ({
             <h2 className="text-2xl font-bold mb-2 text-gray-500 dark:text-gray-400 flex items-center justify-center">
               @{username}
               {verified !== undefined && (
-                <Tooltip className="text-black dark:text-gray-100" content={verified ? "Verified" : "Unverified"}>
+                <Tooltip
+                  className="text-black dark:text-gray-100"
+                  content={verified ? "Verified" : "Unverified"}
+                >
                   <span>
                     <MdVerified
                       className={`ml-2 ${
-                        verified ? "text-blue-500" : "text-gray-800"
+                        verified ? "text-blue-500" : "text-gray-200 dark:text-gray-600 hidden"
                       } cursor-help`}
                       size={20}
                     />
