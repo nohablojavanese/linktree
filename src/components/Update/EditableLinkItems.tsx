@@ -55,22 +55,19 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
   const [isEditing, setIsEditing] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isPending, startTransition] = useTransition();
-  const [isUpdating, setIsUpdating] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [isSwitching, setIsSwitching] = useState(false);
 
   const handleSubmit = async (formData: FormData) => {
-    setIsUpdating(true);
     try {
       linkItemSchema.parse({
         title: formData.get("title"),
         url: formData.get("url"),
         description: formData.get("description"),
-        isVisible: formData.get("isVisible") === "true",
       });
       setErrors({});
-      await onUpdate(formData);
-      setIsEditing(false);
+      startTransition(async () => {
+        await onUpdate(formData);
+        setIsEditing(false);
+      });
     } catch (error) {
       if (error instanceof z.ZodError) {
         const newErrors: { [key: string]: string } = {};
@@ -81,23 +78,21 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
         });
         setErrors(newErrors);
       }
-    } finally {
-      setIsUpdating(false);
     }
   };
 
-  const handleDelete = async () => {
-    setIsDeleting(true);
-    const formData = new FormData();
-    formData.append("id", id);
-    await onDelete(formData);
-    setIsDeleting(false);
+  const handleDelete = () => {
+    startTransition(async () => {
+      const formData = new FormData();
+      formData.append("id", id);
+      await onDelete(formData);
+    });
   };
 
-  const handleVisibilityChange = async (checked: boolean) => {
-    setIsSwitching(true);
-    await onVisible(id, checked);
-    setIsSwitching(false);
+  const handleVisibilityChange = (checked: boolean) => {
+    startTransition(async () => {
+      await onVisible(id, checked);
+    });
   };
 
   const formattedUrl =
@@ -119,13 +114,13 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
             <CardBody>
               <div className="absolute top-2 right-2 flex flex-col items-center">
                 <Switch
-                  onChange={(e) => startTransition(() => handleVisibilityChange(e.target.checked))}
+                  onChange={(e) => handleVisibilityChange(e.target.checked)}
                   isSelected={isVisible}
                   size="md"
                   color={isVisible ? "success" : undefined}
                   startContent={<BiSolidShow size={16} />}
                   endContent={<BiSolidHide size={16} />}
-                  isDisabled={isSwitching}
+                  isDisabled={isPending}
                 />
                 <span className="text-gray-500 dark:text-gray-400">
                   {isVisible ? "Visible" : "Hidden"}
@@ -203,27 +198,27 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
                   color="primary"
                   size="sm"
                   className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                  isLoading={isUpdating}
+                  isLoading={isPending}
                 >
-                  {isUpdating ? 'Updating...' : 'Update'}
+                  {isPending ? 'Updating...' : 'Update'}
                 </Button>
                 <Button
                   onClick={() => setIsEditing(false)}
                   color="secondary"
                   size="sm"
                   className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
-                  isDisabled={isUpdating || isDeleting}
+                  isDisabled={isPending}
                 >
                   Cancel
                 </Button>
                 <Button
-                  onClick={() => startTransition(() => handleDelete())}
+                  onClick={handleDelete}
                   color="danger"
                   size="sm"
                   className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-                  isLoading={isDeleting}
+                  isLoading={isPending}
                 >
-                  {isDeleting ? 'Deleting...' : 'Delete'}
+                  {isPending ? 'Deleting...' : 'Delete'}
                 </Button>
               </CardFooter>
             </form>
