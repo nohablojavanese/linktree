@@ -45,7 +45,7 @@ export const LinkItem: React.FC<LinkItemProps> = ({
       <motion.a
         href={formattedUrl}
         target="_blank"
-        className={`w-full p-4 backdrop-filter backdrop-blur-lg rounded-full shadow-md hover:shadow-lg transition-all duration-300 flex items-center ${themeClass} ${fontClass}`}
+        className={`w-full p-4 b hover:shadow-lg transition-all duration-300 flex items-center ${themeClass} ${fontClass}`}
         whileHover={{ scale: 1.03 }}
         whileTap={{ scale: 0.98 }}
       >
@@ -60,7 +60,7 @@ export const LinkItem: React.FC<LinkItemProps> = ({
             />
           </div>
         )}
-        <span className="text-sm md:text-lg font-semibold text-gray-800 dark:text-white">
+        <span className="text-sm md:text-lg font-semibold">
           {title}
         </span>
       </motion.a>
