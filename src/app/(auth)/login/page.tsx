@@ -2,8 +2,8 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import AuthForm from "../../../components/AuthForm";
 import { login } from "./action";
-import { headers } from "next/headers";
 import { signup } from "./action";
+import { headers } from "next/headers";
 
 export default async function LoginPage() {
   const supabase = createClient();
@@ -45,7 +45,6 @@ export default async function LoginPage() {
               !err.toLowerCase().includes("password")
           ),
         },
-        // remainingAttempts: result.remainingAttempts || 0,
       };
     }
 

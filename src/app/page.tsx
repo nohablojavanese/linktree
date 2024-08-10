@@ -1,13 +1,16 @@
 import Link from "next/link";
 import { Button } from "@nextui-org/react";
 import { Card, CardHeader, CardBody, CardFooter } from "@nextui-org/react";
+import { LogInIcon } from "lucide-react";
+import Image from "next/image";
 export default function Component() {
   return (
     <div className="flex flex-col min-h-[100dvh] dark:bg-[#1a1b1e] dark:text-white">
       <header className="bg-[#0070f3] text-white py-4 px-6 flex items-center justify-between">
         <Link href="#" className="flex items-center gap-2" prefetch={false}>
-          <MountainIcon />
-          <span className="text-lg font-semibold">Acme Inc</span>
+          {/* <MountainIcon /> */}
+          <Image src="/favicon.png" alt="logo" width={24} height={24} />
+          <span className="text-lg font-semibold">Link.id</span>
         </Link>
         <nav className="hidden md:flex items-center gap-4">
           <Link
@@ -39,72 +42,96 @@ export default function Component() {
             Contact
           </Link>
         </nav>
-        <Button className="bg-[#0070f3] text-white hover:bg-[#0061d1] dark:bg-[#0070f3] dark:text-white dark:hover:bg-[#0061d1]">
-          Get Started
-        </Button>
+        <a href="/login" target="_self">
+          <Button color="primary" endContent={<LogInIcon />}>
+            Login
+          </Button>
+        </a>
       </header>
       <main className="flex-1">
         <section className="bg-[#0070f3] py-16 md:py-24 lg:py-32 text-white">
           <div className="container px-4 md:px-6 grid md:grid-cols-2 gap-8 items-center">
             <div className="space-y-4">
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter">
-                Unlock Your Digital Potential
+                Membuat Link hanya dalam satu menit
               </h1>
-              <p className="text-lg md:text-xl max-w-[600px]">
-                Discover our comprehensive suite of tools and services to
-                elevate your online presence and drive growth.
+              <p className="text-sm md:text-base max-w-[600px]">
+                Layanan seperti Link.id memungkinkan pengguna membuat halaman
+                profil yang mengumpulkan semua tautan penting dalam satu tempat
+                dengan tampilan yang sederhana dan responsif.
               </p>
               <div className="flex gap-4">
                 <Button className="bg-[#0070f3] text-white hover:bg-[#0061d1] dark:bg-[#0070f3] dark:text-white dark:hover:bg-[#0061d1]">
-                  Get Started
+                  Buat Sekarang
                 </Button>
-                <Button
-                  variant="solid"
-                  className="border-white text-white hover:bg-white hover:text-[#0070f3] dark:border-[#0070f3] dark:text-[#0070f3] dark:hover:bg-[#0070f3] dark:hover:text-white"
-                >
-                  Learn More
-                </Button>
+                <Button variant="solid">Pelajari Lebih</Button>
               </div>
             </div>
-            <img
-              src="/placeholder.svg"
-              width="600"
-              height="400"
+            <Image
+              src="https://myartistpage.com/wp-content/uploads/2022/03/usecases.png"
+              width="1260"
+              height="740"
               alt="Hero"
-              className="mx-auto aspect-video rounded-lg overflow-hidden"
+              className="mx-auto rounded-lg overflow-hidden"
             />
           </div>
         </section>
         <section className="py-12 md:py-16 lg:py-24 dark:bg-[#1a1b1e] dark:text-white">
           <div className="container px-4 md:px-6">
             <div className="flex flex-col items-center text-center space-y-4 mb-8">
-              <div className="inline-block rounded-lg bg-[#f0f0f0] px-3 py-1 text-sm dark:bg-[#2c2d30] dark:text-[#b3b3b3]">
-                Product Categories
+              <div className="flex  rounded-xl bg-[#0070f3] px-3 py-1 text-sm dark:bg-[#2c2d30] dark:text-[#b3b3b3]">
+                <p>Produk Gratis</p>
               </div>
               <h2 className="text-3xl md:text-4xl font-bold tracking-tighter">
                 Explore Our Offerings
               </h2>
               <p className="max-w-[600px] text-[#6b7280] dark:text-[#b3b3b3]">
-                Browse through our diverse range of products and services to
-                find the perfect fit for your needs.
+                Temukan fitur dan produk secara gratis untuk mempermudah kinerja
+                kamu!
               </p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
               <div className="bg-white rounded-lg overflow-hidden shadow-sm dark:bg-[#2c2d30]">
-                <img
-                  src="/placeholder.svg"
+                <Image
+                  src="https://mobirise.com/bio/assets/images/linkbios-1.jpg"
                   width="400"
                   height="250"
                   alt="Product Category"
                   className="aspect-[4/3] object-cover"
                 />
                 <div className="p-4 space-y-2">
-                  <h3 className="text-xl font-semibold dark:text-white">
-                    Digital Marketing
+                  <h3 className="text-xl font-semibold text-black dark:text-white">
+                    Template
                   </h3>
                   <p className="text-[#6b7280] dark:text-[#b3b3b3]">
-                    Elevate your online presence with our comprehensive digital
-                    marketing solutions.
+                    Tersedia berbagai opsi pilihan template dan warna untuk
+                    profil link yang bisa digunakan.
+                  </p>
+                  <Link
+                    href="#"
+                    className="inline-flex items-center gap-2 text-[#0070f3] hover:underline dark:text-[#0070f3] dark:hover:text-[#0061d1]"
+                    prefetch={false}
+                  >
+                    Pelajari Lebih
+                    <ArrowRightIcon />
+                  </Link>
+                </div>
+              </div>
+              <div className="bg-white rounded-lg overflow-hidden shadow-sm dark:bg-[#2c2d30]">
+                <Image
+                  src="https://uploads-ssl.webflow.com/5fd39cde89a3b6b667f26497/5fd665e7a6df4279cc7c39b8_linkinbio-thumbnail.jpg"
+                  width="400"
+                  height="250"
+                  alt="Product Category"
+                  className="aspect-[4/3] object-cover"
+                />
+                <div className="p-4 space-y-2">
+                  <h3 className="text-xl font-semibold text-black dark:text-white">
+                    Loading Instant
+                  </h3>
+                  <p className="text-[#6b7280] dark:text-[#b3b3b3]">
+                    Jangan sampai pengguna link-mu menunggu lama hanya untuk
+                    menampilkan profil link kamu!
                   </p>
                   <Link
                     href="#"
@@ -118,45 +145,19 @@ export default function Component() {
               </div>
               <div className="bg-white rounded-lg overflow-hidden shadow-sm dark:bg-[#2c2d30]">
                 <img
-                  src="/placeholder.svg"
+                  src="https://embedsocial.com/wp-content/uploads/2022/04/link-in-bio-page-customization.jpg"
                   width="400"
                   height="250"
                   alt="Product Category"
                   className="aspect-[4/3] object-cover"
                 />
                 <div className="p-4 space-y-2">
-                  <h3 className="text-xl font-semibold dark:text-white">
-                    Web Development
+                  <h3 className="text-xl font-semibold text-black dark:text-white">
+                    SEO dan Share
                   </h3>
                   <p className="text-[#6b7280] dark:text-[#b3b3b3]">
-                    Bring your ideas to life with our expert web development
-                    services.
-                  </p>
-                  <Link
-                    href="#"
-                    className="inline-flex items-center gap-2 text-[#0070f3] hover:underline dark:text-[#0070f3] dark:hover:text-[#0061d1]"
-                    prefetch={false}
-                  >
-                    Learn More
-                    <ArrowRightIcon />
-                  </Link>
-                </div>
-              </div>
-              <div className="bg-white rounded-lg overflow-hidden shadow-sm dark:bg-[#2c2d30]">
-                <img
-                  src="/placeholder.svg"
-                  width="400"
-                  height="250"
-                  alt="Product Category"
-                  className="aspect-[4/3] object-cover"
-                />
-                <div className="p-4 space-y-2">
-                  <h3 className="text-xl font-semibold dark:text-white">
-                    Branding & Design
-                  </h3>
-                  <p className="text-[#6b7280] dark:text-[#b3b3b3]">
-                    Craft a unique and memorable brand identity with our design
-                    expertise.
+                    Bagikan link profil kamu dengan informasi detail yang
+                    memudahkan pengunjung.
                   </p>
                   <Link
                     href="#"
@@ -237,7 +238,7 @@ export default function Component() {
                 </p>
               </div>
               <div className="bg-white rounded-lg p-6 shadow-sm dark:bg-[#2c2d30]">
-                <SparkleIcon/>
+                <SparkleIcon />
                 <h3 className="text-xl font-semibold mb-2 dark:text-white">
                   Cutting-Edge Technology
                 </h3>
