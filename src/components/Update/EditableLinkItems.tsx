@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useTransition } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { BiSolidShow, BiSolidHide } from "react-icons/bi";
 import {
@@ -37,9 +37,9 @@ const linkItemSchema = z.object({
 });
 
 type EditableLinkItemProps = LinkType & {
-  onUpdate: (formData: FormData) => void;
-  onDelete: (formData: FormData) => void;
-  onVisible: (id: string, isVisible: boolean) => void;
+  onUpdate: (formData: FormData) => Promise<void>;
+  onDelete: (formData: FormData) => Promise<void>;
+  onVisible: (id: string, isVisible: boolean) => Promise<void>;
 };
 
 export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
@@ -54,8 +54,13 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [isPending, startTransition] = useTransition();
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isSwitching, setIsSwitching] = useState(false);
 
-  const handleSubmit = (formData: FormData) => {
+  const handleSubmit = async (formData: FormData) => {
+    setIsUpdating(true);
     try {
       linkItemSchema.parse({
         title: formData.get("title"),
@@ -64,7 +69,7 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
         isVisible: formData.get("isVisible") === "true",
       });
       setErrors({});
-      onUpdate(formData);
+      await onUpdate(formData);
       setIsEditing(false);
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -76,23 +81,29 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
         });
         setErrors(newErrors);
       }
+    } finally {
+      setIsUpdating(false);
     }
-    // onVisible(id, formData.get("isVisible") === "true");
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
+    setIsDeleting(true);
     const formData = new FormData();
     formData.append("id", id);
-    onDelete(formData);
+    await onDelete(formData);
+    setIsDeleting(false);
   };
 
-  const handleVisibilityChange = (checked: boolean) => {
-    onVisible(id, checked);
+  const handleVisibilityChange = async (checked: boolean) => {
+    setIsSwitching(true);
+    await onVisible(id, checked);
+    setIsSwitching(false);
   };
+
   const formattedUrl =
-  url.startsWith("http://") || url.startsWith("https://")
-    ? url
-    : `https://${url}`;
+    url.startsWith("http://") || url.startsWith("https://")
+      ? url
+      : `https://${url}`;
 
   return (
     <AnimatePresence>
@@ -108,14 +119,13 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
             <CardBody>
               <div className="absolute top-2 right-2 flex flex-col items-center">
                 <Switch
-                  onChange={(e) => handleVisibilityChange(e.target.checked)}
-                  // onValueChange={handleVisibilityChange}
+                  onChange={(e) => startTransition(() => handleVisibilityChange(e.target.checked))}
                   isSelected={isVisible}
-                  // defaultSelected
                   size="md"
                   color={isVisible ? "success" : undefined}
                   startContent={<BiSolidShow size={16} />}
                   endContent={<BiSolidHide size={16} />}
+                  isDisabled={isSwitching}
                 />
                 <span className="text-gray-500 dark:text-gray-400">
                   {isVisible ? "Visible" : "Hidden"}
@@ -193,24 +203,27 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
                   color="primary"
                   size="sm"
                   className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                  isLoading={isUpdating}
                 >
-                  Update
+                  {isUpdating ? 'Updating...' : 'Update'}
                 </Button>
                 <Button
                   onClick={() => setIsEditing(false)}
                   color="secondary"
                   size="sm"
                   className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
+                  isDisabled={isUpdating || isDeleting}
                 >
                   Cancel
                 </Button>
                 <Button
-                  onClick={handleDelete}
+                  onClick={() => startTransition(() => handleDelete())}
                   color="danger"
                   size="sm"
                   className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                  isLoading={isDeleting}
                 >
-                  Delete
+                  {isDeleting ? 'Deleting...' : 'Delete'}
                 </Button>
               </CardFooter>
             </form>
