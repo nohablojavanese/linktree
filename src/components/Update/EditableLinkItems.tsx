@@ -112,7 +112,7 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
                   // onValueChange={handleVisibilityChange}
                   isSelected={isVisible}
                   // defaultSelected
-                  size="lg"
+                  size="md"
                   color={isVisible ? "success" : undefined}
                   startContent={<BiSolidShow size={16} />}
                   endContent={<BiSolidHide size={16} />}
