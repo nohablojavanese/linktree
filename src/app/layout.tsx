@@ -24,7 +24,7 @@ export default function RootLayout({
         <NextUIProvider>
           <NextThemesProvider attribute="class" defaultTheme="light" >
               {children}
-              <ThemeSwitcher/>
+              {/* <ThemeSwitcher/> */}
           </NextThemesProvider>
         </NextUIProvider>
       </body>
