@@ -15,6 +15,7 @@ import { EditProfile } from "@/components/Update/EditProfile";
 import { AddLink } from "@/components/Create/AddLink";
 import { AddSocial } from "@/components/Create/AddSocial";
 import { UpdateTheme } from "@/components/Update/UpdateTheme";
+import { ThemeSwitcher } from "@/components/DarkMode";
 
 async function fetchUserData() {
   const supabase = createClient();
@@ -69,6 +70,8 @@ export default async function EditPage() {
 
   return (
     <div className="mx-auto p-4 bg-gray-50 dark:bg-gray-900  min-h-screen overflow-hidden">
+      <ThemeSwitcher />
+
       <div className="max-w-md mx-auto space-y-6">
         <UserProfile
           username={profile.username}
@@ -76,7 +79,6 @@ export default async function EditPage() {
           createdAt={profile.created_at}
           imageUrl={profile.image_url}
           verified={profile.verified}
-
         />
         <UpdateTheme
           currentTheme={theme?.theme || "default"}
