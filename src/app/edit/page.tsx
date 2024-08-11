@@ -2,7 +2,6 @@ import React from "react";
 import type { Metadata } from "next";
 
 import { createClient } from "@/lib/supabase/server";
-// import { EditableLinkItem } from "@/components/Update/EditableLinkItems";
 import { EditableSocialLink } from "@/components/Update/EditableSocialLink";
 import { UserProfile } from "@/components/UserProfile";
 import {
