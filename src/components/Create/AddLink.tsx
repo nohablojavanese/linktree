@@ -83,7 +83,7 @@ export const AddLink: React.FC<YourLinksProps> = ({ links }) => {
               className="w-full "
             >
               <Link size={16} />
-              Add New Link
+              Add Link
             </Button>
           </div>
         ) : (

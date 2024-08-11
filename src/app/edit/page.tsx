@@ -19,8 +19,6 @@ import { AddSocial } from "@/components/Create/AddSocial";
 import { UpdateTheme } from "@/components/Update/UpdateTheme";
 import { ThemeSwitcher } from "@/components/DarkMode";
 
-
-
 async function fetchUserData() {
   const supabase = createClient();
   const {
@@ -101,6 +99,7 @@ export default async function EditPage() {
 
         <AddLink links={links || []} />
 
+        {/* Link Items from Database */}
         <div className="space-y-4">
           {links?.map((link) => (
             <EditableLinkItem

@@ -1,7 +1,13 @@
 "use client";
 import React, { useState, useTransition } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { BiSolidShow, BiSolidHide, BiTrash, BiEdit } from "react-icons/bi";
+import {
+  BiSolidShow,
+  BiSolidHide,
+  BiTrash,
+  BiEdit,
+  BiSolidPaste,
+} from "react-icons/bi";
 import {
   Card,
   CardBody,
@@ -72,7 +78,16 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
     onOpen: onEditModalOpen,
     onClose: onEditModalClose,
   } = useDisclosure();
+  const [copyUrl, setUrl] = useState<string>("");
 
+  const handlePasteFromClipboard = async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      setUrl(text);
+    } catch (error) {
+      console.error("Failed to read clipboard contents: ", error);
+    }
+  };
   const handleSubmit = async (formData: FormData) => {
     try {
       linkItemSchema.parse({
@@ -121,29 +136,14 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
   return (
     <>
       <motion.div
-        key="view-mode"
-        initial={{ opacity: 0, rotateX: -90 }}
-        animate={{ opacity: 1, rotateX: 0 }}
-        exit={{ opacity: 0, rotateX: 90 }}
+        // key="view-mode"
+        initial={{ opacity: 0, x: -100 }}
+        animate={{ opacity: 1, x: 0 }}
+        exit={{ opacity: 0, x: -100 }}
         transition={{ duration: 1 }}
       >
         <Card className="w-full bg-white dark:bg-gray-800 shadow-md">
           <CardBody>
-            {/* <div className="absolute top-2 right-2 flex flex-col items-center">
-              <Switch
-                onChange={(e) => handleVisibilityChange()}
-                isSelected={isVisible}
-                size="md"
-                color={isVisible ? "success" : undefined}
-                startContent={<BiSolidShow size={16} />}
-                endContent={<BiSolidHide size={16} />}
-                isDisabled={isPending}
-              />
-              <span className="text-gray-500 dark:text-gray-400">
-                {isVisible ? "Visible" : "Hidden"}
-              </span>
-            </div> */}
-
             <div className="flex items-center space-x-2 group">
               <a href={formattedUrl} target="_blank" rel="noopener noreferrer">
                 <Link
@@ -160,13 +160,13 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
               {description}
             </p>
 
-            <div className="flex justify-end mt-4 space-x-4">
+            <div className="flex justify-center mt-4 space-x-4">
               <ButtonGroup>
                 <Button
                   onClick={onEditModalOpen}
                   color="primary"
                   size="sm"
-                  className="bg-gray-500 hover:bg-blue-700 text-white font-bold"
+                  className="button-base bg-blue-600 hover:bg-blue-600"
                   startContent={<BiEdit size={16} />}
                 >
                   <span className="hidden md:block">Edit</span>
@@ -175,8 +175,8 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
                   onClick={onDeleteModalOpen}
                   color="danger"
                   size="sm"
+                  className="button-base bg-red-600 hover:bg-red-600"
                   startContent={<BiTrash size={16} />}
-                  className="bg-gray-500 hover:bg-red-700 text-white font-bold"
                 >
                   <span className="hidden md:block">Delete</span>
                 </Button>
@@ -184,16 +184,25 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
                   onClick={handleVisibilityChange}
                   size="sm"
                   color={isVisible ? "success" : "danger"}
-                  startContent={
-                    isVisible ? (
-                      <BiSolidShow size={16} />
-                    ) : (
-                      <BiSolidHide size={16} />
-                    )
-                  }
+                  className={`button-base ${
+                    isVisible
+                      ? "bg-green-200 hover:bg-green-200"
+                      : "bg-red-200 hover:bg-red-600"
+                  }`}
                   isDisabled={isPending}
                 >
-                  {/* {isVisible ? "Visible" : "Hidden"} */}
+                  <Switch
+                    onChange={(e) => handleVisibilityChange()}
+                    isSelected={isVisible}
+                    size="sm"
+                    color={isVisible ? "success" : undefined}
+                    startContent={<BiSolidShow size={16} />}
+                    endContent={<BiSolidHide size={16} />}
+                    isDisabled={isPending}
+                  />
+                  <span className="hidden md:block">
+                    {isVisible ? "Visible" : "Hidden"}
+                  </span>
                 </Button>
               </ButtonGroup>
             </div>
@@ -209,7 +218,8 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
         placement="bottom-center"
         className="text-gray-900 dark:text-gray-100"
         classNames={{
-          backdrop: "bg-gradient-to-t from-zinc-900 to-zinc-900/10 backdrop-opacity-20"
+          backdrop:
+            "bg-gradient-to-t from-zinc-900 to-zinc-900/10 backdrop-opacity-60",
         }}
       >
         <ModalContent>
@@ -233,11 +243,23 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
               <Input
                 label="URL"
                 name="url"
+                isClearable
+                onValueChange={setUrl}
                 defaultValue={url}
+                value={copyUrl}
                 className="dark:text-white"
                 isInvalid={!!errors.url}
                 errorMessage={errors.url}
+                endContent={
+                  <Button
+                    startContent={<BiSolidPaste />}
+                    onPress={handlePasteFromClipboard}
+                    color="warning"
+                  >
+                  </Button>
+                }
               />
+
               <Textarea
                 label="Description"
                 name="description"
@@ -248,10 +270,16 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
               />
             </ModalBody>
             <ModalFooter>
-              <Button color="danger"  onPress={onEditModalClose}>
+              <Button color="danger" variant="light" onPress={onEditModalClose}>
                 Cancel
               </Button>
-              <Button color="primary" variant="shadow" type="submit" isLoading={isPending}>
+              <Button
+                color="success"
+                variant="shadow"
+                type="submit"
+                isLoading={isPending}
+                className="text-white"
+              >
                 {isPending ? "Updating..." : "Update"}
               </Button>
             </ModalFooter>

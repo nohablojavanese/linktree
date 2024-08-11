@@ -68,3 +68,17 @@ body {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+
+.text-primary {
+  @apply text-gray-900 dark:text-gray-100;
+}
+.text-secondary {
+  @apply text-gray-500 dark:text-gray-400;
+}
+.text-tertiary {
+  @apply text-gray-700 dark:text-gray-300;
+}
+.button-base {
+  @apply bg-gray-200 dark:bg-gray-600 text-white font-bold;
+}
