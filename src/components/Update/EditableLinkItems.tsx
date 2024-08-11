@@ -135,6 +135,9 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
       ? url
       : `https://${url}`;
 
+  const truncatedUrl =
+    url?.length > 40 ? `${url.slice(0, 40)}...` : description;
+
   const truncatedDescription =
     description?.length > 40 ? `${description.slice(0, 40)}...` : description;
 
@@ -154,9 +157,29 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
                 {title}
               </h3>
             </div>
-            <p className="text-sm text-gray-500 dark:text-gray-400 break-all">
-              {url}
-            </p>
+            <div className="text-sm text-gray-500 dark:text-gray-400 break-all">
+              {isDescriptionExpanded ? url : truncatedUrl}
+              {url.length > 40 && (
+                <a
+                  className="ml-2 cursor-pointer hover:text-blue-600"
+                  // size="sm"
+                  // variant="light"
+                  onClick={() =>
+                    setIsDescriptionExpanded(!isDescriptionExpanded)
+                  }
+                  // endContent={
+                  //   isDescriptionExpanded ? (
+                  //     <ChevronUp size={16} />
+                  //   ) : (
+                  //     <ChevronDown size={16} />
+                  //   )
+                  // }
+                >
+                  {isDescriptionExpanded ? "Hide"  : "More"}
+                </a>
+              )}
+            </div>
+
             <div className="mt-2 text-gray-700 dark:text-gray-300">
               {isDescriptionExpanded ? description : truncatedDescription}
               {description?.length > 40 && (
@@ -257,13 +280,15 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
                 className="dark:text-white"
                 isInvalid={!!errors.title}
                 errorMessage={errors.title}
+                description={`Tersimpan: ${title}`}
               />
               <Input
                 label="URL"
                 name="url"
                 // isClearable
                 onValueChange={setUrl}
-                defaultValue={url}
+                // defaultValue={url}
+                description={`Tersimpan: ${truncatedUrl}`}
                 value={copyUrl}
                 className="dark:text-white"
                 isInvalid={!!errors.url}

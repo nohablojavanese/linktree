@@ -69,17 +69,11 @@ export const ClientDraggableLinkList: React.FC<
                   <div
                     ref={provided.innerRef}
                     {...provided.draggableProps}
-                    className={`bg-white dark:bg-gray-800 shadow-md transition-all rounded-2xl ${
+                    className={`bg-white dark:bg-gray-800 shadow-md  rounded-2xl ${
                       snapshot.isDragging ? "shadow-lg scale-105" : ""
                     }`}
                   >
                     <div className="flex items-center p-4 ">
-                      <div
-                        {...provided.dragHandleProps}
-                        className="mr-4 cursor-move text-gray-800 dark:text-white"
-                      >
-                        <GripVertical size={24} />
-                      </div>
                       <div className="flex-grow  ">
                         <EditableLinkItem
                           {...link}
@@ -87,6 +81,12 @@ export const ClientDraggableLinkList: React.FC<
                           onDelete={deleteLink}
                           onVisible={updateLinkVisibility}
                         />
+                      </div>
+                      <div
+                        {...provided.dragHandleProps}
+                        className="ml-4 cursor-move text-gray-800 dark:text-white"
+                      >
+                        <GripVertical size={24} />
                       </div>
                     </div>
                   </div>
