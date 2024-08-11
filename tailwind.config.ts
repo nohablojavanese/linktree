@@ -20,15 +20,6 @@ const config = {
       },
     },
     extend: {
-      width: {
-        a4: "794px",
-      },
-      height: {
-        a4: "1122px",
-      },
-      fontFamily: {
-        poppins: ["Poppins", "sans-serif"],
-      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -86,24 +77,25 @@ const config = {
     },
   },
   plugins: [
+    require('tailwindcss-animate'),
     nextui({
-      prefix: "nextui", // prefix for themes variables
-      addCommonColors: false, // override common colors (e.g. "blue", "green", "pink").
-      defaultTheme: "light", // default theme from the themes object
-      defaultExtendTheme: "light", // default theme to extend on custom themes
-      layout: {}, // common layout tokens (applied to all themes)
+      prefix: 'nextui',
+      addCommonColors: false,
+      defaultTheme: 'light',
+      defaultExtendTheme: 'light',
+      layout: {},
       themes: {
         light: {
-          layout: {}, // light theme layout tokens
-          colors: {}, // light theme colors
+          layout: {},
+          colors: {},
         },
         dark: {
-          layout: {}, // dark theme layout tokens
-          colors: {}, // dark theme colors
+          layout: {},
+          colors: {},
         },
       },
     }),
   ],
-} satisfies Config;
+} satisfies Config
 
-export default config;
+export default config

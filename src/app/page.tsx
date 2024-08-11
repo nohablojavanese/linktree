@@ -1,9 +1,27 @@
 import Link from "next/link";
 import { Button } from "@nextui-org/react";
 import { Card, CardHeader, CardBody, CardFooter } from "@nextui-org/react";
-import { LogInIcon } from "lucide-react";
+import {
+  Bolt,
+  Briefcase,
+  LogInIcon,
+  Rocket,
+  Shield,
+  Sparkle,
+  UserCogIcon,
+} from "lucide-react";
 import Image from "next/image";
+import { GrAnalytics, GrSupport } from "react-icons/gr";
+import ProductPriceSection from "@/components/MainPage/Price";
 export default function Component() {
+  const handleScroll = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+    e.preventDefault();
+    const section = document.querySelector("#key-features");
+    if (section) {
+      section.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
     <div className="flex flex-col min-h-[100dvh] dark:bg-[#1a1b1e] dark:text-white">
       <header className="bg-[#0070f3] text-white py-4 px-6 flex items-center justify-between">
@@ -14,7 +32,8 @@ export default function Component() {
         </Link>
         <nav className="hidden md:flex items-center gap-4">
           <Link
-            href="#"
+            href="#productfree"
+            // scroll={false}
             className="text-sm font-medium hover:underline underline-offset-4 dark:hover:text-[#0070f3]"
             prefetch={false}
           >
@@ -76,7 +95,10 @@ export default function Component() {
             />
           </div>
         </section>
-        <section className="py-12 md:py-16 lg:py-24 dark:bg-[#1a1b1e] dark:text-white">
+        <section
+          id="productfree"
+          className="py-12 md:py-16 lg:py-24 dark:bg-[#1a1b1e] dark:text-white"
+        >
           <div className="container px-4 md:px-6">
             <div className="flex flex-col items-center text-center space-y-4 mb-8">
               <div className="flex  rounded-xl bg-[#0070f3] px-3 py-1 text-sm dark:bg-[#2c2d30] dark:text-[#b3b3b3]">
@@ -144,7 +166,7 @@ export default function Component() {
                 </div>
               </div>
               <div className="bg-white rounded-lg overflow-hidden shadow-sm dark:bg-[#2c2d30]">
-                <img
+                <Image
                   src="https://embedsocial.com/wp-content/uploads/2022/04/link-in-bio-page-customization.jpg"
                   width="400"
                   height="250"
@@ -175,81 +197,81 @@ export default function Component() {
         <section className="bg-[#f0f0f0] py-12 md:py-16 lg:py-24 dark:bg-[#1a1b1e] dark:text-white">
           <div className="container px-4 md:px-6">
             <div className="flex flex-col items-center text-center space-y-4 mb-8">
-              <div className="inline-block rounded-lg bg-[#f0f0f0] px-3 py-1 text-sm dark:bg-[#2c2d30] dark:text-[#b3b3b3]">
-                Key Features
+              <div className="flex  rounded-xl bg-[#0070f3] px-3 py-1 text-sm dark:bg-[#2c2d30] dark:text-[#b3b3b3]">
+                <p>Produk Premium</p>
               </div>
-              <h2 className="text-3xl md:text-4xl font-bold tracking-tighter">
-                Unlock Your Digital Potential
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tighter text-[#1a1b1e] dark:text-white">
+                Tingkatkan Potensi Digital Anda
               </h2>
               <p className="max-w-[600px] text-[#6b7280] dark:text-[#b3b3b3]">
-                Discover how our comprehensive suite of tools and services can
-                elevate your online presence and drive growth.
+                Temukan bagaimana rangkaian alat dan layanan kami dapat
+                meningkatkan kehadiran online Anda dan mendorong pertumbuhan.
               </p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
               <div className="bg-white rounded-lg p-6 shadow-sm dark:bg-[#2c2d30]">
-                <RocketIcon />
-                <h3 className="text-xl font-semibold mb-2 dark:text-white">
-                  Rapid Deployment
+                <Rocket className="text-blue-600 mb-2" size={24} />
+                <h3 className="text-xl font-semibold mb-2 text-[#1a1b1e] dark:text-white">
+                  Penyebaran Cepat
                 </h3>
                 <p className="text-[#6b7280] dark:text-[#b3b3b3]">
-                  Get your projects up and running quickly with our streamlined
-                  deployment process.
+                  Luncurkan Link Anda dengan cepat dengan proses penyebaran yang
+                  efisien.
                 </p>
               </div>
               <div className="bg-white rounded-lg p-6 shadow-sm dark:bg-[#2c2d30]">
-                <BoltIcon />
-                <h3 className="text-xl font-semibold mb-2 dark:text-white">
-                  Scalable Performance
+                <GrAnalytics className="text-blue-600 mb-2" size={24} />
+                <h3 className="text-xl font-semibold mb-2 text-[#1a1b1e] dark:text-white">
+                  Kinerja yang Dapat Dianalisa
                 </h3>
                 <p className="text-[#6b7280] dark:text-[#b3b3b3]">
-                  Effortlessly scale your applications to handle growing traffic
-                  and demands.
+                  Skalakan Link Anda dengan mudah untuk menangani lalu lintas
+                  dan permintaan yang meningkat.
                 </p>
               </div>
               <div className="bg-white rounded-lg p-6 shadow-sm dark:bg-[#2c2d30]">
-                <ShieldIcon />
-                <h3 className="text-xl font-semibold mb-2 dark:text-white">
-                  Robust Security
+                <Shield className="text-blue-600 mb-2" size={24} />
+                <h3 className="text-xl font-semibold mb-2 text-[#1a1b1e] dark:text-white">
+                  Keamanan yang Kuat
                 </h3>
                 <p className="text-[#6b7280] dark:text-[#b3b3b3]">
-                  Protect your data and applications with our comprehensive
-                  security measures.
+                  Lindungi data dan aplikasi Anda dengan langkah-langkah
+                  keamanan yang komprehensif.
                 </p>
               </div>
               <div className="bg-white rounded-lg p-6 shadow-sm dark:bg-[#2c2d30]">
-                <CogIcon />
-                <h3 className="text-xl font-semibold mb-2 dark:text-white">
-                  Seamless Integration
+                <UserCogIcon className="text-blue-600 mb-2" size={24} />
+                <h3 className="text-xl font-semibold mb-2 text-[#1a1b1e] dark:text-white">
+                  Integrasi yang Mulus
                 </h3>
                 <p className="text-[#6b7280] dark:text-[#b3b3b3]">
-                  Easily integrate our solutions with your existing tools and
-                  workflows.
+                  Integrasikan solusi kami dengan alat dan alur kerja Anda yang
+                  ada dengan mudah.
                 </p>
               </div>
               <div className="bg-white rounded-lg p-6 shadow-sm dark:bg-[#2c2d30]">
-                <BriefcaseIcon />
-                <h3 className="text-xl font-semibold mb-2 dark:text-white">
-                  Dedicated Support
+                <GrSupport className="text-blue-600 mb-2" size={24} />
+                <h3 className="text-xl font-semibold mb-2 text-[#1a1b1e] dark:text-white">
+                  Dukungan Dedikasi
                 </h3>
                 <p className="text-[#6b7280] dark:text-[#b3b3b3]">
-                  Receive personalized guidance and support from our expert
-                  team.
+                  Dapatkan panduan dan dukungan pribadi dari tim ahli kami.
                 </p>
               </div>
               <div className="bg-white rounded-lg p-6 shadow-sm dark:bg-[#2c2d30]">
-                <SparkleIcon />
-                <h3 className="text-xl font-semibold mb-2 dark:text-white">
-                  Cutting-Edge Technology
+                <Sparkle className="text-blue-600 mb-2" size={24} />
+                <h3 className="text-xl font-semibold mb-2 text-[#1a1b1e] dark:text-white">
+                  Teknologi Mutakhir
                 </h3>
                 <p className="text-[#6b7280] dark:text-[#b3b3b3]">
-                  Stay ahead of the curve with our innovative and future-proof
-                  solutions.
+                  Dengan Fitur Interaktif dan Modern, terdepan dengan solusi
+                  inovatif dan siap untuk profil Link anda.
                 </p>
               </div>
             </div>
           </div>
         </section>
+        <ProductPriceSection />
       </main>
     </div>
   );
@@ -270,169 +292,6 @@ function ArrowRightIcon() {
     >
       <path d="M5 12h14" />
       <path d="m12 5 7 7-7 7" />
-    </svg>
-  );
-}
-
-function BoltIcon() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
-      <circle cx="12" cy="12" r="4" />
-    </svg>
-  );
-}
-
-function BriefcaseIcon() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
-      <rect width="20" height="14" x="2" y="6" rx="2" />
-    </svg>
-  );
-}
-
-function CheckIcon() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M20 6 9 17l-5-5" />
-    </svg>
-  );
-}
-
-function CogIcon() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M12 20a8 8 0 1 0 0-16 8 8 0 0 0 0 16Z" />
-      <path d="M12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" />
-      <path d="M12 2v2" />
-      <path d="M12 22v-2" />
-      <path d="m17 20.66-1-1.73" />
-      <path d="M11 10.27 7 3.34" />
-      <path d="m20.66 17-1.73-1" />
-      <path d="m3.34 7 1.73 1" />
-      <path d="M14 12h8" />
-      <path d="M2 12h2" />
-      <path d="m20.66 7-1.73 1" />
-      <path d="m3.34 17 1.73-1" />
-      <path d="m17 3.34-1 1.73" />
-      <path d="m11 13.73-4 6.93" />
-    </svg>
-  );
-}
-
-function MountainIcon() {
-  return (
-    <svg
-      // {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="m8 3 4 8 5-5 5 15H2L8 3z" />
-    </svg>
-  );
-}
-
-function RocketIcon() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z" />
-      <path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z" />
-      <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0" />
-      <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5" />
-    </svg>
-  );
-}
-
-function ShieldIcon() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
-    </svg>
-  );
-}
-
-function SparkleIcon() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z" />
     </svg>
   );
 }
