@@ -35,14 +35,23 @@ export const ClientDraggableLinkList: React.FC<
     const [reorderedItem] = items.splice(result.source.index, 1);
     items.splice(result.destination.index, 0, reorderedItem);
 
-    setLinks(items);
-
-    const updatedOrder = items.map((item, index) => ({
-      id: item.id,
+    const updatedLinks = items.map((item, index) => ({
+      ...item,
       order: index,
     }));
 
-    await updateLinkOrder(updatedOrder);
+    setLinks(updatedLinks);
+
+    const updatedOrder = updatedLinks.map(({ id, order }) => ({ id, order }));
+
+    try {
+      await updateLinkOrder(updatedOrder);
+    } catch (error) {
+      console.error("Error updating link order:", error);
+      // Revert the state if the update fails
+      setLinks(links);
+      // Optionally, show an error message to the user
+    }
   };
 
   return (

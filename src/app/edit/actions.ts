@@ -242,20 +242,17 @@ export async function updateTheme(formData: FormData) {
   revalidatePath("/edit");
 }
 
-export async function updateLinkOrder(newOrder: { id: string; order: number }[]) {
+export async function updateLinkOrder(
+  newOrder: { id: string; order: number }[]
+) {
   const user = await getAuthenticatedUser();
   const supabase = createClient();
 
-  const updates = newOrder.map(({ id, order }) => ({
-    id,
-    order,
+  const { error } = await supabase.rpc("update_links_order", {
+    updates: newOrder,
     user_id: user.id,
-  }));
-
-  const { error } = await supabase.from('links').upsert(updates, {
-    onConflict: 'id',
   });
 
   if (error) throw error;
-  revalidatePath('/edit');
+  revalidatePath("/edit");
 }
