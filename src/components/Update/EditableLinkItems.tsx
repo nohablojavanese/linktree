@@ -234,7 +234,7 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
                 // isClearable
                 onValueChange={setUrl}
                 defaultValue={url}
-                // value={copyUrl}
+                value={copyUrl}
                 className="dark:text-white"
                 isInvalid={!!errors.url}
                 errorMessage={errors.url}
