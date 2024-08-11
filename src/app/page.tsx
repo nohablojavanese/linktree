@@ -12,16 +12,12 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { GrAnalytics, GrSupport } from "react-icons/gr";
-import ProductPriceSection from "@/components/MainPage/Price";
+import { CardDemo } from "@/components/MainPage/CardDemo";
+import {
+  TextGenerateChild,
+  TextGenerateHeadline,
+} from "@/components/MainPage/Headline";
 export default function Component() {
-  const handleScroll = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
-    e.preventDefault();
-    const section = document.querySelector("#key-features");
-    if (section) {
-      section.scrollIntoView({ behavior: "smooth" });
-    }
-  };
-
   return (
     <div className="flex flex-col min-h-[100dvh] dark:bg-[#1a1b1e] dark:text-white">
       <header className="bg-[#0070f3] text-white py-4 px-6 flex items-center justify-between">
@@ -33,7 +29,6 @@ export default function Component() {
         <nav className="hidden md:flex items-center gap-4">
           <Link
             href="#productfree"
-            // scroll={false}
             className="text-sm font-medium hover:underline underline-offset-4 dark:hover:text-[#0070f3]"
             prefetch={false}
           >
@@ -71,14 +66,8 @@ export default function Component() {
         <section className="bg-[#0070f3] py-16 md:py-24 lg:py-32 text-white">
           <div className="container px-4 md:px-6 grid md:grid-cols-2 gap-8 items-center">
             <div className="space-y-4">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter">
-                Membuat Link hanya dalam satu menit
-              </h1>
-              <p className="text-sm md:text-base max-w-[600px]">
-                Layanan seperti Link.id memungkinkan pengguna membuat halaman
-                profil yang mengumpulkan semua tautan penting dalam satu tempat
-                dengan tampilan yang sederhana dan responsif.
-              </p>
+              <TextGenerateHeadline />
+              <TextGenerateChild />
               <div className="flex gap-4">
                 <Button className="bg-[#0070f3] text-white hover:bg-[#0061d1] dark:bg-[#0070f3] dark:text-white dark:hover:bg-[#0061d1]">
                   Buat Sekarang
@@ -271,7 +260,7 @@ export default function Component() {
             </div>
           </div>
         </section>
-        <ProductPriceSection />
+        <CardDemo />
       </main>
     </div>
   );
