@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useTransition } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { BiSolidShow, BiSolidHide } from "react-icons/bi";
+import { BiSolidShow, BiSolidHide, BiTrash, BiEdit } from "react-icons/bi";
 import {
   Card,
   CardBody,
@@ -10,6 +10,13 @@ import {
   Textarea,
   Button,
   Switch,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
+  ButtonGroup,
 } from "@nextui-org/react";
 import { LinkType } from "@/lib/types/type";
 import { z } from "zod";
@@ -55,6 +62,16 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
   const [isEditing, setIsEditing] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isPending, startTransition] = useTransition();
+  const {
+    isOpen: isDeleteModalOpen,
+    onOpen: onDeleteModalOpen,
+    onClose: onDeleteModalClose,
+  } = useDisclosure();
+  const {
+    isOpen: isEditModalOpen,
+    onOpen: onEditModalOpen,
+    onClose: onEditModalClose,
+  } = useDisclosure();
 
   const handleSubmit = async (formData: FormData) => {
     try {
@@ -66,7 +83,7 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
       setErrors({});
       startTransition(async () => {
         await onUpdate(formData);
-        setIsEditing(false);
+        onEditModalClose();
       });
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -86,12 +103,13 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
       const formData = new FormData();
       formData.append("id", id);
       await onDelete(formData);
+      onDeleteModalClose();
     });
   };
 
-  const handleVisibilityChange = (checked: boolean) => {
+  const handleVisibilityChange = () => {
     startTransition(async () => {
-      await onVisible(id, checked);
+      await onVisible(id, !isVisible);
     });
   };
 
@@ -101,130 +119,180 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
       : `https://${url}`;
 
   return (
-    <AnimatePresence>
-      <Card className="w-full bg-white dark:bg-gray-800 shadow-md">
-        {!isEditing ? (
-          <motion.div
-            key="view-mode"
-            initial={{ opacity: 0, rotateX: -90 }}
-            animate={{ opacity: 1, rotateX: 0 }}
-            exit={{ opacity: 0, rotateX: 90 }}
-            transition={{ duration: 1 }}
-          >
-            <CardBody>
-              <div className="absolute top-2 right-2 flex flex-col items-center">
-                <Switch
-                  onChange={(e) => handleVisibilityChange(e.target.checked)}
-                  isSelected={isVisible}
-                  size="md"
-                  color={isVisible ? "success" : undefined}
-                  startContent={<BiSolidShow size={16} />}
-                  endContent={<BiSolidHide size={16} />}
-                  isDisabled={isPending}
-                />
-                <span className="text-gray-500 dark:text-gray-400">
-                  {isVisible ? "Visible" : "Hidden"}
-                </span>
-              </div>
+    <>
+      <motion.div
+        key="view-mode"
+        initial={{ opacity: 0, rotateX: -90 }}
+        animate={{ opacity: 1, rotateX: 0 }}
+        exit={{ opacity: 0, rotateX: 90 }}
+        transition={{ duration: 1 }}
+      >
+        <Card className="w-full bg-white dark:bg-gray-800 shadow-md">
+          <CardBody>
+            {/* <div className="absolute top-2 right-2 flex flex-col items-center">
+              <Switch
+                onChange={(e) => handleVisibilityChange()}
+                isSelected={isVisible}
+                size="md"
+                color={isVisible ? "success" : undefined}
+                startContent={<BiSolidShow size={16} />}
+                endContent={<BiSolidHide size={16} />}
+                isDisabled={isPending}
+              />
+              <span className="text-gray-500 dark:text-gray-400">
+                {isVisible ? "Visible" : "Hidden"}
+              </span>
+            </div> */}
 
-              <a
-                href={formattedUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center space-x-2 group"
-              >
+            <div className="flex items-center space-x-2 group">
+              <a href={formattedUrl} target="_blank" rel="noopener noreferrer">
                 <Link
                   size={16}
                   className="text-gray-900 dark:text-gray-100 group-hover:text-blue-500"
                 />
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                  {title}
-                </h3>
               </a>
-              <p className="text-sm text-gray-500 dark:text-gray-400">{url}</p>
-              <p className="mt-2 text-gray-700 dark:text-gray-300">
-                {description}
-              </p>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                {title}
+              </h3>
+            </div>
+            <p className="text-sm text-gray-500 dark:text-gray-400">{url}</p>
+            <p className="mt-2 text-gray-700 dark:text-gray-300">
+              {description}
+            </p>
 
-              <Button
-                onClick={() => setIsEditing(true)}
-                color="primary"
-                size="sm"
-                className="mt-4 bg-gray-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-xl"
-              >
-                Edit
-              </Button>
-            </CardBody>
-          </motion.div>
-        ) : (
-          <motion.div
-            key="edit-mode"
-            initial={{ opacity: 0, rotateX: 90 }}
-            animate={{ opacity: 1, rotateX: 0 }}
-            exit={{ opacity: 0, rotateX: -90 }}
-            transition={{ duration: 1 }}
-          >
-            <form action={handleSubmit}>
-              <input type="hidden" name="id" value={id} />
-              <CardBody className="gap-4">
-                <Input
-                  label="Title"
-                  name="title"
-                  defaultValue={title}
-                  className="dark:text-white"
-                  isInvalid={!!errors.title}
-                  errorMessage={errors.title}
-                />
-                <Input
-                  label="URL"
-                  name="url"
-                  defaultValue={url}
-                  className="dark:text-white"
-                  isInvalid={!!errors.url}
-                  errorMessage={errors.url}
-                />
-                <Textarea
-                  label="Description"
-                  name="description"
-                  defaultValue={description}
-                  className="dark:text-white"
-                  isInvalid={!!errors.description}
-                  errorMessage={errors.description}
-                />
-              </CardBody>
-              <CardFooter className="justify-between pt-0">
+            <div className="flex justify-end mt-4 space-x-4">
+              <ButtonGroup>
                 <Button
-                  type="submit"
+                  onClick={onEditModalOpen}
                   color="primary"
                   size="sm"
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                  isLoading={isPending}
+                  className="bg-gray-500 hover:bg-blue-700 text-white font-bold"
+                  startContent={<BiEdit size={16} />}
                 >
-                  {isPending ? 'Updating...' : 'Update'}
+                  <span className="hidden md:block">Edit</span>
                 </Button>
                 <Button
-                  onClick={() => setIsEditing(false)}
-                  color="secondary"
-                  size="sm"
-                  className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
-                  isDisabled={isPending}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={handleDelete}
+                  onClick={onDeleteModalOpen}
                   color="danger"
                   size="sm"
-                  className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-                  isLoading={isPending}
+                  startContent={<BiTrash size={16} />}
+                  className="bg-gray-500 hover:bg-red-700 text-white font-bold"
                 >
-                  {isPending ? 'Deleting...' : 'Delete'}
+                  <span className="hidden md:block">Delete</span>
                 </Button>
-              </CardFooter>
-            </form>
-          </motion.div>
-        )}
-      </Card>
-    </AnimatePresence>
+                <Button
+                  onClick={handleVisibilityChange}
+                  size="sm"
+                  color={isVisible ? "success" : "danger"}
+                  startContent={
+                    isVisible ? (
+                      <BiSolidShow size={16} />
+                    ) : (
+                      <BiSolidHide size={16} />
+                    )
+                  }
+                  isDisabled={isPending}
+                >
+                  {/* {isVisible ? "Visible" : "Hidden"} */}
+                </Button>
+              </ButtonGroup>
+            </div>
+          </CardBody>
+        </Card>
+      </motion.div>
+
+      {/* Edit Modal */}
+      <Modal
+        isOpen={isEditModalOpen}
+        onClose={onEditModalClose}
+        backdrop="opaque"
+        placement="bottom-center"
+        className="text-gray-900 dark:text-gray-100"
+        classNames={{
+          backdrop: "bg-gradient-to-t from-zinc-900 to-zinc-900/10 backdrop-opacity-20"
+        }}
+      >
+        <ModalContent>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSubmit(new FormData(e.target as HTMLFormElement));
+            }}
+          >
+            <ModalHeader className="flex flex-col gap-1">Edit Link</ModalHeader>
+            <ModalBody>
+              <input type="hidden" name="id" value={id} />
+              <Input
+                label="Title"
+                name="title"
+                defaultValue={title}
+                className="dark:text-white"
+                isInvalid={!!errors.title}
+                errorMessage={errors.title}
+              />
+              <Input
+                label="URL"
+                name="url"
+                defaultValue={url}
+                className="dark:text-white"
+                isInvalid={!!errors.url}
+                errorMessage={errors.url}
+              />
+              <Textarea
+                label="Description"
+                name="description"
+                defaultValue={description}
+                className="dark:text-white"
+                isInvalid={!!errors.description}
+                errorMessage={errors.description}
+              />
+            </ModalBody>
+            <ModalFooter>
+              <Button color="danger"  onPress={onEditModalClose}>
+                Cancel
+              </Button>
+              <Button color="primary" variant="shadow" type="submit" isLoading={isPending}>
+                {isPending ? "Updating..." : "Update"}
+              </Button>
+            </ModalFooter>
+          </form>
+        </ModalContent>
+      </Modal>
+
+      {/* Delete Modal */}
+      <Modal
+        backdrop="opaque"
+        placement="bottom-center"
+        className="text-gray-900 dark:text-gray-100"
+        isOpen={isDeleteModalOpen}
+        onClose={onDeleteModalClose}
+        classNames={{
+          backdrop:
+            "bg-gradient-to-t from-zinc-900 to-zinc-900/10 backdrop-opacity-20",
+        }}
+      >
+        <ModalContent>
+          <ModalHeader className="flex flex-col gap-1">Hapus Link?</ModalHeader>
+          <ModalBody>
+            <p>
+              Anda akan menghapus Link{" "}
+              <span className="font-bold">{title}</span> menuju link {url}{" "}
+            </p>
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              color="default"
+              variant="light"
+              onPress={onDeleteModalClose}
+            >
+              Cancel
+            </Button>
+            <Button color="danger" onPress={handleDelete} isLoading={isPending}>
+              {isPending ? "Menghapus..." : "Hapus"}
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </>
   );
 };
