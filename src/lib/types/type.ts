@@ -11,7 +11,7 @@ export interface Profile {
 export interface LinkType {
   id: string;
   title: string;
-  description?: string;
+  description: string;
   url: string;
   imageUrl: string;
   isVisible: boolean;

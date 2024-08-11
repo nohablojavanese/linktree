@@ -26,7 +26,7 @@ import {
 } from "@nextui-org/react";
 import { LinkType } from "@/lib/types/type";
 import { z } from "zod";
-import { Link } from "lucide-react";
+import { Link, ChevronDown, ChevronUp } from "lucide-react";
 
 const linkItemSchema = z.object({
   title: z
@@ -65,6 +65,8 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
   onDelete,
   onVisible,
 }) => {
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
+
   const [isEditing, setIsEditing] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isPending, startTransition] = useTransition();
@@ -133,24 +135,53 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
       ? url
       : `https://${url}`;
 
+  const truncatedDescription =
+    description?.length > 40 ? `${description.slice(0, 40)}...` : description;
+
   return (
     <>
-      <div className="w-full">
-        <div className="flex items-center space-x-2 group">
-          <a href={formattedUrl} target="_blank" rel="noopener noreferrer">
-            <Link
-              size={16}
-              className="text-gray-900 dark:text-gray-100 group-hover:text-blue-500"
-            />
-          </a>
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-            {title}
-          </h3>
-        </div>
-        <p className="text-sm text-gray-500 dark:text-gray-400">{url}</p>
-        <p className="mt-2 text-gray-700 dark:text-gray-300">{description}</p>
+      <Card className="w-full">
+        <CardBody className="p-4">
+          <div className="flex flex-col space-y-2">
+            <div className="flex items-center space-x-2 group">
+              <a href={formattedUrl} target="_blank" rel="noopener noreferrer">
+                <Link
+                  size={16}
+                  className="text-gray-900 dark:text-gray-100 group-hover:text-blue-500"
+                />
+              </a>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 truncate">
+                {title}
+              </h3>
+            </div>
+            <p className="text-sm text-gray-500 dark:text-gray-400 break-all">
+              {url}
+            </p>
+            <div className="mt-2 text-gray-700 dark:text-gray-300">
+              {isDescriptionExpanded ? description : truncatedDescription}
+              {description?.length > 40 && (
+                <Button
+                  size="sm"
+                  variant="light"
+                  onClick={() =>
+                    setIsDescriptionExpanded(!isDescriptionExpanded)
+                  }
+                  endContent={
+                    isDescriptionExpanded ? (
+                      <ChevronUp size={16} />
+                    ) : (
+                      <ChevronDown size={16} />
+                    )
+                  }
+                >
+                  {isDescriptionExpanded ? "Hide" : "More"}
+                </Button>
+              )}
+            </div>
+          </div>
+        </CardBody>
 
-        <div className="flex justify-center mt-4 space-x-4">
+        <CardFooter className="flex justify-center mt-4 space-x-4">
           <ButtonGroup>
             <Button
               onClick={onEditModalOpen}
@@ -195,9 +226,8 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
               </span>
             </Button>
           </ButtonGroup>
-        </div>
-      </div>
-
+        </CardFooter>
+      </Card>
       {/* Edit Modal */}
       <Modal
         isOpen={isEditModalOpen}
@@ -290,8 +320,8 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
           <ModalHeader className="flex flex-col gap-1">Hapus Link?</ModalHeader>
           <ModalBody>
             <p>
-              Anda akan menghapus Link{" "}
-              <span className="font-bold">{title}</span> menuju link {url}{" "}
+              Anda akan menghapus Link
+              <span className="font-bold">{title}</span> menuju link {url}
             </p>
           </ModalBody>
           <ModalFooter>

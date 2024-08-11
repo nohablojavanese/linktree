@@ -1,7 +1,20 @@
 "use client";
-import React, { useState } from "react";
-import { Button, Input, Textarea, Card, CardBody } from "@nextui-org/react";
-import { Link } from "lucide-react";
+import React, { useState, useTransition, useEffect } from "react";
+import {
+  Button,
+  Input,
+  Textarea,
+  Card,
+  CardBody,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
+} from "@nextui-org/react";
+import { Link, Plus, X } from "lucide-react";
+import { BiSolidPaste } from "react-icons/bi";
 
 import { createLink } from "@/app/edit/actions";
 import { z } from "zod";
@@ -39,16 +52,33 @@ type YourLinksProps = {
 };
 
 export const AddLink: React.FC<YourLinksProps> = ({ links }) => {
-  const [isEditing, setIsEditing] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [isPending, startTransition] = useTransition();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [formData, setFormData] = useState({
+    title: "",
+    url: "",
+    description: "",
+  });
 
-  const validateForm = (formData: FormData) => {
+  useEffect(() => {
+    const getClipboardContent = async () => {
+      try {
+        const text = await navigator.clipboard.readText();
+        setFormData((prevState) => ({ ...prevState, url: text }));
+      } catch (error) {
+        console.error("Failed to read clipboard contents: ", error);
+      }
+    };
+
+    if (isOpen) {
+      getClipboardContent();
+    }
+  }, [isOpen]);
+
+  const validateForm = (data: typeof formData) => {
     try {
-      linkSchema.parse({
-        title: formData.get("title"),
-        url: formData.get("url"),
-        description: formData.get("description"),
-      });
+      linkSchema.parse(data);
       setErrors({});
       return true;
     } catch (error) {
@@ -65,66 +95,129 @@ export const AddLink: React.FC<YourLinksProps> = ({ links }) => {
     }
   };
 
-  const handleSubmit = (formData: FormData) => {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
     if (validateForm(formData)) {
-      createLink(formData);
-      setIsEditing(false);
+      startTransition(async () => {
+        const formDataToSend = new FormData();
+        Object.entries(formData).forEach(([key, value]) => {
+          formDataToSend.append(key, value);
+        });
+        await createLink(formDataToSend);
+        onClose();
+        setFormData({ title: "", url: "", description: "" });
+      });
     }
   };
 
+  const handleInputChange = (key: keyof typeof formData) => (value: string) => {
+    setFormData((prevState) => ({ ...prevState, [key]: value }));
+  };
+
+  const handleClearForm = () => {
+    setFormData({ title: "", url: "", description: "" });
+  };
+
   return (
-    <Card className="w-full bg-white dark:bg-gray-800 shadow-md text-gray-400 dark:text-gray-400">
-      <CardBody>
-        {!isEditing ? (
-          <div className="">
-            <Button
-              onClick={() => setIsEditing(true)}
-              color="primary"
-              className="w-full "
-            >
-              <Link size={16} />
-              Add Link
-            </Button>
-          </div>
-        ) : (
-          <form action={handleSubmit} className="space-y-4">
-            <Input
-              name="title"
-              isRequired
-              label="Title"
-              placeholder="Enter link title"
-              className="dark:text-white"
-              isInvalid={!!errors.title}
-              errorMessage={errors.title}
-            />
-            <Input
-              name="url"
-              isRequired
-              label="URL"
-              placeholder="Enter link URL"
-              className="dark:text-white"
-              isInvalid={!!errors.url}
-              errorMessage={errors.url}
-            />
-            <Textarea
-              name="description"
-              label="Description"
-              placeholder="Enter link description"
-              className="dark:text-white"
-              isInvalid={!!errors.description}
-              errorMessage={errors.description}
-            />
-            <div className="flex justify-between">
-              <Button type="submit" color="primary">
-                Add Link
-              </Button>
-              <Button onClick={() => setIsEditing(false)} color="secondary">
+    <>
+      <Card className="w-full bg-white dark:bg-gray-800 shadow-md text-gray-400 dark:text-gray-400">
+        <CardBody>
+          <Button
+            onClick={onOpen}
+            color="primary"
+            className="w-full"
+            startContent={<Plus size={16} />}
+          >
+            Add Link
+          </Button>
+        </CardBody>
+      </Card>
+
+      <Modal
+        isOpen={isOpen}
+        onClose={onClose}
+        backdrop="opaque"
+        placement="bottom-center"
+        className="text-gray-900 dark:text-gray-100"
+        classNames={{
+          backdrop:
+            "bg-gradient-to-t from-zinc-900 to-zinc-900/10 backdrop-opacity-60",
+        }}
+      >
+        <ModalContent>
+          <form onSubmit={handleSubmit}>
+            <ModalHeader className="flex flex-col gap-1">
+              Add New Link
+            </ModalHeader>
+            <ModalBody>
+              <Input
+                name="title"
+                label="Title"
+                placeholder="Enter link title"
+                className="dark:text-white"
+                value={formData.title}
+                onValueChange={handleInputChange("title")}
+                isInvalid={!!errors.title}
+                errorMessage={errors.title}
+              />
+              <Input
+                name="url"
+                label="URL"
+                placeholder="Enter link URL"
+                className="dark:text-white"
+                value={formData.url}
+                onValueChange={handleInputChange("url")}
+                isInvalid={!!errors.url}
+                errorMessage={errors.url}
+                endContent={
+                  <Button
+                    isIconOnly
+                    variant="flat"
+                    onPress={() =>
+                      navigator.clipboard
+                        .readText()
+                        .then((text) =>
+                          setFormData((prevState) => ({
+                            ...prevState,
+                            url: text,
+                          }))
+                        )
+                    }
+                  >
+                    <BiSolidPaste />
+                  </Button>
+                }
+              />
+              <Textarea
+                name="description"
+                label="Description"
+                placeholder="Enter link description"
+                className="dark:text-white"
+                value={formData.description}
+                onValueChange={handleInputChange("description")}
+                isInvalid={!!errors.description}
+                errorMessage={errors.description}
+              />
+            </ModalBody>
+            <ModalFooter>
+              <Button color="danger" variant="light" onPress={onClose}>
                 Cancel
               </Button>
-            </div>
+              <Button
+                color="warning"
+                variant="light"
+                onPress={handleClearForm}
+                startContent={<X size={16} />}
+              >
+                Clear
+              </Button>
+              <Button color="primary" type="submit" isLoading={isPending}>
+                {isPending ? "Adding..." : "Add Link"}
+              </Button>
+            </ModalFooter>
           </form>
-        )}
-      </CardBody>
-    </Card>
+        </ModalContent>
+      </Modal>
+    </>
   );
 };
