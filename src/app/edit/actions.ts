@@ -43,7 +43,9 @@ export async function updateProfile(formData: FormData) {
 
   try {
     usernameSchema.parse(username);
-    const validatedImageUrl = imageUrl ? urlSchema.parse(imageUrl as string) : null;
+    const validatedImageUrl = imageUrl
+      ? urlSchema.parse(imageUrl as string)
+      : null;
 
     const { error } = await supabase
       .from("user_profiles")
@@ -88,13 +90,25 @@ export async function createLink(formData: FormData) {
       .optional()
       .parse(description);
 
+    const { data: maxOrderData, error: maxOrderError } = await supabase
+      .from("links")
+      .select("order")
+      .eq("user_id", user.id)
+      .order("order", { ascending: false })
+      .limit(1);
+
+    if (maxOrderError) throw maxOrderError;
+
+    const newOrder =
+      maxOrderData && maxOrderData.length > 0 ? maxOrderData[0].order + 1 : 0;
+
     const { error } = await supabase.from("links").insert({
       user_id: user.id,
       title: title,
       url: url,
       description: description,
+      order: newOrder, // Add this line
     });
-
     if (error) throw new Error("Failed to create link");
     revalidatePath("/edit");
   } catch (error) {
@@ -226,4 +240,22 @@ export async function updateTheme(formData: FormData) {
 
   if (error) throw error;
   revalidatePath("/edit");
+}
+
+export async function updateLinkOrder(newOrder: { id: string; order: number }[]) {
+  const user = await getAuthenticatedUser();
+  const supabase = createClient();
+
+  const updates = newOrder.map(({ id, order }) => ({
+    id,
+    order,
+    user_id: user.id,
+  }));
+
+  const { error } = await supabase.from('links').upsert(updates, {
+    onConflict: 'id',
+  });
+
+  if (error) throw error;
+  revalidatePath('/edit');
 }

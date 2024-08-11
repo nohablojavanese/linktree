@@ -135,80 +135,68 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
 
   return (
     <>
-      <motion.div
-        // key="view-mode"
-        initial={{ opacity: 0, x: -100 }}
-        animate={{ opacity: 1, x: 0 }}
-        exit={{ opacity: 0, x: -100 }}
-        transition={{ duration: 1 }}
-      >
-        <Card className="w-full bg-white dark:bg-gray-800 shadow-md">
-          <CardBody>
-            <div className="flex items-center space-x-2 group">
-              <a href={formattedUrl} target="_blank" rel="noopener noreferrer">
-                <Link
-                  size={16}
-                  className="text-gray-900 dark:text-gray-100 group-hover:text-blue-500"
-                />
-              </a>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                {title}
-              </h3>
-            </div>
-            <p className="text-sm text-gray-500 dark:text-gray-400">{url}</p>
-            <p className="mt-2 text-gray-700 dark:text-gray-300">
-              {description}
-            </p>
+      <div className="w-full">
+        <div className="flex items-center space-x-2 group">
+          <a href={formattedUrl} target="_blank" rel="noopener noreferrer">
+            <Link
+              size={16}
+              className="text-gray-900 dark:text-gray-100 group-hover:text-blue-500"
+            />
+          </a>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+            {title}
+          </h3>
+        </div>
+        <p className="text-sm text-gray-500 dark:text-gray-400">{url}</p>
+        <p className="mt-2 text-gray-700 dark:text-gray-300">{description}</p>
 
-            <div className="flex justify-center mt-4 space-x-4">
-              <ButtonGroup>
-                <Button
-                  onClick={onEditModalOpen}
-                  color="primary"
-                  size="sm"
-                  className="button-base bg-blue-600 hover:bg-blue-600"
-                  startContent={<BiEdit size={16} />}
-                >
-                  <span className="hidden md:block">Edit</span>
-                </Button>
-                <Button
-                  onClick={onDeleteModalOpen}
-                  color="danger"
-                  size="sm"
-                  className="button-base bg-red-600 hover:bg-red-600"
-                  startContent={<BiTrash size={16} />}
-                >
-                  <span className="hidden md:block">Delete</span>
-                </Button>
-                <Button
-                  onClick={handleVisibilityChange}
-                  size="sm"
-                  color={isVisible ? "success" : "danger"}
-                  className={`button-base ${
-                    isVisible
-                      ? "bg-green-200 hover:bg-green-200"
-                      : "bg-red-200 hover:bg-red-600"
-                  }`}
-                  isDisabled={isPending}
-                >
-                  <Switch
-                    onChange={(e) => handleVisibilityChange()}
-                    isSelected={isVisible}
-                    size="sm"
-                    color={isVisible ? "success" : undefined}
-                    startContent={<BiSolidShow size={16} />}
-                    endContent={<BiSolidHide size={16} />}
-                    isDisabled={isPending}
-                  />
-                  <span className="hidden md:block">
-                    {isVisible ? "Visible" : "Hidden"}
-                  </span>
-                </Button>
-              </ButtonGroup>
-            </div>
-          </CardBody>
-        </Card>
-      </motion.div>
+        <div className="flex justify-center mt-4 space-x-4">
+          <ButtonGroup>
+            <Button
+              onClick={onEditModalOpen}
+              color="primary"
+              size="sm"
+              className="button-base bg-blue-600 hover:bg-blue-600"
+              startContent={<BiEdit size={16} />}
+            >
+              <span className="hidden md:block">Edit</span>
+            </Button>
+            <Button
+              onClick={onDeleteModalOpen}
+              color="danger"
+              size="sm"
+              className="button-base bg-red-600 hover:bg-red-600"
+              startContent={<BiTrash size={16} />}
+            >
+              <span className="hidden md:block">Delete</span>
+            </Button>
+            <Button
+              onClick={handleVisibilityChange}
+              size="sm"
+              color={isVisible ? "success" : "danger"}
+              className={`button-base ${
+                isVisible
+                  ? "bg-green-200 hover:bg-green-200"
+                  : "bg-red-200 hover:bg-red-600"
+              }`}
+              isDisabled={isPending}
+            >
+              <Switch
+                onChange={handleVisibilityChange}
+                isSelected={isVisible}
+                size="sm"
+                color={isVisible ? "success" : undefined}
+                startContent={<BiSolidShow size={16} />}
+                endContent={<BiSolidHide size={16} />}
+                isDisabled={isPending}
+              />
+              <span className="hidden md:block">
+                {isVisible ? "Visible" : "Hidden"}
+              </span>
+            </Button>
+          </ButtonGroup>
+        </div>
+      </div>
 
       {/* Edit Modal */}
       <Modal
@@ -243,7 +231,7 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
               <Input
                 label="URL"
                 name="url"
-                isClearable
+                // isClearable
                 onValueChange={setUrl}
                 defaultValue={url}
                 value={copyUrl}
@@ -255,8 +243,7 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
                     startContent={<BiSolidPaste />}
                     onPress={handlePasteFromClipboard}
                     color="warning"
-                  >
-                  </Button>
+                  ></Button>
                 }
               />
 
