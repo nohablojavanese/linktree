@@ -2,7 +2,7 @@ import React from "react";
 import type { Metadata } from "next";
 
 import { createClient } from "@/lib/supabase/server";
-import { EditableLinkItem } from "@/components/Update/EditableLinkItems";
+// import { EditableLinkItem } from "@/components/Update/EditableLinkItems";
 import { EditableSocialLink } from "@/components/Update/EditableSocialLink";
 import { UserProfile } from "@/components/UserProfile";
 import {
@@ -11,6 +11,7 @@ import {
   updateLinkVisibility,
   updateSocialLink,
   deleteSocialLink,
+  updateLinkOrder,
 } from "./actions";
 import { redirect } from "next/navigation";
 import { EditProfile } from "@/components/Update/EditProfile";
@@ -18,6 +19,7 @@ import { AddLink } from "@/components/Create/AddLink";
 import { AddSocial } from "@/components/Create/AddSocial";
 import { UpdateTheme } from "@/components/Update/UpdateTheme";
 import { ThemeSwitcher } from "@/components/DarkMode";
+import { DragLinks } from "@/components/Drag/ServerDrag";
 
 async function fetchUserData() {
   const supabase = createClient();
@@ -33,7 +35,11 @@ async function fetchUserData() {
   const [profileResult, linksResult, socialLinksResult, themeResult] =
     await Promise.all([
       supabase.from("user_profiles").select("*").eq("id", user.id).single(),
-      supabase.from("links").select("*").eq("user_id", user.id),
+      supabase
+        .from("links")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("order", { ascending: true }),
       supabase.from("social_links").select("*").eq("user_id", user.id),
       supabase.from("themes").select("*").eq("user_id", user.id).single(),
     ]);
@@ -99,18 +105,11 @@ export default async function EditPage() {
 
         <AddLink links={links || []} />
 
-        {/* Link Items from Database */}
-        <div className="space-y-4">
-          {links?.map((link) => (
-            <EditableLinkItem
-              key={link.id}
-              {...link}
-              onUpdate={updateLink}
-              onDelete={deleteLink}
-              onVisible={updateLinkVisibility}
-            />
-          ))}
-        </div>
+        {links && links.length > 0 ? (
+          <DragLinks links={links} />
+        ) : (
+          <p>Empty</p>
+        )}
 
         <AddSocial socialLinks={socialLinks || []} />
 

@@ -3,7 +3,7 @@ export const FormatTheme = {
     simple: "bg-gray-100 dark:bg-gray-700 bg-opacity-70 dark:bg-opacity-70 text-gray-700 dark:text-gray-200",
     elegant: "bg-gray-800 dark:bg-white bg-opacity-70 dark:bg-opacity-70 text-white dark:text-gray-800",
     minimal: "bg-gray-200 dark:bg-gray-600 bg-opacity-70 dark:bg-opacity-70 text-gray-600 dark:text-gray-300",
-    colorful: "bg-gradient-to-r from-purple-400 to-pink-500 bg-opacity-70 text-white",
+    colorful: "bg-gradient-to-r from-purple-400 to-pink-500 bg-opacity-70 text-white border-black border-2  ",
 
     neon: "bg-black dark:bg-gray-900 text-white border-2 border-neon-pink dark:border-neon-blue rounded-lg shadow-neon-glow dark:shadow-neon-glow-dark transition-all duration-300 hover:bg-neon-pink dark:hover:bg-neon-blue hover:text-black dark:hover:text-white",
     glassmorphism: "bg-white dark:bg-gray-800 bg-opacity-20 dark:bg-opacity-20 backdrop-filter backdrop-blur-xl border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg text-gray-800 dark:text-white",
