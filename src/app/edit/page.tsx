@@ -6,12 +6,8 @@ import { createClient } from "@/lib/supabase/server";
 import { EditableSocialLink } from "@/components/Update/EditableSocialLink";
 import { UserProfile } from "@/components/UserProfile";
 import {
-  updateLink,
-  deleteLink,
-  updateLinkVisibility,
   updateSocialLink,
   deleteSocialLink,
-  updateLinkOrder,
 } from "./actions";
 import { redirect } from "next/navigation";
 import { EditProfile } from "@/components/Update/EditProfile";
