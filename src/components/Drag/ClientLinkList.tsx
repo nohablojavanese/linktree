@@ -84,7 +84,7 @@ export const ClientDraggableLinkList: React.FC<
                       </div>
                       <div
                         {...provided.dragHandleProps}
-                        className="ml-4 cursor-move text-gray-800 dark:text-white"
+                        className="ml-4 cursor-move text-gray-800 dark:text-white flex "
                       >
                         <GripVertical size={24} />
                       </div>

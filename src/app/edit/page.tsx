@@ -4,10 +4,7 @@ import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { EditableSocialLink } from "@/components/Update/EditableSocialLink";
 import { UserProfile } from "@/components/UserProfile";
-import {
-  updateSocialLink,
-  deleteSocialLink,
-} from "./actions";
+import { updateSocialLink, deleteSocialLink } from "./actions";
 import { redirect } from "next/navigation";
 import { EditProfile } from "@/components/Update/EditProfile";
 import { AddLink } from "@/components/Create/AddLink";
@@ -15,6 +12,8 @@ import { AddSocial } from "@/components/Create/AddSocial";
 import { UpdateTheme } from "@/components/Update/UpdateTheme";
 import { ThemeSwitcher } from "@/components/DarkMode";
 import { DragLinks } from "@/components/Drag/ServerDrag";
+import SignOutButton from "@/components/SignOut";
+import { Suspense } from "react";
 
 async function fetchUserData() {
   const supabase = createClient();
@@ -84,13 +83,16 @@ export default async function EditPage() {
       <ThemeSwitcher />
 
       <div className="max-w-md mx-auto space-y-6">
-        <UserProfile
-          username={profile.username}
-          randomId={profile.random_id}
-          createdAt={profile.created_at}
-          imageUrl={profile.image_url}
-          verified={profile.verified}
-        />
+        <Suspense fallback={<p>Loading Profile...</p>}>
+          <UserProfile
+            username={profile.username}
+            randomId={profile.random_id}
+            createdAt={profile.created_at}
+            imageUrl={profile.image_url}
+            verified={profile.verified}
+          />
+        </Suspense>
+
         <UpdateTheme
           currentTheme={theme?.theme || "default"}
           currentFontFamily={theme?.font_family || ""}
@@ -100,11 +102,13 @@ export default async function EditPage() {
 
         <AddLink links={links || []} />
 
-        {links && links.length > 0 ? (
-          <DragLinks links={links} />
-        ) : (
-          <p>Empty</p>
-        )}
+        <Suspense fallback={<p>Loading Profile...</p>}>
+          {links && links.length > 0 ? (
+            <DragLinks links={links} />
+          ) : (
+            <p>Empty</p>
+          )}
+        </Suspense>
 
         <AddSocial socialLinks={socialLinks || []} />
 
@@ -118,6 +122,7 @@ export default async function EditPage() {
             />
           ))}
         </div>
+        <SignOutButton />
       </div>
     </div>
   );

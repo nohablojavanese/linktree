@@ -135,8 +135,7 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
       ? url
       : `https://${url}`;
 
-  const truncatedUrl =
-    url?.length > 40 ? `${url.slice(0, 40)}...` : description;
+  const truncatedUrl = url?.length > 40 ? `${url.slice(0, 40)}...` : url;
 
   const truncatedDescription =
     description?.length > 40 ? `${description.slice(0, 40)}...` : description;
@@ -153,11 +152,11 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
                   className="text-gray-900 dark:text-gray-100 group-hover:text-blue-500"
                 />
               </a>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 truncate">
+              <h3 className="text-md md:text-lg font-semibold text-gray-900 dark:text-gray-100 break-all">
                 {title}
               </h3>
             </div>
-            <div className="text-sm text-gray-500 dark:text-gray-400 break-all">
+            <div className="text-xs md:text-sm text-gray-500 dark:text-gray-400 break-all">
               {isDescriptionExpanded ? url : truncatedUrl}
               {url.length > 40 && (
                 <a
@@ -175,12 +174,12 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
                   //   )
                   // }
                 >
-                  {isDescriptionExpanded ? "Hide"  : "More"}
+                  {isDescriptionExpanded ? "Hide" : "More"}
                 </a>
               )}
             </div>
 
-            <div className="mt-2 text-gray-700 dark:text-gray-300">
+            <div className="mt-2 text-gray-700 dark:text-gray-300 text-xs md:text-md">
               {isDescriptionExpanded ? description : truncatedDescription}
               {description?.length > 40 && (
                 <Button
