@@ -14,6 +14,7 @@ import { ThemeSwitcher } from "@/components/DarkMode";
 import { DragLinks } from "@/components/Drag/ServerDrag";
 import SignOutButton from "@/components/SignOut";
 import { Suspense } from "react";
+import EmptyLink from "@/components/EmptyLink";
 
 async function fetchUserData() {
   const supabase = createClient();
@@ -79,7 +80,7 @@ export default async function EditPage() {
   }
 
   return (
-    <div className="mx-auto p-4 bg-gray-50 dark:bg-gray-900  min-h-screen overflow-hidden">
+    <div className="mx-auto p-4 bg-[#F3F3F1] dark:bg-gray-900  min-h-screen overflow-hidden">
       <ThemeSwitcher />
 
       <div className="max-w-md mx-auto space-y-6">
@@ -106,7 +107,7 @@ export default async function EditPage() {
           {links && links.length > 0 ? (
             <DragLinks links={links} />
           ) : (
-            <p>Empty</p>
+            <EmptyLink />
           )}
         </Suspense>
 

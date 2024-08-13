@@ -85,3 +85,33 @@ export async function handleAuth(action: 'login' | 'signup', formData: FormData,
     };
   }
 }
+
+export async function handleGoogleSignIn(next: string = "/edit") {
+  const supabase = createClient();
+  
+  try {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback?next=${encodeURIComponent(next)}`,
+      },
+    });
+
+    if (error) throw error;
+
+    return { success: true, url: data.url };
+  } catch (error: unknown) {
+    let errorMessage = "An unexpected error occurred during Google Sign-In";
+    
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    } else if (typeof error === 'object' && error !== null && 'message' in error) {
+      errorMessage = String(error.message);
+    }
+    
+    return {
+      success: false,
+      errors: { general: [errorMessage] },
+    };
+  }
+}

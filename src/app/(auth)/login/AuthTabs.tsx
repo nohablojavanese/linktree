@@ -67,7 +67,7 @@ export default function AuthTabs({ onSubmit }: AuthTabsProps) {
       className="w-full"
       onValueChange={(value) => setActiveTab(value as "login" | "signup")}
     >
-      <TabsList className="grid w-full grid-cols-2 bg-gray-100 dark:bg-gray-800">
+      <TabsList className="grid w-full grid-cols-2 bg-gray-100 dark:bg-gray-800 rounded-full">
         <TabsTrigger
           value="login"
           className="data-[state=active]:text-gray-800 text-gray-400 dark:text-white data-[state=active]:bg-white data-[state=active]:dark:bg-gray-700"
@@ -190,10 +190,10 @@ function AuthForm({ formType, onSubmit, schema }: AuthFormProps) {
               required
               value={formData.email}
               onChange={handleInputChange}
-              className={`bg-gray-50 dark:bg-gray-700 ${
+              className={`bg-gray-50 dark:bg-gray-700 rounded-xl ${
                 errors.email
-                  ? "border-red-500"
-                  : "border-gray-300 dark:border-gray-600"
+                  ? "border-red-500 dark:border-red-500 border-1"
+                  : "border-gray-200 dark:border-gray-600 border-1"
               }`}
             />
             {errors.email && (
@@ -213,7 +213,7 @@ function AuthForm({ formType, onSubmit, schema }: AuthFormProps) {
             <Input
               id="password"
               name="password"
-              // type="password"
+              
               required
               value={formData.password}
               endContent={
@@ -233,9 +233,9 @@ function AuthForm({ formType, onSubmit, schema }: AuthFormProps) {
               type={isVisible ? "text" : "password"}
               // className="max-w-xs"
               onChange={handleInputChange}
-              className={`bg-gray-50 dark:bg-gray-700 ${
+              className={`bg-gray-50 dark:bg-gray-700 rounded-full ${
                 errors.password
-                  ? "border-red-500"
+                  ? "border-red-500 dark:border-red-500 border-1"
                   : "border-gray-300 dark:border-gray-600"
               }`}
             />
@@ -276,7 +276,7 @@ function AuthForm({ formType, onSubmit, schema }: AuthFormProps) {
                   </button>
                 }
                 type={isVisible ? "text" : "password"}
-                className={`bg-gray-50 dark:bg-gray-700 ${
+                className={`bg-gray-50 dark:bg-gray-700 rounded-full ${
                   errors.confirmPassword
                     ? "border-red-500"
                     : "border-gray-300 dark:border-gray-600"
@@ -305,16 +305,16 @@ function AuthForm({ formType, onSubmit, schema }: AuthFormProps) {
         </form>
       </CardContent>
       <CardFooter>
-      {remainingAttempts > 0 && remainingAttempts < 3 && (
-    <p className="text-sm text-gray-500 dark:text-gray-400">
-      You have {remainingAttempts} remaining attempts left!
-    </p>
-  )}
-  {remainingAttempts === 0 && (
-    <p className="text-sm text-red-500 dark:text-red-400">
-      No attempts left. Please try again later.
-    </p>
-  )}
+        {remainingAttempts > 0 && remainingAttempts < 3 && (
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            You have {remainingAttempts} remaining attempts left!
+          </p>
+        )}
+        {remainingAttempts === 0 && (
+          <p className="text-sm text-red-500 dark:text-red-400">
+            No attempts left. Please try again later.
+          </p>
+        )}
       </CardFooter>
     </Card>
   );
