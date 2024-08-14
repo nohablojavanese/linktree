@@ -18,14 +18,12 @@ interface AuthFormProps {
   ) => Promise<{
     success: boolean;
     errors?: { email?: string[]; password?: string[]; general?: string[] };
-    // remainingAttempts: number;
+    remainingAttempts: number;
   }>;
-  // initialRemainingAttempts: number;
+  initialRemainingAttempts: number;
 }
 
-export default function AuthForm({ onSubmit, 
-  // initialRemainingAttempts 
-}: AuthFormProps) {
+export default function AuthForm({ onSubmit, initialRemainingAttempts }: AuthFormProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -34,13 +32,12 @@ export default function AuthForm({ onSubmit,
     password?: string[];
     general?: string[];
   }>({});
-  // const [remainingAttempts, setRemainingAttempts] = useState(initialRemainingAttempts);
-  const [isLogin, setIsLogin] = useState(true);
+  const [remainingAttempts, setRemainingAttempts] = useState(initialRemainingAttempts);
   const router = useRouter();
 
   const toggleVisibility = () => setIsVisible(!isVisible);
 
-  const handleSubmit = async (action: "login" | "signup") => {
+  const handleSubmit = async (action: "login") => {
     setErrors({});
     const formData = new FormData();
     formData.append("email", email);
@@ -50,7 +47,7 @@ export default function AuthForm({ onSubmit,
       const result = await onSubmit(action, formData);
       if (result && !result.success && result.errors) {
         setErrors(result.errors);
-        // setRemainingAttempts(result.remainingAttempts);
+        setRemainingAttempts(result.remainingAttempts);
       } else {
         router.push("/edit");
         router.refresh();
@@ -67,6 +64,7 @@ export default function AuthForm({ onSubmit,
     } else {
       setPassword(value);
     }
+    // Clear the error for the field being typed in
     setErrors(prev => ({ ...prev, [field]: undefined }));
   };
 
@@ -74,13 +72,13 @@ export default function AuthForm({ onSubmit,
     <Card className="max-w-md w-full">
       <CardHeader className="flex gap-3">
         <div className="flex flex-col">
-          <p className="text-md">{isLogin ? "Login" : "Sign Up"}</p>
+          <p className="text-md">Login or Sign Up</p>
           <p className="text-small text-default-500">Enter your credentials</p>
         </div>
       </CardHeader>
       <Divider/>
       <CardBody>
-        <form onSubmit={(e) => { e.preventDefault(); handleSubmit(isLogin ? "login" : "signup"); }}>
+        <form onSubmit={(e) => { e.preventDefault(); handleSubmit("login"); }}>
           <div className="flex flex-col gap-4">
             <Input
               isRequired
@@ -112,24 +110,17 @@ export default function AuthForm({ onSubmit,
               errorMessage={errors.password && errors.password[0]}
               color={errors.password ? "danger" : "default"}
             />
-            {/* <p className="text-small text-default-500">
+            <p className="text-small text-default-500">
               Remaining attempts: {remainingAttempts}
-            </p> */}
+            </p>
             {errors.general && (
               <p className="text-danger">{errors.general[0]}</p>
             )}
             <div className="flex gap-2 justify-end">
               <Button fullWidth color="primary" type="submit">
-                {isLogin ? "Login" : "Sign Up"}
+                Login
               </Button>
             </div>
-            <Button
-              color="secondary"
-              variant="light"
-              onPress={() => setIsLogin(!isLogin)}
-            >
-              {isLogin ? "Need an account? Sign Up" : "Already have an account? Login"}
-            </Button>
           </div>
         </form>
       </CardBody>

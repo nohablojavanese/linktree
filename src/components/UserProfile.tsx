@@ -9,6 +9,7 @@ import {
 } from "@nextui-org/react";
 import Image from "next/image";
 import { MdVerified } from "react-icons/md";
+import SignOutButton from "./SignOut";
 
 export type UserProfileProps = {
   username: string;
@@ -110,6 +111,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({
         ) : (
           <Skeleton className="h-4 w-2/3 mx-auto mb-2" />
         )}
+        {/* <SignOutButton/> */}
       </CardBody>
     </Card>
   );
