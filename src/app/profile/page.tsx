@@ -1,7 +1,10 @@
 import { Dashboard } from "@/components/Profile/menu";
+import EditPage from "../edit/page";
 
-const page = () => {
-  return <Dashboard />;
-};
-
-export default page;
+export default function Page() {
+  return (
+    <>
+      <EditPage />
+    </>
+  );
+}

@@ -14,71 +14,22 @@ import {
   Upload,
   Users2,
 } from "lucide-react";
-
-import { Badge } from "@/components/shadcn/ui/badge";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/shadcn/ui/breadcrumb";
-import { Button } from "@/components/shadcn/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/shadcn/ui/card";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/shadcn/ui/dropdown-menu";
-import { Input } from "@/components/shadcn/ui/input";
-import { Label } from "@/components/shadcn/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/shadcn/ui/select";
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-} from "@/components/shadcn/ui/sheet";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/shadcn/ui/table";
-import { Textarea } from "@/components/shadcn/ui/textarea";
-import {
-  ToggleGroup,
-  ToggleGroupItem,
-} from "@/components/shadcn/ui/toggle-group";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
   TooltipProvider,
 } from "@/components/shadcn/ui/tooltip";
+import React, { ReactNode } from "react";
 
-export function Dashboard() {
+interface DashboardProps {
+  children: ReactNode;
+}
+
+export function Dashboard({ children }: DashboardProps) {
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40 bg-white dark:bg-gray-50">
-      <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background bg-black sm:flex">
+      <aside className="absolute inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background bg-black sm:flex">
         <nav className="flex flex-col items-center gap-4 px-2 py-4">
           <Link
             href="#"
@@ -205,7 +156,7 @@ export function Dashboard() {
           </TooltipProvider>
         </nav>
       </aside>
-      <main className="bg-white dark:bg-gray-800"></main>
+      <main className="flex-1 relative">{children}</main>
     </div>
   );
 }
