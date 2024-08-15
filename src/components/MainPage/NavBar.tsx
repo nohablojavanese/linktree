@@ -68,7 +68,7 @@ const Navbar = () => {
           </span>
         </Link>
         <nav className="hidden md:flex items-center gap-4">
-          {["Home", "Features", "Premium", "Demo", "Stats"].map((item) => (
+          {["Home", "Features", "Premium", "Demo", "Stats", "Check"].map((item) => (
             <Link
               key={item}
               href={`#${item.toLowerCase()}`}
@@ -80,12 +80,15 @@ const Navbar = () => {
             </Link>
           ))}
         </nav>
+
         {session ? (
           <div className="flex items-center gap-4">
             <Button
               radius="full"
-              className={`font-bold bg-gradient-to-tr from-pink-500 to-yellow-500 text-white shadow-lg ${
-                isScrolled ? "bg-gradient-to-br from-blue-500 to-gray-500 text-white shadow-lg" : ""
+              className={`font-bold accordion-up bg-gradient-to-tr from-pink-500 to-yellow-500 text-white shadow-lg ${
+                isScrolled
+                  ? "bg-gradient-to-br from-blue-500 to-gray-500 text-white shadow-lg"
+                  : ""
               }  `}
               color="primary"
               onClick={() => router.push("/edit")}
@@ -100,16 +103,24 @@ const Navbar = () => {
             >
               Sign Out
             </Button>
+            <ThemeSwitcher className="md:flex hidden relative top-0 right-0" />
           </div>
         ) : (
           <a href="/login" target="_self">
-            <Button color="primary" endContent={<LogInIcon />}>
+            <Button
+              className={`font-bold bg-gradient-to-tr from-pink-500 to-yellow-500 text-white shadow-lg ${
+                isScrolled
+                  ? "bg-gradient-to-br from-blue-500 to-gray-500 text-white shadow-lg"
+                  : ""
+              }  `}
+              color="primary"
+              endContent={<LogInIcon />}
+            >
               Login
             </Button>
           </a>
         )}
       </div>
-      <ThemeSwitcher className="md:flex hidden" />
     </motion.header>
   );
 };

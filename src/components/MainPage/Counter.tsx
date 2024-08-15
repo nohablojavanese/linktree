@@ -22,7 +22,7 @@ export default function LinkProfileCounter() {
   return (
     <AnimatedSection>
       <section
-        id="counter"
+        id="stats"
         className="py-20 bg-gradient-to-r from-purple-500 to-pink-500"
       >
         <div className="container grid items-center justify-center gap-4 px-4 text-center md:px-6">

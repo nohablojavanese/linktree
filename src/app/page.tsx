@@ -1,10 +1,11 @@
-'use client'
+"use client";
 import Navbar from "@/components/MainPage/NavBar";
 import HeroSection from "@/components/MainPage/HeroSection";
 import FeaturesSection from "@/components/MainPage/FeaturedSection";
 import { CardDemo } from "@/components/MainPage/CardDemo";
 import LinkProfileCounter from "@/components/MainPage/Counter";
 import PremiumSection from "@/components/MainPage/PremiumSection";
+import UsernameChecker from "@/components/MainPage/NameCheck";
 
 export default function Component() {
   return (
@@ -16,6 +17,7 @@ export default function Component() {
         <PremiumSection />
         <CardDemo />
         <LinkProfileCounter />
+        <UsernameChecker />
       </main>
     </div>
   );

@@ -7,7 +7,7 @@ import { GoCopilot } from "react-icons/go";
 export function CardDemo() {
   return (
     <section
-      id="card-demo"
+      id="demo"
       className="py-12 md:py-16 lg:py-24 bg-[#f0f0f0] dark:bg-[#1a1b1e] dark:text-white"
     >
       <Card className="shadow-xl">
