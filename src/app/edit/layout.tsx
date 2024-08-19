@@ -12,24 +12,26 @@ interface EditLayoutProps {
 const EditLayout: React.FC<EditLayoutProps> = ({ children }) => {
   return (
     <Dashboard>
-      <div className="flex flex-col lg:flex-row">
-        <div className="w-full lg:w-2/3 pr-0  mb-4 lg:mb-0">
-          {children}
-        </div>
-        <div className="hidden lg:flex lg:w-1/3 items-center justify-center sticky bg-[#F3F3F1] dark:bg-gray-900 ">
-          <div className="transform scale-90 sticky over">
+    <div className="flex flex-col lg:flex-row">
+      <div className="w-full lg:w-2/3 pr-0 lg:pr-4 mb-4 lg:mb-0">
+        {children}
+      </div>
+      <div className="hidden lg:block lg:w-1/3">
+        <div className="fixed top-0 right-0 w-1/3 h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-800">
+          <div className="transform scale-[0.85] origin-center">
             <MobileMockup>
               <UserPagePreview />
             </MobileMockup>
           </div>
         </div>
       </div>
-      <div className="lg:hidden">
-        <PreviewOverlay>
-          <UserPagePreview />
-        </PreviewOverlay>
-      </div>
-    </Dashboard>
+    </div>
+    <div className="lg:hidden">
+      <PreviewOverlay>
+        <UserPagePreview />
+      </PreviewOverlay>
+    </div>
+  </Dashboard>
   );
 };
 
