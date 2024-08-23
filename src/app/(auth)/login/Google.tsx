@@ -25,7 +25,7 @@ const GoogleSignInButton: React.FC<GoogleSignInButtonProps> = ({ onGoogleSignIn 
   return (
     <Button
       onClick={handleClick}
-      className="w-full bg-white text-gray-700 border border-gray-300 hover:bg-gray-100 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700"
+      className="w-full bg-white text-gray-700 border font-semibold border-gray-300 hover:bg-gray-100 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700"
       startContent={<FcGoogle className="w-5 h-5" />}
     >
       Sign in with Google

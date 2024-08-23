@@ -56,6 +56,7 @@ const UsernameCheckerSection: React.FC = () => {
     }
   }, [supabase]);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedCheckUsername = useCallback(
     debounce((value: string) => checkUsername(value), 300),
     [checkUsername]

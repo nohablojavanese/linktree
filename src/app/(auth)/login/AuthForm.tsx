@@ -43,7 +43,6 @@ export default function AuthForm({ formType, onSubmit, schema }: AuthFormProps) 
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-    // confirmPassword: "",
   });
   const [isVisible, setIsVisible] = React.useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -195,22 +194,7 @@ export default function AuthForm({ formType, onSubmit, schema }: AuthFormProps) 
                 id="confirmPassword"
                 name="confirmPassword"
                 required
-                // value={formData.confirmPassword}
                 onChange={handleInputChange}
-                // endContent={
-                //   <button
-                //     className="focus:outline-none"
-                //     type="button"
-                //     onClick={toggleVisibility}
-                //     aria-label="toggle password visibility"
-                //   >
-                //     {isVisible ? (
-                //       <IoIosEyeOff className="text-2xl text-default-400 pointer-events-none" />
-                //     ) : (
-                //       <IoIosEye className="text-2xl text-default-400 pointer-events-none" />
-                //     )}
-                //   </button>
-                // }
                 type={isVisible ? "text" : "password"}
                 className={`bg-gray-50 dark:bg-gray-700 rounded-full ${
                   errors.confirmPassword
@@ -232,9 +216,13 @@ export default function AuthForm({ formType, onSubmit, schema }: AuthFormProps) 
               {errors.general[0]}
             </p>
           )}
-          <Button
+              <Button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+            className={`w-full ${
+              isFormValid()
+                ? "bg-blue-600 hover:bg-blue-700 text-white"
+                : "bg-gray-300 text-gray-600 cursor-not-allowed"
+            }`}
             isDisabled={!isFormValid()}
             isLoading={isLoading}
           >
