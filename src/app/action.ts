@@ -19,4 +19,4 @@ export async function getLinkAndProfileCount() {
   return counts;
 }
 
-export const revalidate = 3600; // Cache for 1 hour
+export const revalidate = 3600*6; // Cache for 6 hour

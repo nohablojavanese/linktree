@@ -4,6 +4,7 @@ import { UserNotFound } from "@/components/NotFound";
 import { redirect } from "next/navigation";
 import UserPageReturn from "@/components/RenderUsername";
 import { Metadata, ResolvingMetadata } from "next";
+import Watermark from "@/components/Watermark";
 
 export const dynamicParams = true;
 export const revalidate = 0; // Disable static generation for this route
@@ -119,12 +120,16 @@ export default async function UserPage({
     }
 
     return (
+      <>
       <UserPageReturn
         profile={profile}
         links={links}
         socialLinks={socialLinks}
         themes={theme}
-      />
+        />
+      <Watermark username={profile.username} verified={profile.verified} />
+        </>
+
     );
   } catch (error) {
     console.error("Error in UserPage:", error);

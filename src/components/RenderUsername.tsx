@@ -46,7 +46,7 @@ const UserPageReturn: React.FC<UserPageProp> = ({
               <SocialLink key={socialLink.id} {...socialLink} />
             ))}
           </div>
-          <Watermark username={profile.username} verified={profile.verified} />
+          {/* <Watermark username={profile.username} verified={profile.verified} /> */}
         </div>
       </div>
     </div>
