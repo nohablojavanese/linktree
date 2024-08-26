@@ -22,9 +22,8 @@ async function fetchUserData() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) redirect("/login");
   if (!user) {
-    return { error: "User not authenticated" };
+    throw new Error("User not authenticated");
   }
 
   const [profileResult, linksResult, socialLinksResult, themeResult] =
@@ -77,14 +76,14 @@ export default async function EditPage() {
         Profile not found. Please contact support.
       </div>
     );
-  }
+  }   
 
   return (
     <div className="mx-auto p-4 bg-[#F3F3F1] dark:bg-gray-900  min-h-screen overflow-hidden">
       <ThemeSwitcher />
 
       <div className="max-w-md mx-auto space-y-6">
-        <Suspense fallback={<p>Loading Profile...</p>}>
+        {/* <Suspense fallback={<p>Loading Profile...</p>}>
           <UserProfile
             username={profile.username}
             randomId={profile.random_id}
@@ -92,7 +91,7 @@ export default async function EditPage() {
             imageUrl={profile.image_url}
             verified={profile.verified}
           />
-        </Suspense>
+        </Suspense> */}
 
         <UpdateTheme
           currentTheme={theme?.theme || "default"}

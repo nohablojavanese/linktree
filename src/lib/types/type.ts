@@ -4,7 +4,9 @@ export interface Profile {
   random_id: string;
   created_at: string;
   image_url?: string;
+  hero_url?: string;
   verified?: boolean;
+  background_url?: string;
   theme: "default" | "simple" | "elegant" | "minimal" | "colorful";
 }
 

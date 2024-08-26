@@ -54,8 +54,7 @@ export async function generateMetadata(
       siteName: "Linked.id",
       images: [
         {
-          url:
-            profile.image_url || "https://yourdomain.com/default-avatar.png",
+          url: profile.image_url || "https://yourdomain.com/default-avatar.png",
           width: 1200,
           height: 630,
           alt: `${profile.username}'s profile picture`,
@@ -68,9 +67,7 @@ export async function generateMetadata(
       card: "summary_large_image",
       title: `${profile.display_name || profile.username}'s Profile`,
       description: profile.bio || `Check out ${profile.username}'s profile`,
-      images: [
-        profile.image_url || "/image.png",
-      ],
+      images: [profile.image_url || "/image.png"],
     },
   };
 }
@@ -121,15 +118,14 @@ export default async function UserPage({
 
     return (
       <>
-      <UserPageReturn
-        profile={profile}
-        links={links}
-        socialLinks={socialLinks}
-        themes={theme}
+        <UserPageReturn
+          profile={profile}
+          links={links}
+          socialLinks={socialLinks}
+          themes={theme}
         />
-      <Watermark username={profile.username} verified={profile.verified} />
-        </>
-
+        <Watermark username={profile.username} verified={profile.verified} />
+      </>
     );
   } catch (error) {
     console.error("Error in UserPage:", error);

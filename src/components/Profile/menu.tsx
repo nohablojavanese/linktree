@@ -102,7 +102,7 @@ const PCNav: React.FC = () => {
           <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold">
             L
           </div>
-          {isExpanded && <span className="ml-3 font-semibold">Logo</span>}
+          {isExpanded && <span className="ml-3 font-semibold text-blue-500">Logo</span>}
         </Link>
       </div>
       <nav className="flex flex-col flex-grow">

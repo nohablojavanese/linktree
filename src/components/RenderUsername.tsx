@@ -3,7 +3,6 @@ import { LinkItem } from "@/components/LinkItems";
 import { SocialLink } from "@/components/SocialLinks";
 import { UserProfile } from "@/components/UserProfile";
 import { UserPageProp } from "@/lib/types/type";
-import Watermark from "./Watermark";
 
 const UserPageReturn: React.FC<UserPageProp> = ({
   profile,
@@ -12,18 +11,33 @@ const UserPageReturn: React.FC<UserPageProp> = ({
   themes,
 }) => {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-purple-400 to-pink-500 flex items-center justify-center p-4">
-      <div className="w-full max-w-md ">
-        <div className="p-6 space-y-6">
+    <div className="min-h-screen relative">
+      {/* Full-page background */}
+      <div 
+        className="fixed inset-0 bg-cover bg-center z-0"
+        style={{ backgroundImage: `url(${profile.background_url})` }}
+      />
+      
+      {/* Content overlay */}
+      <div className="relative  min-h-screen bg-black bg-opacity-50 flex flex-col items-center">
+        {/* Hero Image */}
+        <div 
+          className="w-full max-w-3xl h-60 bg-cover bg-center relative"
+          style={{ backgroundImage: `url(${profile.hero_url})` }}
+        />
+
+        {/* Profile section */}
+        <div className="w-full max-w-3xl px-4 -mt-20">
           <UserProfile
             username={profile.username}
-            randomId={profile.random_id}
             createdAt={profile.created_at}
             imageUrl={profile.image_url}
+            heroUrl={profile.hero_url}
             verified={profile.verified}
           />
 
-          <div className="space-y-4">
+          {/* Links section */}
+          <div className="mt-8 space-y-4">
             {links?.map(
               (link) =>
                 link.isVisible && (
@@ -35,18 +49,17 @@ const UserPageReturn: React.FC<UserPageProp> = ({
                     url={link.url}
                     imageUrl={link.imageUrl}
                     isVisible={link.isVisible}
-                    // description={link.description}
                   />
                 )
             )}
           </div>
 
-          <div className="flex justify-center space-x-4">
+          {/* Social links */}
+          <div className="mt-8 flex justify-center space-x-4">
             {socialLinks?.map((socialLink) => (
               <SocialLink key={socialLink.id} {...socialLink} />
             ))}
           </div>
-          {/* <Watermark username={profile.username} verified={profile.verified} /> */}
         </div>
       </div>
     </div>
