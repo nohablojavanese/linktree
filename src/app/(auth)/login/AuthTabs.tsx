@@ -1,14 +1,12 @@
 "use client";
 
 import React, { useState } from "react";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/shadcn/ui/tabs";
+import { Tabs, Tab } from "@nextui-org/react";
 import AuthForm from "./AuthForm";
 import { z } from "zod";
+import { KeyRound, KeyRoundIcon, LogIn } from "lucide-react";
+import { IdCardIcon } from "@radix-ui/react-icons";
+import { BiIdCard } from "react-icons/bi";
 
 const emailSchema = z.string().email("Invalid email format");
 const passwordSchema = z
@@ -49,31 +47,35 @@ export default function AuthTabs({ onSubmit }: AuthTabsProps) {
   const [activeTab, setActiveTab] = useState<"login" | "signup">("login");
 
   return (
-    <Tabs
-      defaultValue="login"
-      className="w-full"
-      onValueChange={(value) => setActiveTab(value as "login" | "signup")}
+    <Tabs 
+      selectedKey={activeTab}
+      onSelectionChange={(key) => setActiveTab(key as "login" | "signup")}
+      aria-label="Authentication options"
+      variant="light"
+      fullWidth
+      classNames={{
+        // tabList: "gap-6 w-full relative rounded-none p-0 border-b border-divider",
+        cursor: "w-full bg-blue-600",
+        // tab: "max-w-fit" ,
+        tabContent: "group-data-[selected=true]:text-white"
+      }}
     >
-      <TabsList className="grid w-full grid-cols-2 bg-gray-100 dark:bg-gray-800 rounded-full">
-        <TabsTrigger
-          value="login"
-          className="data-[state=active]:text-gray-800 text-gray-400 dark:text-white data-[state=active]:bg-white data-[state=active]:dark:bg-gray-700"
-        >
-          Login
-        </TabsTrigger>
-        <TabsTrigger
-          value="signup"
-          className="data-[state=active]:text-gray-800 text-gray-400 dark:text-white data-[state=active]:bg-white data-[state=active]:dark:bg-gray-700"
-        >
-          Sign Up
-        </TabsTrigger>
-      </TabsList>
-      <TabsContent value="login">
+      <Tab key="login" title={
+            <div className="flex items-center space-x-2">
+              <KeyRoundIcon size={14}/>
+              <span>Login</span>
+            </div>
+          }>
         <AuthForm formType="login" onSubmit={onSubmit} schema={loginSchema} />
-      </TabsContent>
-      <TabsContent value="signup">
+      </Tab>
+      <Tab key="signup" title={
+            <div className="flex items-center space-x-2">
+              <BiIdCard size={14}/>
+              <span>Sign Up</span>
+            </div>
+          }>
         <AuthForm formType="signup" onSubmit={onSubmit} schema={signupSchema} />
-      </TabsContent>
+      </Tab>
     </Tabs>
   );
 }

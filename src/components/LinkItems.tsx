@@ -36,21 +36,22 @@ export const LinkItem: React.FC<LinkItemProps> = ({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      whileHover={{ y: -5 }}
-      className="w-full mb-4 flex justify-center"
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.5 }}
+    whileHover={{ y: -5 }}
+    className="w-full mb-4 flex justify-center"
+  >
+    <motion.a
+      href={formattedUrl}
+      target="_blank"
+      className={`w-full p-4 hover:shadow-lg transition-all duration-300 ${themeClass} ${fontClass}`}
+      whileHover={{ scale: 1.03 }}
+      whileTap={{ scale: 0.98 }}
     >
-      <motion.a
-        href={formattedUrl}
-        target="_blank"
-        className={`w-full p-4 b hover:shadow-lg  transition-all duration-300 flex items-center ${themeClass} ${fontClass}`}
-        whileHover={{ scale: 1.03 }}
-        whileTap={{ scale: 0.98 }}
-      >
+      <div className="flex flex-col items-center justify-center">
         {imageUrl && (
-          <div className="mr-4 flex-shrink-0">
+          <div className="mb-2">
             <Image
               src={imageUrl}
               alt={title}
@@ -60,11 +61,12 @@ export const LinkItem: React.FC<LinkItemProps> = ({
             />
           </div>
         )}
-        <div className="flex-1 flex items-center">
+        <div className="text-center">
           <span className="text-sm md:text-lg font-semibold">{title}</span>
         </div>
-      </motion.a>
-    </motion.div>
+      </div>
+    </motion.a>
+  </motion.div>
   );
 };
 

@@ -13,7 +13,7 @@ const EditLayout: React.FC<EditLayoutProps> = ({ children }) => {
   return (
     <Dashboard>
     <div className="flex flex-col lg:flex-row">
-      <div className="w-full lg:w-2/3 pr-0 lg:pr-4 mb-4 lg:mb-0">
+      <div className="w-full lg:w-2/3">
         {children}
       </div>
       <div id="mobile-preview" className="hidden lg:block lg:w-1/3">
