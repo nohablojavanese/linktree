@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { Suspense, useState } from "react";
 import { Tabs, Tab } from "@nextui-org/react";
 import AuthForm from "./AuthForm";
 import { z } from "zod";
@@ -47,35 +47,46 @@ export default function AuthTabs({ onSubmit }: AuthTabsProps) {
   const [activeTab, setActiveTab] = useState<"login" | "signup">("login");
 
   return (
-    <Tabs 
-      selectedKey={activeTab}
-      onSelectionChange={(key) => setActiveTab(key as "login" | "signup")}
-      aria-label="Authentication options"
-      variant="light"
-      fullWidth
-      classNames={{
-        // tabList: "gap-6 w-full relative rounded-none p-0 border-b border-divider",
-        cursor: "w-full bg-blue-600",
-        // tab: "max-w-fit" ,
-        tabContent: "group-data-[selected=true]:text-white"
-      }}
-    >
-      <Tab key="login" title={
+    <Suspense fallback={<p>Loading...</p>}>
+      <Tabs
+        selectedKey={activeTab}
+        onSelectionChange={(key) => setActiveTab(key as "login" | "signup")}
+        aria-label="Authentication options"
+        variant="light"
+        fullWidth
+        classNames={{
+          tabList: "w-full relative rounded-xl p-0 border-2 ",
+          cursor: "w-full bg-blue-600",
+          tabContent: "group-data-[selected=true]:text-white",
+        }}
+      >
+        <Tab
+          key="login"
+          title={
             <div className="flex items-center space-x-2">
-              <KeyRoundIcon size={14}/>
+              <KeyRoundIcon size={14} />
               <span>Login</span>
             </div>
-          }>
-        <AuthForm formType="login" onSubmit={onSubmit} schema={loginSchema} />
-      </Tab>
-      <Tab key="signup" title={
+          }
+        >
+          <AuthForm formType="login" onSubmit={onSubmit} schema={loginSchema} />
+        </Tab>
+        <Tab
+          key="signup"
+          title={
             <div className="flex items-center space-x-2">
-              <BiIdCard size={14}/>
+              <BiIdCard size={14} />
               <span>Sign Up</span>
             </div>
-          }>
-        <AuthForm formType="signup" onSubmit={onSubmit} schema={signupSchema} />
-      </Tab>
-    </Tabs>
+          }
+        >
+          <AuthForm
+            formType="signup"
+            onSubmit={onSubmit}
+            schema={signupSchema}
+          />
+        </Tab>
+      </Tabs>
+    </Suspense>
   );
 }

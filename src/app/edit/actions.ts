@@ -22,7 +22,7 @@ const urlSchema = z
   })
   .optional();
 
-async function getAuthenticatedUser() {
+export async function getAuthenticatedUser() {
   const supabase = createClient();
   const session = await supabase.auth.getSession();
   const {
@@ -34,42 +34,42 @@ async function getAuthenticatedUser() {
   return user;
 }
 
-export async function updateProfile(formData: FormData) {
-  const user = await getAuthenticatedUser();
-  const supabase = createClient();
+// export async function updateProfile(formData: FormData) {
+//   const user = await getAuthenticatedUser();
+//   const supabase = createClient();
 
-  const username = formData.get("username") as string;
-  const imageUrl = formData.get("imageUrl");
+//   const username = formData.get("username") as string;
+//   const imageUrl = formData.get("imageUrl");
 
-  try {
-    usernameSchema.parse(username);
-    const validatedImageUrl = imageUrl
-      ? urlSchema.parse(imageUrl as string)
-      : null;
+//   try {
+//     usernameSchema.parse(username);
+//     const validatedImageUrl = imageUrl
+//       ? urlSchema.parse(imageUrl as string)
+//       : null;
 
-    const { error } = await supabase
-      .from("user_profiles")
-      .update({
-        username: username,
-        image_url: validatedImageUrl,
-      })
-      .eq("id", user.id);
+//     const { error } = await supabase
+//       .from("user_profiles")
+//       .update({
+//         username: username,
+//         image_url: validatedImageUrl,
+//       })
+//       .eq("id", user.id);
 
-    if (error) {
-      if (error.code === "23505") {
-        throw new Error("Username is already taken");
-      }
-      throw new Error("Failed to update profile");
-    }
+//     if (error) {
+//       if (error.code === "23505") {
+//         throw new Error("Username is already taken");
+//       }
+//       throw new Error("Failed to update profile");
+//     }
 
-    revalidatePath("/edit");
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      throw new Error(error.errors[0].message);
-    }
-    throw error;
-  }
-}
+//     revalidatePath("/edit");
+//   } catch (error) {
+//     if (error instanceof z.ZodError) {
+//       throw new Error(error.errors[0].message);
+//     }
+//     throw error;
+//   }
+// }
 
 export async function createLink(formData: FormData) {
   const user = await getAuthenticatedUser();
@@ -224,23 +224,23 @@ export async function updateLinkVisibility(id: string, isVisible: boolean) {
   revalidatePath("/edit");
 }
 
-export async function updateTheme(formData: FormData) {
-  const user = await getAuthenticatedUser();
-  const supabase = createClient();
+// export async function updateTheme(formData: FormData) {
+//   const user = await getAuthenticatedUser();
+//   const supabase = createClient();
 
-  const ThemeData = {
-    theme: formData.get("theme") as string,
-    font_family: formData.get("font_family") as string,
-  };
+//   const ThemeData = {
+//     theme: formData.get("theme") as string,
+//     font_family: formData.get("font_family") as string,
+//   };
 
-  const { error } = await supabase
-    .from("themes")
-    .update(ThemeData)
-    .eq("user_id", user.id);
+//   const { error } = await supabase
+//     .from("themes")
+//     .update(ThemeData)
+//     .eq("user_id", user.id);
 
-  if (error) throw error;
-  revalidatePath("/edit");
-}
+//   if (error) throw error;
+//   revalidatePath("/edit");
+// }
 
 export async function updateLinkOrder(
   newOrder: { id: string; order: number }[]

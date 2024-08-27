@@ -5,6 +5,7 @@ import UserPagePreview from "@/components/EditPreview/PagePreview";
 import MobileMockup from "@/components/EditPreview/Mobile";
 import PreviewOverlay from "@/components/EditPreview/PreviewOverlay";
 import { createClient } from "@/lib/supabase/server";
+import { ThemeSwitcher } from "@/components/DarkMode";
 
 interface EditLayoutProps {
   children: ReactNode;
@@ -26,6 +27,7 @@ export default async function EditLayout({ children }: EditLayoutProps) {
   return (
     <Dashboard>
       <div className="flex flex-col lg:flex-row">
+      <ThemeSwitcher />
         <div className="w-full lg:w-2/3">
           {children}
         </div>

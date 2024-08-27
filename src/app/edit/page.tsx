@@ -3,14 +3,10 @@ import type { Metadata } from "next";
 
 import { createClient } from "@/lib/supabase/server";
 import { EditableSocialLink } from "@/components/Update/EditableSocialLink";
-import { UserProfile } from "@/components/UserProfile";
 import { updateSocialLink, deleteSocialLink } from "./actions";
 import { redirect } from "next/navigation";
-import { EditProfile } from "@/components/Update/EditProfile";
 import { AddLink } from "@/components/Create/AddLink";
 import { AddSocial } from "@/components/Create/AddSocial";
-import { UpdateTheme } from "@/components/Update/UpdateTheme";
-import { ThemeSwitcher } from "@/components/DarkMode";
 import { DragLinks } from "@/components/Drag/ServerDrag";
 import SignOutButton from "@/components/SignOut";
 import { Suspense } from "react";
@@ -23,7 +19,7 @@ async function fetchUserData() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    throw new Error("User not authenticated");
+    redirect("/login");
   }
 
   const [profileResult, linksResult, socialLinksResult, themeResult] =
@@ -80,28 +76,8 @@ export default async function EditPage() {
 
   return (
     <div className="mx-auto p-4 bg-[#F3F3F1] dark:bg-gray-900  min-h-screen overflow-hidden">
-      <ThemeSwitcher />
-
       <div className="max-w-md mx-auto space-y-6">
-        {/* <Suspense fallback={<p>Loading Profile...</p>}>
-          <UserProfile
-            username={profile.username}
-            randomId={profile.random_id}
-            createdAt={profile.created_at}
-            imageUrl={profile.image_url}
-            verified={profile.verified}
-          />
-        </Suspense> */}
-
-        <UpdateTheme
-          currentTheme={theme?.theme || "default"}
-          currentFontFamily={theme?.font_family || ""}
-        />
-
-        <EditProfile username={profile.username} imageUrl={profile.image_url} />
-
         <AddLink links={links || []} />
-
         <Suspense fallback={<p>Loading Profile...</p>}>
           {links && links.length > 0 ? (
             <DragLinks links={links} />
@@ -109,9 +85,7 @@ export default async function EditPage() {
             <EmptyLink />
           )}
         </Suspense>
-
         <AddSocial socialLinks={socialLinks || []} />
-
         <div className="space-y-4">
           {socialLinks?.map((socialLink) => (
             <EditableSocialLink
