@@ -1,4 +1,7 @@
-import React from "react";
+"use client";
+import React, { useState } from "react";
+import Image from "next/image";
+import { Skeleton } from "@nextui-org/react";
 import { LinkItem } from "@/components/LinkItems";
 import { SocialLink } from "@/components/SocialLinks";
 import { UserProfile } from "@/components/UserProfile";
@@ -10,29 +13,61 @@ const UserPageReturn: React.FC<UserPageProp> = ({
   socialLinks,
   themes,
 }) => {
+  const [bgLoaded, setBgLoaded] = useState(false);
+  const [heroLoaded, setHeroLoaded] = useState(false);
   return (
     <div className="min-h-screen relative">
       {/* Full-page background */}
-      <div 
-        className="fixed inset-0 bg-cover bg-center z-0"
-        style={{ backgroundImage: `url(${profile.background_url})` }}
-      />
-      
+      {profile.background_url && (
+        <div className="fixed inset-0 z-0">
+          {!bgLoaded && (
+            <div className="absolute inset-0 bg-gray-200 animate-pulse" />
+          )}
+          <Image
+            src={profile.background_url}
+            alt="Background"
+            fill
+            className="cover"
+            priority
+            onLoad={() => setBgLoaded(true)}
+          />
+        </div>
+      )}
       {/* Content overlay */}
-      <div className="relative  min-h-screen bg-black bg-opacity-50 flex flex-col items-center">
+      <div className="relative min-h-screen bg-black bg-opacity-50 flex flex-col items-center">
         {/* Hero Image */}
-        <div 
-          className="w-full max-w-3xl h-60 bg-cover bg-center relative"
-          style={{ backgroundImage: `url(${profile.hero_url})` }}
-        />
+        <div
+          className={`w-full max-w-3xl ${
+            profile.hero_url ? "h-60" : "h-20"
+          } relative`}
+        >
+          {profile.hero_url && (
+            <>
+              {!heroLoaded && (
+                <div className="absolute inset-0 bg-gray-200 animate-pulse" />
+              )}
+              <Image
+                src={profile.hero_url}
+                alt="Hero"
+                fill
+                className="cover rounded-b-xl"
+                priority
+                onLoad={() => setHeroLoaded(true)}
+              />
+            </>
+          )}
+        </div>
 
         {/* Profile section */}
-        <div className="w-full max-w-3xl px-4 -mt-20">
+        <div
+          className={`w-full max-w-3xl px-4 ${
+            profile.hero_url ? "-mt-20" : "mt-4"
+          }`}
+        >
           <UserProfile
             username={profile.username}
             createdAt={profile.created_at}
             imageUrl={profile.image_url}
-            heroUrl={profile.hero_url}
             verified={profile.verified}
           />
 

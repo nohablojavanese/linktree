@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { Card, CardBody, CardHeader, Input, Button } from "@nextui-org/react";
-import { updateProfile } from "@/app/edit/actions";
+import { updateProfile } from "@/app/edit/appearance/actions";
 import { UserPen } from "lucide-react";
 
 import { z } from "zod";

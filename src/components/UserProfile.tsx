@@ -8,7 +8,6 @@ export type UserProfileProps = {
   username: string;
   createdAt: string;
   imageUrl?: string | null;
-  heroUrl?: string;
   verified?: boolean;
 };
 
@@ -29,7 +28,6 @@ const DefaultAvatar: React.FC<{ username: string }> = ({ username }) => {
 export const UserProfile: React.FC<UserProfileProps> = ({
   username,
   createdAt,
-  heroUrl,
   imageUrl,
   verified,
 }) => {
@@ -46,8 +44,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({
               alt={`${username}'s Profile Picture`}
               width={128}
               height={128}
-              style={{ objectFit: "cover" }}
-              className={`rounded-full cover w-32 h-32 border-4 border-white ${
+              className={`rounded-full object-cover w-32 h-32 border-4 border-white ${
                 imageLoaded ? "opacity-100" : "opacity-0"
               }`}
               onLoad={() => setImageLoaded(true)}
@@ -57,10 +54,10 @@ export const UserProfile: React.FC<UserProfileProps> = ({
           <DefaultAvatar username={username} />
         )}
       </div>
-      <div className="pt-32 px-4">
+      <div className="pt-36">
         {username ? (
-          <h2 className="text-2xl font-bold text-white flex items-center">
-            {username}
+          <h1 className="text-2xl font-bold text-white flex items-center">
+           @{username}
             {verified !== undefined && (
               <Tooltip content={verified ? "Verified" : "Unverified"}>
                 <span>
@@ -73,16 +70,20 @@ export const UserProfile: React.FC<UserProfileProps> = ({
                 </span>
               </Tooltip>
             )}
-          </h2>
+          </h1>
         ) : (
           <Skeleton className="h-10 w-3/4 mb-2" />
         )}
         {createdAt ? (
-          <p className="text-sm text-gray-400 mt-2">
-            Joined {new Date(createdAt).toLocaleDateString()}
+          <p className="text-sm text-gray-300">
+            Joined{" "}
+            {new Date(createdAt).toLocaleDateString("en-US", {
+              month: "long",
+              year: "numeric",
+            })}
           </p>
         ) : (
-          <Skeleton className="h-4 w-1/2 mt-2" />
+          <Skeleton className="h-4 w-1/2" />
         )}
       </div>
     </div>

@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { Card, CardBody, Button, Select, SelectItem } from "@nextui-org/react";
-import { updateTheme } from "@/app/edit/actions";
+import { updateTheme } from "@/app/edit/appearance/actions";
 import { z } from "zod";
 import { FormatTheme, FormatFont, ThemeKey, FontKey } from "@/lib/theme/basic";
 import { GrFormEdit } from "react-icons/gr";
