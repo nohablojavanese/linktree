@@ -1,13 +1,13 @@
 export interface Profile {
   id: string;
   username: string;
+  bio?: string;
   random_id: string;
   created_at: string;
   image_url?: string;
   hero_url?: string;
   verified?: boolean;
   background_url?: string;
-  theme: "default" | "simple" | "elegant" | "minimal" | "colorful";
 }
 
 export interface LinkType {

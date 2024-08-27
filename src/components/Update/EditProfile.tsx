@@ -1,10 +1,9 @@
 "use client";
-import React, { useState } from "react";
-import { Card, CardBody, CardHeader, Input, Button } from "@nextui-org/react";
+import React, { useState, useCallback, useMemo } from "react";
+import { Card, CardBody, Input } from "@nextui-org/react";
 import { updateProfile } from "@/app/edit/appearance/actions";
-import { UserPen } from "lucide-react";
-
 import { z } from "zod";
+import { debounce } from "lodash";
 
 const censoredWords = ["badword", "offensive", "inappropriate"];
 const usernameSchema = z
@@ -33,118 +32,104 @@ const urlSchema = z
       message: "URL must end with an image file extension (png, jpg, etc.)",
     }
   );
+const bioSchema = z.string().max(160).optional();
+
+type ProfileField =
+  | "username"
+  | "bio"
+  | "background_url"
+  | "hero_url"
+  | "image_url";
 
 export type EditProfileProps = {
-  username: string;
-  imageUrl: string;
+  profile: {
+    username: string;
+    bio?: string;
+    background_url?: string ;
+    hero_url?: string;
+    image_url?: string;
+  };
 };
 
-export const EditProfile: React.FC<EditProfileProps> = ({
-  username,
-  imageUrl,
-}) => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [usernameError, setUsernameError] = useState("");
-  const [imageUrlError, setImageUrlError] = useState("");
+export const EditProfile: React.FC<EditProfileProps> = ({ profile }) => {
+  const [errors, setErrors] = useState<Partial<Record<ProfileField, string>>>(
+    {}
+  );
+  const [updatedFields, setUpdatedFields] = useState<Partial<typeof profile>>(
+    {}
+  );
 
-  const validateForm = (formData: FormData) => {
-    const newUsername = formData.get("username") as string;
-    const newImageUrl = formData.get("imageUrl") as string;
-    let isValid = true;
-
+  const validateField = (field: ProfileField, value: string) => {
     try {
-      usernameSchema.parse(newUsername);
-      setUsernameError("");
+      switch (field) {
+        case "username":
+          usernameSchema.parse(value);
+          break;
+        case "bio":
+          bioSchema.parse(value);
+          break;
+        case "background_url":
+        case "hero_url":
+        case "image_url":
+          urlSchema.parse(value);
+          break;
+      }
+      setErrors((prev) => ({ ...prev, [field]: undefined }));
+      return true;
     } catch (error) {
       if (error instanceof z.ZodError) {
-        setUsernameError(error.errors[0].message);
-        isValid = false;
+        setErrors((prev) => ({ ...prev, [field]: error.errors[0].message }));
       }
+      return false;
     }
-    try {
-      urlSchema.parse(newImageUrl);
-      setImageUrlError("");
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        setImageUrlError(error.errors[0].message);
-        isValid = false;
-      }
-    }
-
-    return isValid;
   };
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-
-    if (validateForm(formData)) {
-      try {
-        await updateProfile(formData);
-        setIsEditing(false);
-      } catch (error) {
-        if (error instanceof Error) {
-          setUsernameError(error.message);
+  const handleUpdate = useCallback(
+    async (field: ProfileField, value: string) => {
+      if (validateField(field, value)) {
+        try {
+          await updateProfile({ [field]: value });
+          // Optionally, you can add some visual feedback here to indicate successful update
+        } catch (error) {
+          if (error instanceof Error) {
+            setErrors((prev) => ({ ...prev, [field]: error.message }));
+          }
         }
       }
-    }
+    },
+    []
+  );
+
+  const debouncedUpdate = useMemo(
+    () => debounce(handleUpdate, 500),
+    [handleUpdate]
+  );
+
+  const handleChange = (field: ProfileField, value: string) => {
+    setUpdatedFields((prev) => ({ ...prev, [field]: value }));
+    debouncedUpdate(field, value);
   };
 
   return (
     <Card className="w-full max-w-md mx-auto mb-4 dark:bg-gray-800">
       <CardBody>
-        {!isEditing ? (
-          <Button
-            onClick={() => setIsEditing(true)}
-            color="primary"
-            className="w-full text-gray-400 dark:text-gray-400"
-          >
-            <UserPen size={16} />
-            Edit Profile
-          </Button>
-        ) : (
-          <form onSubmit={handleSubmit}>
-            <div className="flex items-center mb-4">
-              <Input
-                name="username"
-                label="Username"
-                isRequired
-                defaultValue={username}
-                className="flex-1"
-                isInvalid={!!usernameError}
-                errorMessage={usernameError}
-                description={`Username should be unique`}
-                startContent={
-                  <div className="pointer-events-none flex items-center">
-                    <span className="text-default-400 text-small">@</span>
-                  </div>
-                }
-              />
-            </div>
+        <div className="space-y-4">
+          {(Object.keys(profile) as ProfileField[]).map((field) => (
             <Input
-              name="imageUrl"
-              label="Profile Image URL"
-              defaultValue={imageUrl}
+              key={field}
+              name={field}
+              label={
+                field.charAt(0).toUpperCase() + field.slice(1).replace("_", " ")
+              }
+              defaultValue={profile[field]}
+              className="w-full"
+              isInvalid={!!errors[field]}
               isClearable
-              className="mb-4"
-              isInvalid={!!imageUrlError}
-              errorMessage={imageUrlError}
-              placeholder="https://"
+              errorMessage={errors[field]}
+              onChange={(e) => handleChange(field, e.target.value)}
             />
-            <div className="flex justify-between">
-              <Button type="submit" color="primary" className="text-gray-400">
-                Update Profile
-              </Button>
-              <Button
-                onClick={() => setIsEditing(false)}
-                color="secondary"
-                className="text-gray-400"
-              >
-                Cancel
-              </Button>
-            </div>
-          </form>
-        )}
+          ))}
+        </div>
       </CardBody>
     </Card>
   );

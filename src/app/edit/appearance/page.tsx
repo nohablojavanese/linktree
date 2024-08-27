@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
@@ -12,26 +12,26 @@ async function fetchUserData() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    // throw new Error("User not authenticated");
     redirect("/login");
-
   }
 
-  const [profileResult, themeResult] =
-    await Promise.all([
-      supabase.from("user_profiles").select("*").eq("id", user.id).single(),
-      supabase.from("themes").select("*").eq("user_id", user.id).single(),
-    ]);
+  const [profileResult, themeResult] = await Promise.all([
+    supabase
+      .from("user_profiles")
+      .select("username, background_url, hero_url, image_url, bio")
+      .eq("id", user.id)
+      .single(),
+    supabase.from("themes").select("*").eq("user_id", user.id).single(),
+  ]);
 
   return {
     profile: profileResult.data,
     theme: themeResult.data,
-    error:
-      profileResult.error ||
-      themeResult.error,
+    error: profileResult.error || themeResult.error,
   };
 }
-    export async function generateMetadata(): Promise<Metadata> {
+
+export async function generateMetadata(): Promise<Metadata> {
   const { profile } = await fetchUserData();
 
   return {
@@ -39,6 +39,7 @@ async function fetchUserData() {
     description: "Appearance",
   };
 }
+
 export default async function EditPage() {
   const { profile, theme, error } = await fetchUserData();
 
@@ -57,17 +58,20 @@ export default async function EditPage() {
         Profile not found. Please contact support.
       </div>
     );
-  }   
+  }
 
   return (
-    <div className="mx-auto p-4 bg-[#F3F3F1] dark:bg-gray-900  min-h-screen overflow-hidden">
+    <div className="mx-auto p-4 bg-[#F3F3F1] dark:bg-gray-900 min-h-screen overflow-hidden">
       <div className="max-w-md mx-auto space-y-6">
-        <UpdateTheme
-          currentTheme={theme?.theme || "default"}
-          currentFontFamily={theme?.font_family || ""}
-        />
-        <EditProfile username={profile.username} imageUrl={profile.image_url} />
-
+        <Suspense fallback={<a>Loading...</a>}>
+          <UpdateTheme
+            currentTheme={theme?.theme || "default"}
+            currentFontFamily={theme?.font_family || ""}
+          />
+        </Suspense>
+        <Suspense fallback={<a>Loading...</a>}>
+          <EditProfile profile={profile} />
+        </Suspense>
       </div>
     </div>
   );

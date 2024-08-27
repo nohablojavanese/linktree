@@ -296,6 +296,7 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
                   <Button
                     startContent={<BiSolidPaste />}
                     onPress={handlePasteFromClipboard}
+                    isIconOnly
                     color="warning"
                   ></Button>
                 }
@@ -341,11 +342,13 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
         }}
       >
         <ModalContent>
-          <ModalHeader className="flex flex-col gap-1">Hapus Link?</ModalHeader>
+          <ModalHeader className="flex flex-col gap-1">
+            Delete Link?
+          </ModalHeader>
           <ModalBody>
             <p>
-              Anda akan menghapus Link
-              <span className="font-bold">{title}</span> menuju link {url}
+              Anda akan menghapus <span className="font-bold">{title}</span>{" "}
+              menuju link {url}
             </p>
           </ModalBody>
           <ModalFooter>

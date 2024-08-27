@@ -6,6 +6,7 @@ import { MdVerified } from "react-icons/md";
 
 export type UserProfileProps = {
   username: string;
+  bio?: string;
   createdAt: string;
   imageUrl?: string | null;
   verified?: boolean;
@@ -27,6 +28,7 @@ const DefaultAvatar: React.FC<{ username: string }> = ({ username }) => {
 
 export const UserProfile: React.FC<UserProfileProps> = ({
   username,
+  bio,
   createdAt,
   imageUrl,
   verified,
@@ -57,9 +59,9 @@ export const UserProfile: React.FC<UserProfileProps> = ({
       <div className="pt-36">
         {username ? (
           <h1 className="text-2xl font-bold text-white flex items-center">
-           @{username}
+            @{username}
             {verified !== undefined && (
-              <Tooltip content={verified ? "Verified" : "Unverified"}>
+              <Tooltip className="text-black" content={verified ? "Verified" : "Unverified"}>
                 <span>
                   <MdVerified
                     className={`ml-2 ${
@@ -74,8 +76,9 @@ export const UserProfile: React.FC<UserProfileProps> = ({
         ) : (
           <Skeleton className="h-10 w-3/4 mb-2" />
         )}
+        <h2 className="text-sm text-white flex items-center">{bio}</h2>
         {createdAt ? (
-          <p className="text-sm text-gray-300">
+          <p className="text-xs text-gray-300">
             Joined{" "}
             {new Date(createdAt).toLocaleDateString("en-US", {
               month: "long",
