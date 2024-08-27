@@ -4,6 +4,7 @@ import { Card, CardBody, Input } from "@nextui-org/react";
 import { updateProfile } from "@/app/edit/appearance/actions";
 import { z } from "zod";
 import { debounce } from "lodash";
+import { ImageUploader } from "./ImageUploader";
 
 const censoredWords = ["badword", "offensive", "inappropriate"];
 const usernameSchema = z
@@ -73,16 +74,21 @@ export const EditProfile: React.FC<EditProfileProps> = ({ profile }) => {
         case "image_url":
           urlSchema.parse(value);
           break;
+        }
+        setErrors((prev) => ({ ...prev, [field]: undefined }));
+        return true;
+      } catch (error) {
+        if (error instanceof z.ZodError) {
+          setErrors((prev) => ({ ...prev, [field]: error.errors[0].message }));
+        }
+        return false;
       }
-      setErrors((prev) => ({ ...prev, [field]: undefined }));
-      return true;
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        setErrors((prev) => ({ ...prev, [field]: error.errors[0].message }));
-      }
-      return false;
-    }
-  };
+    };
+    
+    const handleImageUploadComplete = (field: 'background_url' | 'hero_url' | 'image_url', url: string) => {
+      setUpdatedFields((prev) => ({ ...prev, [field]: url }));
+      handleUpdate(field, url);
+    };
 
   const handleUpdate = useCallback(
     async (field: ProfileField, value: string) => {
@@ -109,26 +115,45 @@ export const EditProfile: React.FC<EditProfileProps> = ({ profile }) => {
     setUpdatedFields((prev) => ({ ...prev, [field]: value }));
     debouncedUpdate(field, value);
   };
-
   return (
     <Card className="w-full max-w-md mx-auto mb-4 dark:bg-gray-800">
       <CardBody>
         <div className="space-y-4">
-          {(Object.keys(profile) as ProfileField[]).map((field) => (
-            <Input
-              key={field}
-              name={field}
-              label={
-                field.charAt(0).toUpperCase() + field.slice(1).replace("_", " ")
-              }
-              defaultValue={profile[field]}
-              className="w-full"
-              isInvalid={!!errors[field]}
-              isClearable
-              errorMessage={errors[field]}
-              onChange={(e) => handleChange(field, e.target.value)}
-            />
-          ))}
+          {/* Username and Bio inputs */}
+          <Input
+            name="username"
+            label="Username"
+            defaultValue={profile.username}
+            className="w-full"
+            isInvalid={!!errors.username}
+            isClearable
+            errorMessage={errors.username}
+            onChange={(e) => handleChange('username', e.target.value)}
+          />
+          <Input
+            name="bio"
+            label="Bio"
+            defaultValue={profile.bio}
+            className="w-full"
+            isInvalid={!!errors.bio}
+            isClearable
+            errorMessage={errors.bio}
+            onChange={(e) => handleChange('bio', e.target.value)}
+          />
+
+          {/* Image uploaders */}
+          <ImageUploader 
+            imageType="image" 
+            onUploadComplete={(url) => handleImageUploadComplete('image_url', url)} 
+          />
+          <ImageUploader 
+            imageType="hero" 
+            onUploadComplete={(url) => handleImageUploadComplete('hero_url', url)} 
+          />
+          <ImageUploader 
+            imageType="background" 
+            onUploadComplete={(url) => handleImageUploadComplete('background_url', url)} 
+          />
         </div>
       </CardBody>
     </Card>

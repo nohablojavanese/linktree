@@ -89,10 +89,10 @@ export default async function UserPage({
     if (profileError || !profile) {
       return <UserNotFound username={params.username} />;
     }
-    // Check if the current username matches the one in the database
-    // if (params.username !== profile.username) {
-    //   redirect(`/${profile.username}`); // Redirect to the new username
-    // }
+    // Check if the current username matches the one in the database (Ex: /jEREMyperwIra can be redirected to /jeremyperwira)
+    if (params.username !== profile.username) {
+      redirect(`/${profile.username}`); // Redirect to the new username
+    }
     const { data: links, error: linksError } = await supabase
       .from("links")
       .select("*")
