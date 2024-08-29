@@ -1,15 +1,15 @@
 "use client";
 import { TextGenerateEffect } from "../ui/text-generation-effect";
-
-const words = `Membuat Link hanya dalam satu menit`;
-const wordsChild = `Layanan seperti Link.id memungkinkan pengguna membuat halaman
-profil yang mengumpulkan semua tautan penting dalam satu tempat
-dengan tampilan yang sederhana dan responsif.`;
+import { hero } from "@/lib/fonts/fonts";
+const words = `Create a customable Link-in-Bio for Free! `;
+const wordsChild = `Services like Link.id allow users to create a profile page
+that gathers all important links in one place
+with a simple and responsive design.`;
 
 export function TextGenerateHeadline() {
   return (
     <TextGenerateEffect
-      className={`text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter`}
+      className={`${hero.className} text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter`}
       duration={2}
       filter={false}
       words={words}

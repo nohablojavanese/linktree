@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Poppins } from "next/font/google";
 import "./globals.css";
 import { NextUIProvider } from "@nextui-org/react";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { ThemeSwitcher } from "@/components/DarkMode";
-
-const inter = Inter({ subsets: ["latin"] });
+import { poppins } from "@/lib/fonts/fonts";
 
 export const metadata: Metadata = {
   title: "Link.ID",
@@ -19,7 +18,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={poppins.className}>
         <NextUIProvider>
           <NextThemesProvider attribute="class" defaultTheme="light">
             {children}
