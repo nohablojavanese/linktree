@@ -1,7 +1,14 @@
-import { Inter, Poppins, Dancing_Script, Nerko_One, Handjet, Libre_Baskerville } from "next/font/google";
+import {
+  Inter,
+  Poppins,
+  Dancing_Script,
+  Nerko_One,
+  Handjet,
+  Libre_Baskerville,
+  Plus_Jakarta_Sans,
+} from "next/font/google";
 
-
-const inter = Inter({ subsets: ["latin"] });
+export const inter = Inter({ subsets: ["latin"] });
 
 export const poppins = Poppins({
   weight: "400",
@@ -9,6 +16,11 @@ export const poppins = Poppins({
 });
 
 export const hero = Libre_Baskerville({
-    weight: "400",
-    subsets: ["latin"],
-  });
+  weight: "400",
+  subsets: ["latin"],
+});
+
+export const jakarta = Plus_Jakarta_Sans({
+  // weight: "400",
+  subsets: ["latin"],
+});

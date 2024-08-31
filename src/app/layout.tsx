@@ -4,7 +4,7 @@ import "./globals.css";
 import { NextUIProvider } from "@nextui-org/react";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { ThemeSwitcher } from "@/components/DarkMode";
-import { poppins } from "@/lib/fonts/fonts";
+import { poppins,inter, jakarta } from "@/lib/fonts/fonts";
 
 export const metadata: Metadata = {
   title: "Link.ID",
@@ -18,7 +18,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={poppins.className}>
+      <body className={jakarta.className}>
         <NextUIProvider>
           <NextThemesProvider attribute="class" defaultTheme="light">
             {children}
