@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
-import { Inter, Poppins } from "next/font/google";
 import "./globals.css";
 import { NextUIProvider } from "@nextui-org/react";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
-import { ThemeSwitcher } from "@/components/DarkMode";
 import { poppins,inter, jakarta } from "@/lib/fonts/fonts";
+import { GoogleAnalytics } from '@next/third-parties/google'
 
 export const metadata: Metadata = {
   title: "Link.ID",
@@ -22,7 +21,7 @@ export default function RootLayout({
         <NextUIProvider>
           <NextThemesProvider attribute="class" defaultTheme="light">
             {children}
-            {/* <ThemeSwitcher/> */}
+            <GoogleAnalytics gaId="G-ZSJW5EM7NR" />
           </NextThemesProvider>
         </NextUIProvider>
       </body>
