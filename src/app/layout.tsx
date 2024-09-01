@@ -3,7 +3,7 @@ import "./globals.css";
 import { NextUIProvider } from "@nextui-org/react";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { poppins,inter, jakarta } from "@/lib/fonts/fonts";
-import { GoogleAnalytics } from '@next/third-parties/google'
+import { GoogleAnalytics, GoogleTagManager } from '@next/third-parties/google'
 
 export const metadata: Metadata = {
   title: "Link.ID",
@@ -20,8 +20,10 @@ export default function RootLayout({
       <body className={jakarta.className}>
         <NextUIProvider>
           <NextThemesProvider attribute="class" defaultTheme="light">
-            {children}
             <GoogleAnalytics gaId="G-ZSJW5EM7NR" />
+            <GoogleTagManager gtmId="GTM-NK2XDJ29" />
+
+            {children}
           </NextThemesProvider>
         </NextUIProvider>
       </body>

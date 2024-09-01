@@ -66,7 +66,7 @@ const UserPageReturn: React.FC<UserPageProp> = ({
         {/* Profile section */}
         <div
           className={`w-full max-w-3xl px-4 ${
-            profile.hero_url? "-mt-20" : "mt-4"
+            profile.hero_url ? "-mt-20" : "mt-4"
           }`}
         >
           <UserProfile
@@ -90,6 +90,9 @@ const UserPageReturn: React.FC<UserPageProp> = ({
                     url={link.url}
                     imageUrl={link.imageUrl}
                     isVisible={link.isVisible}
+                    username_id={profile.id}
+                    username={profile.username}
+
                   />
                 )
             )}

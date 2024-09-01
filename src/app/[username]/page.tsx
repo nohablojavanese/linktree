@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import UserPageReturn from "@/components/RenderUsername";
 import { Metadata, ResolvingMetadata } from "next";
 import Watermark from "@/components/Watermark";
+import { GoogleTagManager } from "@next/third-parties/google";
 
 export const dynamicParams = true;
 export const revalidate = 0; // Disable static generation for this route
@@ -45,7 +46,7 @@ export async function generateMetadata(
   }
 
   return {
-    title: `${profile.username} Links`,
+    title: `${profile.username}`,
     description: profile.bio || `Check out ${profile.username}'s profile`,
     openGraph: {
       title: `${profile.display_name || profile.username}'s Profile`,
@@ -118,6 +119,8 @@ export default async function UserPage({
 
     return (
       <>
+        <GoogleTagManager gtmId="GTM-NK2XDJ29" />
+
         <UserPageReturn
           profile={profile}
           links={links}
