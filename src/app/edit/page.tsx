@@ -10,7 +10,6 @@ import { AddSocial } from "@/components/Create/AddSocial";
 import { DragLinks } from "@/components/Drag/ServerDrag";
 import SignOutButton from "@/components/SignOut";
 import { Suspense } from "react";
-import EmptyLink from "@/components/EmptyLink";
 
 async function fetchUserData() {
   const supabase = createClient();
@@ -78,7 +77,7 @@ export default async function EditPage() {
     <div className="mx-auto p-4 bg-[#F3F3F1] dark:bg-gray-900  min-h-screen overflow-hidden pb-20">
       <div className="max-w-md mx-auto space-y-6">
         <AddLink links={links || []} />
-        <Suspense fallback={<p>Loading Profile...</p>}>
+        <Suspense fallback={<p>Loading Links...</p>}>
           {links && links.length > 0 ? (
             <DragLinks links={links} />
           ) : (

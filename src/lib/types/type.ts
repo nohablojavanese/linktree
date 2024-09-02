@@ -18,6 +18,7 @@ export interface LinkType {
   imageUrl: string;
   isVisible: boolean;
   order: number;
+  app: string
 }
 
 export interface SocialLinkType {

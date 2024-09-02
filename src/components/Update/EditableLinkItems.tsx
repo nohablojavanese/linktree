@@ -67,7 +67,7 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
 }) => {
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
 
-  const [isEditing, setIsEditing] = useState(false);
+  // const [isEditing, setIsEditing] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isPending, startTransition] = useTransition();
   const {
