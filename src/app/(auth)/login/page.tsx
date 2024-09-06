@@ -30,7 +30,8 @@ export default async function AuthPage() {
 
   return (
     <div className="flex min-h-screen bg-white dark:bg-gray-900">
-      <div className="flex flex-col justify-start flex-1 px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
+      <div className="flex flex-col justify-start flex-1 px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24 ">
+        <h1 className="text-gray-500 text-4xl my-8 md:my-20">Welcome Start Join Now!</h1>
         <div className="w-full max-w-sm mx-auto lg:w-96">
           <div className="flex flex-col h-full">
             <div className="flex-shrink-0">
@@ -42,12 +43,19 @@ export default async function AuthPage() {
                   <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 text-gray-400 bg-white dark:bg-gray-900">Or continue with email</span>
+                  <span className="px-2 text-gray-400 bg-white dark:bg-gray-900">
+                    Or continue with email
+                  </span>
                 </div>
               </div>
             </div>
             <div className="flex-grow mt-6 overflow-y-auto">
-              <AuthTabs onSubmit={onSubmit} />  
+              <AuthTabs onSubmit={onSubmit} />
+            </div>
+            <div className="mt-3 flex items-center justify-center ">
+              <a className="text-gray-500" href="/request">
+                Forgot Password?{" "}
+              </a>
             </div>
           </div>
         </div>

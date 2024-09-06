@@ -1,7 +1,5 @@
-"use server"
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
 import { rateLimit, resetRateLimit } from "@/lib/rateLimit";
 
 const authSchema = z.object({
@@ -9,16 +7,32 @@ const authSchema = z.object({
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
-const signupSchema = authSchema.extend({
-  confirmPassword: z.string(),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"],
-});
+const signupSchema = authSchema
+  .extend({
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+  });
 
-export async function handleAuth(action: 'login' | 'signup', formData: FormData, ip: string) {
+type AuthAction = "login" | "signup";
+
+interface AuthResult {
+  success: boolean;
+  redirectUrl?: string;
+  errors?: { [key: string]: string[] };
+  remainingAttempts: number;
+}
+
+export async function handleAuth(
+  action: AuthAction,
+  formData: FormData,
+  ip: string
+): Promise<AuthResult> {
   const supabase = createClient();
 
+  // Rate limiting
   const rateLimitResult = await rateLimit(ip);
   if (!rateLimitResult.success) {
     return {
@@ -28,60 +42,67 @@ export async function handleAuth(action: 'login' | 'signup', formData: FormData,
     };
   }
 
-  const data = {
-    email: formData.get("email") as string,
-    password: formData.get("password") as string,
-    ...(action === 'signup' && { confirmPassword: formData.get("confirmPassword") as string }),
-  };
+  // Data validation
+  const schema = action === "login" ? authSchema : signupSchema;
+  const data = Object.fromEntries(formData);
+  const validationResult = schema.safeParse(data);
 
-  const schema = action === 'login' ? authSchema : signupSchema;
-  const parsedData = schema.safeParse(data);
-  
-  if (!parsedData.success) {
-    const errors: { [key: string]: string[] } = {};
-    parsedData.error.errors.forEach((err) => {
-      const path = err.path[0] as string;
-      if (!errors[path]) {
-        errors[path] = [];
-      }
-      errors[path].push(err.message);
-    });
+  if (!validationResult.success) {
     return {
       success: false,
-      errors,
+      errors: validationResult.error.flatten().fieldErrors,
       remainingAttempts: rateLimitResult.remainingAttempts,
     };
   }
 
   try {
-    if (action === 'login') {
+    // SignIn process
+    if (action === "login") {
       const { error } = await supabase.auth.signInWithPassword({
-        email: data.email,
-        password: data.password,
+        email: data.email as string,
+        password: data.password as string,
       });
-      if (error) throw error;
+      if (error) {
+        return {
+          success: false,
+          errors: { general: ["This email is already registered."] },
+          remainingAttempts: rateLimitResult.remainingAttempts,
+        };
+      }
     } else {
+      // Signup process
       const { error } = await supabase.auth.signUp({
-        email: data.email,
-        password: data.password,
+        email: data.email as string,
+        password: data.password as string,
       });
-      if (error) throw error;
+      if (error) {
+        return {
+          success: false,
+          errors: { general: ["This email is already registered."] },
+          remainingAttempts: rateLimitResult.remainingAttempts,
+        };
+      }
     }
 
     await resetRateLimit(ip);
-    redirect("/edit");
-  } catch (error: unknown) {
-    let errorMessage = "An unexpected error occurred";
-    
-    if (error instanceof Error) {
-      errorMessage = error.message;
-    } else if (typeof error === 'object' && error !== null && 'message' in error) {
-      errorMessage = String(error.message);
-    }
-    
+
+    const redirectUrl =
+      action === "login"
+        ? "/edit?login"
+        : `/auth/confirm/email?email=${encodeURIComponent(
+            data.email as string
+          )}&status=success`;
+
+    return {
+      success: true,
+      redirectUrl,
+      remainingAttempts: rateLimitResult.remainingAttempts,
+    };
+  } catch (error) {
+    console.error("Auth Error:", error);
     return {
       success: false,
-      errors: { general: [errorMessage] },
+      errors: { general: ["An unexpected error occurred. Please try again."] },
       remainingAttempts: rateLimitResult.remainingAttempts,
     };
   }
@@ -89,12 +110,14 @@ export async function handleAuth(action: 'login' | 'signup', formData: FormData,
 
 export async function handleGoogleSignIn(next: string = "/edit") {
   const supabase = createClient();
-  
+
   try {
     const { data, error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
+      provider: "google",
       options: {
-        redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback?next=${encodeURIComponent(next)}`,
+        redirectTo: `${
+          process.env.NEXT_PUBLIC_SITE_URL
+        }/auth/callback?next=${encodeURIComponent(next)}`,
       },
     });
 
@@ -102,14 +125,10 @@ export async function handleGoogleSignIn(next: string = "/edit") {
 
     return { success: true, url: data.url };
   } catch (error: unknown) {
-    let errorMessage = "An unexpected error occurred during Google Sign-In";
-    
-    if (error instanceof Error) {
-      errorMessage = error.message;
-    } else if (typeof error === 'object' && error !== null && 'message' in error) {
-      errorMessage = String(error.message);
-    }
-    
+    const errorMessage =
+      error instanceof Error
+        ? error.message
+        : "An unexpected error occurred during Google Sign-In";
     return {
       success: false,
       errors: { general: [errorMessage] },

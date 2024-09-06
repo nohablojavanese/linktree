@@ -1,25 +1,30 @@
-"use client"
-import React from 'react';
-import Link from 'next/link';
-import { AlertCircle } from 'lucide-react';
+import React from "react";
+import Link from "next/link";
+import { AlertCircle } from "lucide-react";
 import { Button } from "@nextui-org/react";
-import { useSearchParams } from 'next/navigation';
+import { redirect } from "next/navigation";
+import { MdEmail } from "react-icons/md";
 
-export default function AuthErrorPage() {
-  const searchParams = useSearchParams();
-  const errorMessage = searchParams.get('message') || 'An authentication error occurred';
+export default async function ConfirmPage({
+  searchParams,
+}: {
+  searchParams: { status: string; message: string; user: string };
+}) {
+  if (!searchParams) {
+    return redirect("/login");
+  }
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900">
       <div className="p-8 bg-white dark:bg-gray-800 rounded-lg shadow-md max-w-md w-full">
         <div className="flex items-center justify-center mb-6">
-          <AlertCircle className="w-12 h-12 text-red-500" />
+          <MdEmail className="w-12 h-12 text-blue-500" />
         </div>
         <h1 className="text-2xl font-bold text-center text-gray-900 dark:text-white mb-4">
-          Authentication Error
+          One More Step, {searchParams.message}!
         </h1>
         <p className="text-center text-gray-600 dark:text-gray-300 mb-6">
-          {errorMessage}
+          Hi,{searchParams.user}. We just send you an email to activate your account.
         </p>
         <div className="space-y-4">
           <Button

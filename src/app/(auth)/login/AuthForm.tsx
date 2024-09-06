@@ -13,6 +13,7 @@ import { Label } from "@/components/shadcn/ui/label";
 import { AlertCircle } from "lucide-react";
 import { z } from "zod";
 import { IoIosEye, IoIosEyeOff } from "react-icons/io";
+import { useRouter } from "next/navigation";
 
 interface AuthFormProps {
   formType: "login" | "signup";
@@ -29,10 +30,16 @@ interface AuthFormProps {
       general?: string[];
     };
     remainingAttempts: number;
+    redirectUrl?: string;
   }>;
 }
 
-export default function AuthForm({ formType, onSubmit, schema }: AuthFormProps) {
+export default function AuthForm({
+  formType,
+  onSubmit,
+  schema,
+}: AuthFormProps) {
+  const router = useRouter();
   const [errors, setErrors] = useState<{
     email?: string[];
     password?: string[];
@@ -43,6 +50,7 @@ export default function AuthForm({ formType, onSubmit, schema }: AuthFormProps) 
   const [formData, setFormData] = useState({
     email: "",
     password: "",
+    // confirmPassword: "",
   });
   const [isVisible, setIsVisible] = React.useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -63,38 +71,24 @@ export default function AuthForm({ formType, onSubmit, schema }: AuthFormProps) 
   };
 
   const isFormValid = () => {
-    return (
-      schema.safeParse(formData).success &&
-      Object.values(formData).every((value) => value !== "")
-    );
+    return schema.safeParse(formData).success;
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setErrors({});
     setIsLoading(true);
-
-    const result = schema.safeParse(formData);
-    if (!result.success) {
-      const fieldErrors = result.error.flatten().fieldErrors;
-      setErrors(fieldErrors);
-      setIsLoading(false);
-      return;
-    }
-
-    const formDataToSubmit = new FormData();
-    Object.entries(formData).forEach(([key, value]) => {
-      formDataToSubmit.append(key, value);
-    });
-
+  
+    const formDataToSubmit = new FormData(e.currentTarget);
+  
     try {
-      const submitResult = await onSubmit(formType, formDataToSubmit);
-
-      if (!submitResult.success && submitResult.errors) {
-        setErrors(submitResult.errors);
-        setRemainingAttempts(submitResult.remainingAttempts);
-      } else {
-        window.location.href = "/edit";
+      const result = await onSubmit(formType, formDataToSubmit);
+  
+      if (!result.success) {
+        setErrors(result.errors || {});
+        setRemainingAttempts(result.remainingAttempts);
+      } else if (result.redirectUrl) {
+        router.push(result.redirectUrl);
       }
     } catch (error) {
       setErrors({
@@ -216,7 +210,7 @@ export default function AuthForm({ formType, onSubmit, schema }: AuthFormProps) 
               {errors.general[0]}
             </p>
           )}
-              <Button
+          <Button
             type="submit"
             className={`w-full ${
               isFormValid()
