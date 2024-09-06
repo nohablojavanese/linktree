@@ -1,101 +1,53 @@
-import { createClient } from '@/lib/supabase/server';
-import Link from 'next/link';
-import { redirect } from 'next/navigation';
+import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
+import ResetPasswordForm from "./ResetPasswordForm";
+import { MdEmail } from "react-icons/md";
+import { BiErrorCircle } from "react-icons/bi";
 
-export default async function ResetPassword({
+export default async function ResetPasswordPage({
   searchParams,
 }: {
-  searchParams: { message: string; code: string };
+  searchParams: { code: string; error?: string; error_description?: string };
 }) {
   const supabase = createClient();
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+  const { data } = await supabase.auth.getUser();
 
-  if (session) {
-    return redirect('/edit');
+  if (data.user) {
+    redirect("/edit");
   }
 
-  const resetPassword = async (formData: FormData) => {
-    'use server';
-
-    const password = formData.get('password') as string;
-    const supabase = createClient();
-
-    if (searchParams.code) {
-      const supabase = createClient();
-      const { error } = await supabase.auth.exchangeCodeForSession(
-        searchParams.code 
-      );
-
-      if (error) {
-        return redirect(
-          `/reset-password?message=Unable to reset Password. Link expired!`
-        );
-      }
-    }
-    console.log("updating password")
-    const { error } = await supabase.auth.updateUser({
-      password,
-    });
-
-    if (error) {
-      console.log(error);
-      return redirect(
-        `/reset-password?message=Unable to reset Password. Try again!`
-      );
-    }
-
-    redirect(
-      `/login?message=Your Password has been reset successfully. Sign in.`
-    );
-  };
+  const isError = !!searchParams.error;
+  const errorMessage = searchParams.error_description
+    ? decodeURIComponent(searchParams.error_description).replace(/\+/g, " ")
+    : "An error occurred while resetting your password.";
 
   return (
-    <div>
-      <Link
-        href="/"
-        className="py-2 px-4 rounded-md no-underline text-foreground bg-btn-background hover:bg-btn-background-hover text-sm m-4"
-      >
-        Home
-      </Link>
-
-      <div className="w-full px-8 sm:max-w-md mx-auto mt-4">
-        <form
-          className="animate-in flex-1 flex flex-col w-full justify-center gap-2 text-foreground mb-4"
-          action={resetPassword}
-        >
-          <label className="text-md" htmlFor="password">
-            New Password
-          </label>
-          <input
-            className="rounded-md px-4 py-2 bg-inherit border mb-6"
-            type="password"
-            name="password"
-            placeholder="••••••••"
-            required
-          />
-          <label className="text-md" htmlFor="password">
-            Confirm New Password
-          </label>
-          <input
-            className="rounded-md px-4 py-2 bg-inherit border mb-6"
-            type="password"
-            name="confirmPassword"
-            placeholder="••••••••"
-            required
-          />
-          <button className="bg-indigo-700 rounded-md px-4 py-2 text-foreground mb-2">
-            Reset
-          </button>
-
-          {searchParams?.message && (
-            <p className="mt-4 p-4 bg-foreground/10 text-foreground text-center">
-              {searchParams.message}
-            </p>
+    <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900">
+      <div className="p-8 bg-white dark:bg-gray-800 rounded-lg shadow-md max-w-md w-full">
+        <div className="flex items-center justify-center mb-6">
+          {isError ? (
+            <BiErrorCircle className="w-12 h-12 text-red-500" />
+          ) : (
+            <MdEmail className="w-12 h-12 text-blue-500" />
           )}
-        </form>
+        </div>
+        <h1 className="text-2xl font-bold text-center text-gray-900 dark:text-white mb-2">
+          {isError ? "Password Reset Error" : "Create a New Password"}
+        </h1>
+        <p className="text-center text-sm text-gray-600 dark:text-gray-300 mb-6 text-balance">
+          {isError
+            ? errorMessage
+            : "Enter your new password to reset your account"}
+        </p>
+        <div className="w-full px-8 sm:max-w-md mx-auto mt-4">
+          <ResetPasswordForm code={searchParams.code} isError={isError} />
+        </div>
+        {!isError && (
+          <p className="text-sm text-center text-gray-500 dark:text-gray-400 mt-4">
+            Make sure you have an active email to receive our email.
+          </p>
+        )}
       </div>
     </div>
   );

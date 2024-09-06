@@ -27,7 +27,7 @@ export async function requestPasswordReset(email: string, ip: string) {
       console.error("Email not found:", email);
       return { 
         success: false, 
-        message: "Email does not exist in our records.",
+        message: `Email ${email} does not exist in our records.`,
         remainingAttempts
       };
     }

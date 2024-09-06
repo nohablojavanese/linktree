@@ -1,10 +1,37 @@
-import Redis from 'ioredis';
+import Redis from "ioredis";
+import crypto from "crypto";
 
+const cache_url = process.env.REDIS_URL as string;
+const cache_key = process.env.RATE_LIMIT_SECRET_KEY as string;
 
-const redis = new Redis("rediss://default:Acx_AAIjcDFmMTc1NzlkMTU0Njk0ZjBmYjNkNzM1NzkxNDJkMDI5ZXAxMA@shining-bison-52351.upstash.io:6379");;
+if (!cache_url || !cache_key) {
+  throw new Error("Cache is not set in environment variables.");
+}
+const redis = new Redis(cache_url);
 
-export async function rateLimit(ip: string): Promise<{ success: boolean; remainingAttempts: number }> {
-  const key = `Login_Attempts: from ${ip}`;
+// Encrypt IP using AES
+function encryptIP(ip: string): string {
+  const cipher = crypto.createCipheriv(
+    "aes-256-ctr",
+    Buffer.from(cache_key, "hex"),
+    Buffer.alloc(16, 0) // Initialization vector (IV)
+  );
+  const encrypted = Buffer.concat([cipher.update(ip), cipher.final()]);
+  return encrypted.toString("hex");
+}
+
+// Hash the encrypted IP to store securely
+function hashIP(encryptedIP: string): string {
+  return crypto.createHash("sha256").update(encryptedIP).digest("hex");
+}
+
+export async function rateLimit(
+  ip: string
+): Promise<{ success: boolean; remainingAttempts: number }> {
+  const encryptedIP = encryptIP(ip); // Encrypt the IP first
+  const hashedIP = hashIP(encryptedIP); // Hash the encrypted IP
+  const key = `Login_Attempts: ${hashedIP}`; // Use the hashed value as the Redis key
+
   const limit = 10;
   const windowInSeconds = 3600; // 1 hour
 
@@ -23,6 +50,8 @@ export async function rateLimit(ip: string): Promise<{ success: boolean; remaini
 }
 
 export async function resetRateLimit(ip: string): Promise<void> {
-  const key = `Login_Attempts: from ${ip}`;
+  const encryptedIP = encryptIP(ip);
+  const hashedIP = hashIP(encryptedIP);
+  const key = `Login_Attempts: ${hashedIP}`;
   await redis.del(key);
 }
