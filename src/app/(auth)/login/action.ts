@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { rateLimit, resetRateLimit } from "@/lib/rateLimit";
+import { redirect } from "next/navigation";
 
 const authSchema = z.object({
   email: z.string().email("Invalid email format"),
@@ -23,6 +24,7 @@ interface AuthResult {
   redirectUrl?: string;
   errors?: { [key: string]: string[] };
   remainingAttempts: number;
+  shouldRedirect?: boolean; // Add this line
 }
 
 export async function handleAuth(
@@ -31,6 +33,17 @@ export async function handleAuth(
   ip: string
 ): Promise<AuthResult> {
   const supabase = createClient();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (session || user) {
+    redirect("/edit");
+  }
 
   // Rate limiting
   const rateLimitResult = await rateLimit(ip);
@@ -65,7 +78,7 @@ export async function handleAuth(
       if (error) {
         return {
           success: false,
-          errors: { general: ["This email is already registered."] },
+          errors: { general: [error.message] },
           remainingAttempts: rateLimitResult.remainingAttempts,
         };
       }
@@ -78,7 +91,8 @@ export async function handleAuth(
       if (error) {
         return {
           success: false,
-          errors: { general: ["This email is already registered."] },
+          // errors: { general: ["This email is already registered."] },
+          errors: { general: [error.message] },
           remainingAttempts: rateLimitResult.remainingAttempts,
         };
       }
@@ -97,6 +111,7 @@ export async function handleAuth(
       success: true,
       redirectUrl,
       remainingAttempts: rateLimitResult.remainingAttempts,
+      shouldRedirect: true, // Add this line
     };
   } catch (error) {
     console.error("Auth Error:", error);

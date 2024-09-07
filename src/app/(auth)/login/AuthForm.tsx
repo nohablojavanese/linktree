@@ -13,7 +13,7 @@ import { Label } from "@/components/shadcn/ui/label";
 import { AlertCircle } from "lucide-react";
 import { z } from "zod";
 import { IoIosEye, IoIosEyeOff } from "react-icons/io";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 
 interface AuthFormProps {
   formType: "login" | "signup";
@@ -89,6 +89,8 @@ export default function AuthForm({
         setRemainingAttempts(result.remainingAttempts);
       } else if (result.redirectUrl) {
         router.push(result.redirectUrl);
+        // redirect("/edit") Successfully redirect to the edit page but throw an
+
       }
     } catch (error) {
       setErrors({
