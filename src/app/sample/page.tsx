@@ -65,9 +65,17 @@ export default function Home() {
                     <DatePicker 
                         defaultValue={schedule}
                         onChange={(date: DateValue | null) => setSchedule(date)}
-                        className=" text-black"
+                        classNames={{
+                            input: "text-black hover:bg-gray-100",
+                            inputWrapper: "border-blue-500 rounded-md",
+                            popoverContent: "bg-white shadow-lg rounded-lg",
+                            calendar: "bg-white p-2",
+                            calendarContent: "text-black font-medium",
+                            timeInputLabel: "text-blue-600 font-bold",
+                            timeInput: "border-blue-300 text-black rounded-md px-2 py-1",
+                        }}
                     />
-                    <Button onClick={handleAddTodo} color="primary">Add Todo</Button>
+                    <Button onClick={handleAddTodo} color="primary" className='bg-blue-600 text-white'>Create Schedule</Button>
                 </div>
                 <TodoList refreshTrigger={refreshTrigger} />
             </div>
