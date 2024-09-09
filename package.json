@@ -9,7 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@aldabil/react-scheduler": "^2.9.5",
     "@hello-pangea/dnd": "^16.6.0",
     "@next/third-parties": "^14.2.7",
     "@nextui-org/react": "^2.4.6",
@@ -34,7 +33,6 @@
     "next": "^14.2.7",
     "next-themes": "^0.3.0",
     "react": "^18",
-    "react-beautiful-dnd": "^13.1.1",
     "react-countup": "^6.5.3",
     "react-dom": "^18",
     "react-easy-crop": "^5.0.8",
