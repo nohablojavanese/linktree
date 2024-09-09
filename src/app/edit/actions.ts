@@ -5,15 +5,8 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
-const usernameSchema = z
-  .string()
-  .min(3)
-  .max(20)
-  .regex(/^[a-zA-Z0-9_]+$/);
-
 const urlSchema = z
   .string()
-  // .url("Invalid URL format ex: https://websource.com/picture.png")
   .transform((url) => {
     if (!/^https?:\/\//.test(url)) {
       return `http://${url}`;
@@ -33,7 +26,6 @@ export async function getAuthenticatedUser() {
 
   return user;
 }
-
 
 export async function createLink(formData: FormData) {
   const user = await getAuthenticatedUser();
@@ -187,24 +179,6 @@ export async function updateLinkVisibility(id: string, isVisible: boolean) {
   if (error) throw error;
   revalidatePath("/edit");
 }
-
-// export async function updateTheme(formData: FormData) {
-//   const user = await getAuthenticatedUser();
-//   const supabase = createClient();
-
-//   const ThemeData = {
-//     theme: formData.get("theme") as string,
-//     font_family: formData.get("font_family") as string,
-//   };
-
-//   const { error } = await supabase
-//     .from("themes")
-//     .update(ThemeData)
-//     .eq("user_id", user.id);
-
-//   if (error) throw error;
-//   revalidatePath("/edit");
-// }
 
 export async function updateLinkOrder(
   newOrder: { id: string; order: number }[]

@@ -53,8 +53,8 @@ export default async function AuthPage() {
               <AuthTabs onSubmit={onSubmit} />
             </div>
             <div className="mt-3 flex items-center justify-center ">
-              <a className="text-gray-500" href="/request">
-                Forgot Password?{" "}
+              <a className="text-gray-500 text-sm" href="/request">
+                Forgot Password?
               </a>
             </div>
           </div>

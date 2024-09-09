@@ -102,10 +102,9 @@ export async function handleAuth(
 
     const redirectUrl =
       action === "login"
-        ? "/edit?login"
-        : `/auth/confirm/email?email=${encodeURIComponent(
-            data.email as string
-          )}&status=success`;
+        ? "/edit?onboard=false"
+        : `/auth/success?status=Waiting for confirmation&message=Please check your email (${encodeURIComponent(
+            data.email as string)}) for a confirmation link.`;
 
     return {
       success: true,

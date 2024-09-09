@@ -78,19 +78,18 @@ export default function AuthForm({
     e.preventDefault();
     setErrors({});
     setIsLoading(true);
-  
+
     const formDataToSubmit = new FormData(e.currentTarget);
-  
+
     try {
       const result = await onSubmit(formType, formDataToSubmit);
-  
+
       if (!result.success) {
         setErrors(result.errors || {});
         setRemainingAttempts(result.remainingAttempts);
       } else if (result.redirectUrl) {
-        router.push(result.redirectUrl);
-        // redirect("/edit") Successfully redirect to the edit page but throw an
-
+        // Use window.location for a full page reload
+        window.location.href = result.redirectUrl;
       }
     } catch (error) {
       setErrors({
