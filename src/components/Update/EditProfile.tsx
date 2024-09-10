@@ -53,109 +53,100 @@ export type EditProfileProps = {
 };
 
 export const EditProfile: React.FC<EditProfileProps> = ({ profile }) => {
-  const [errors, setErrors] = useState<Partial<Record<ProfileField, string>>>(
-    {}
-  );
-  const [updatedFields, setUpdatedFields] = useState<Partial<typeof profile>>(
-    {}
-  );
+  const { errors, updatedFields, handleChange, handleImageUploadComplete, handleRemoveImage } = useProfileForm(profile);
 
-  const validateField = (field: ProfileField, value: string) => {
-    try {
-      switch (field) {
-        case "username":
-          usernameSchema.parse(value);
-          break;
-        case "bio":
-          bioSchema.parse(value);
-          break;
-        case "background_url":
-        case "hero_url":
-        case "image_url":
-          urlSchema.parse(value);
-          break;
-        }
-        setErrors((prev) => ({ ...prev, [field]: undefined }));
-        return true;
-      } catch (error) {
-        if (error instanceof z.ZodError) {
-          setErrors((prev) => ({ ...prev, [field]: error.errors[0].message }));
-        }
-        return false;
-      }
-    };
-    
-    const handleImageUploadComplete = (field: 'background_url' | 'hero_url' | 'image_url', url: string) => {
-      setUpdatedFields((prev) => ({ ...prev, [field]: url }));
-      handleUpdate(field, url);
-    };
-
-  const handleUpdate = useCallback(
-    async (field: ProfileField, value: string) => {
-      if (validateField(field, value)) {
-        try {
-          await updateProfile({ [field]: value });
-          // Optionally, you can add some visual feedback here to indicate successful update
-        } catch (error) {
-          if (error instanceof Error) {
-            setErrors((prev) => ({ ...prev, [field]: error.message }));
-          }
-        }
-      }
-    },
-    []
-  );
-
-  const debouncedUpdate = useMemo(
-    () => debounce(handleUpdate, 500),
-    [handleUpdate]
-  );
-
-  const handleChange = (field: ProfileField, value: string) => {
-    setUpdatedFields((prev) => ({ ...prev, [field]: value }));
-    debouncedUpdate(field, value);
-  };
   return (
     <Card className="w-full max-w-md mx-auto mb-4 dark:bg-gray-800">
       <CardBody>
         <div className="space-y-4">
-          {/* Username and Bio inputs */}
-          <Input
+          <ProfileInput
             name="username"
             label="Username"
             defaultValue={profile.username}
-            className="w-full"
-            isInvalid={!!errors.username}
-            isClearable
-            errorMessage={errors.username}
-            onChange={(e) => handleChange('username', e.target.value)}
+            error={errors.username}
+            onChange={(value) => handleChange('username', value)}
           />
-          <Input
+          <ProfileInput
             name="bio"
             label="Bio"
             defaultValue={profile.bio}
-            className="w-full"
-            isInvalid={!!errors.bio}
-            isClearable
-            errorMessage={errors.bio}
-            onChange={(e) => handleChange('bio', e.target.value)}
+            error={errors.bio}
+            onChange={(value) => handleChange('bio', value)}
           />
-
-          {/* Image uploaders */}
-          <ImageUploader 
-            imageType="image" 
-            onUploadComplete={(url) => handleImageUploadComplete('image_url', url)} 
-          />
-          <ImageUploader 
-            imageType="hero" 
-            onUploadComplete={(url) => handleImageUploadComplete('hero_url', url)} 
-          />
-          <ImageUploader 
-            imageType="background" 
-            onUploadComplete={(url) => handleImageUploadComplete('background_url', url)} 
-          />
+          {['image', 'hero', 'background'].map((type) => (
+            <ImageUploader 
+              key={type}
+              imageType={type as 'image' | 'hero' | 'background'}
+              currentImageUrl={profile[`${type}_url` as 'image_url' | 'hero_url' | 'background_url']}
+              onUploadComplete={(url) => handleImageUploadComplete(`${type}_url` as 'image_url' | 'hero_url' | 'background_url', url)}
+              onRemoveImage={() => handleRemoveImage(`${type}_url` as 'image_url' | 'hero_url' | 'background_url')}
+            />
+          ))}
         </div>
       </CardBody>
     </Card>
   );
 };
+
+// Create a custom hook for form state management
+function useProfileForm(initialProfile: EditProfileProps['profile']) {
+  const [errors, setErrors] = useState<Partial<Record<ProfileField, string>>>({});
+  const [updatedFields, setUpdatedFields] = useState<Partial<typeof initialProfile>>({});
+
+  const handleUpdate = useCallback(async (field: ProfileField, value: string) => {
+    try {
+      await updateProfile({ [field]: value });
+      setErrors((prev) => ({ ...prev, [field]: undefined }));
+    } catch (error) {
+      if (error instanceof Error) {
+        setErrors((prev) => ({ ...prev, [field]: error.message }));
+      }
+    }
+  }, []);
+
+  const debouncedUpdate = useMemo(() => debounce(handleUpdate, 500), [handleUpdate]);
+
+  const handleChange = useCallback((field: ProfileField, value: string) => {
+    setUpdatedFields((prev) => ({ ...prev, [field]: value }));
+    debouncedUpdate(field, value);
+  }, [debouncedUpdate]);
+
+  const handleImageUploadComplete = useCallback((field: 'background_url' | 'hero_url' | 'image_url', url: string) => {
+    setUpdatedFields((prev) => ({ ...prev, [field]: url }));
+    handleUpdate(field, url);
+  }, [handleUpdate]);
+
+  const handleRemoveImage = useCallback(async (field: 'background_url' | 'hero_url' | 'image_url') => {
+    try {
+      await updateProfile({ [field]: null });
+      setUpdatedFields((prev) => ({ ...prev, [field]: null }));
+      setErrors((prev) => ({ ...prev, [field]: undefined }));
+    } catch (error) {
+      if (error instanceof Error) {
+        setErrors((prev) => ({ ...prev, [field]: error.message }));
+      }
+    }
+  }, []);
+
+  return { errors, updatedFields, handleChange, handleImageUploadComplete, handleRemoveImage };
+}
+
+// Create a reusable ProfileInput component
+const ProfileInput: React.FC<{
+  name: string;
+  label: string;
+  defaultValue?: string;
+  error?: string;
+  onChange: (value: string) => void;
+}> = ({ name, label, defaultValue, error, onChange }) => (
+  <Input
+    name={name}
+    label={label}
+    defaultValue={defaultValue}
+    className="w-full"
+    isInvalid={!!error}
+    isClearable
+    errorMessage={error}
+    onChange={(e) => onChange(e.target.value)}
+  />
+);
