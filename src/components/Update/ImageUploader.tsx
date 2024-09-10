@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
-import React, { useState, useCallback } from "react";
-import Image from 'next/image';
+import React, { useState, useEffect } from "react";
+import Image from "next/image";
 import {
   Button,
   Modal,
@@ -13,9 +13,9 @@ import {
 import { createClient } from "@/lib/supabase/client";
 import Cropper from "react-easy-crop";
 import { getCroppedImg } from "@/lib/utils";
-import { z } from 'zod';
-import { redirect } from 'next/navigation';
-import { UploadCloudIcon } from "lucide-react";
+import { z } from "zod";
+import { redirect } from "next/navigation";
+import { LinkIcon, UploadCloud, UploadCloudIcon } from "lucide-react";
 
 // Define the image types and their corresponding dimensions
 const IMAGE_TYPES = {
@@ -32,9 +32,12 @@ interface ImageUploaderProps {
   onRemoveImage: () => void;
 }
 
-const urlSchema = z.string().url().refine((url) => {
-  return /\.(jpeg|jpg|gif|png|webp)$/i.test(url);
-}, "URL must end with a valid image extension (.jpg, .png, .gif, .webp)");
+const urlSchema = z
+  .string()
+  .url()
+  .refine((url) => {
+    return /\.(jpeg|jpg|gif|png|webp)$/i.test(url);
+  }, "URL must end with a valid image extension (.jpg, .png, .gif, .webp)");
 async function getAuthenticatedUser() {
   const supabase = createClient();
   const session = await supabase.auth.getSession();
@@ -46,6 +49,39 @@ async function getAuthenticatedUser() {
 
   return user;
 }
+
+// Use a custom hook for image loading and error handling
+const useImageLoader = (url: string) => {
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!url) {
+      setIsLoaded(false);
+      setError(null);
+      return;
+    }
+
+    const img = document.createElement("img");
+
+    img.onload = () => {
+      setIsLoaded(true);
+      setError(null);
+    };
+    img.onerror = () => {
+      setIsLoaded(false);
+      setError("Unable to load the image. Please check the URL and try again.");
+    };
+    img.src = url;
+
+    return () => {
+      img.onload = null;
+      img.onerror = null;
+    };
+  }, [url]);
+
+  return { isLoaded, error };
+};
 
 export const ImageUploader: React.FC<ImageUploaderProps> = ({
   imageType,
@@ -92,7 +128,9 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
         // Image loaded successfully, no need to set cropping state here
       };
       img.onerror = () => {
-        setError("Unable to load the image. Please check the URL and try again.");
+        setError(
+          "Unable to load the image. Please check the URL and try again."
+        );
       };
       img.src = imageUrl;
     } catch (error) {
@@ -138,7 +176,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
       const { data, error: uploadError } = await supabase.storage
         .from(bucketName)
         .upload(fileName, blob, {
-          contentType: 'image/jpeg',
+          contentType: "image/jpeg",
         });
 
       if (uploadError) throw uploadError;
@@ -153,51 +191,39 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
         onUploadComplete(publicUrlData.publicUrl);
         handleCloseModal();
       } else {
-        throw new Error('Failed to get public URL');
+        throw new Error("Failed to get public URL");
       }
     } catch (error) {
-      console.error('Error uploading image:', error);
-      setError('An error occurred while uploading the image. Please try again.');
+      console.error("Error uploading image:", error);
+      setError(
+        "An error occurred while uploading the image. Please try again."
+      );
     } finally {
       setIsUploading(false);
     }
   };
 
   const handleRemoveImage = async () => {
+    setIsUploading(true);
+    setError(null);
     try {
-      const supabase = createClient();
-      const user = await getAuthenticatedUser();
-
-      // Remove the image from storage
-      if (currentImageUrl) {
-        const fileName = currentImageUrl.split('/').pop() || '';
-        if (fileName) {
-          const bucketName = `user_${imageType}`;
-          const { error: removeError } = await supabase.storage
-            .from(bucketName)
-            .remove([fileName]);
-
-          if (removeError) throw removeError;
-        } else {
-          console.error('Unable to extract filename from URL');
-        }
-      }
-
-      // Call the onRemoveImage function to update the profile
-      onRemoveImage();
+      await onRemoveImage();
+      console.log("Image removed successfully");
     } catch (error) {
-      console.error('Error removing image:', error);
-      setError('An error occurred while removing the image. Please try again.');
+      console.error("Error removing image:", error);
+      setError("An error occurred while removing the image. Please try again.");
+    } finally {
+      setIsUploading(false);
     }
   };
 
   return (
     <div className="w-full">
       <h3 className="text-lg font-semibold mb-2 text-gray-800 dark:text-gray-200">
-        {imageType.charAt(0).toUpperCase() + imageType.slice(1)} 
+        {imageType.charAt(0).toUpperCase() + imageType.slice(1)}
       </h3>
       {currentImageUrl ? (
-        <div className="flex items-center gap-4 bg-gray-100 dark:bg-gray-800 p-4 rounded-2xl">
+        <div className="flex items-center gap-4 bg-gray-100  dark:bg-gray-800 p-4 rounded-2xl">
           {!imageError ? (
             <div className="relative w-16 h-16 rounded-full overflow-hidden">
               <Image
@@ -213,61 +239,79 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
             </div>
           ) : (
             <div className="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center">
-              <span className="text-xs text-gray-500 dark:text-gray-400">Error</span>
+              <span className="text-xs text-gray-500 dark:text-gray-400">
+                Error
+              </span>
             </div>
           )}
           <div className="flex-grow">
-            <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">Current Image</p>
-            <Button 
-              color="danger" 
+            <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">
+              Current Image
+            </p>
+            <Button
+              color="danger"
               variant="flat"
               onClick={handleRemoveImage}
               className="text-sm"
+              isLoading={isUploading}
+              disabled={isUploading}
             >
-              Remove Image
+              {isUploading ? "Removing..." : "Remove Image"}
             </Button>
           </div>
         </div>
       ) : (
-        <Button 
+        <Button
           onClick={handleUploadClick}
           color="primary"
           variant="flat"
-          className="w-full justify-center py-6 text-sm border-2 border-dashed  border-gray-300 dark:border-gray-600 rounded-2xl"
+          className="w-full justify-center py-6 text-sm border-2 border-dashed bg-gray-100 dark:bg-gray-800  border-gray-300 dark:border-gray-600 rounded-2xl"
+          isLoading={isUploading}
+          disabled={isUploading}
         >
-          <UploadCloudIcon className="w-6 h-6 mr-2" />
-          Upload {imageType} Image
+          {isUploading ? (
+            "Processing..."
+          ) : (
+            <>
+              <UploadCloud className="w-6 h-6 mr-2" />
+              Upload {imageType.charAt(0).toUpperCase() + imageType.slice(1)}
+            </>
+          )}
         </Button>
       )}
 
-      <Modal 
-        isOpen={isModalOpen} 
-        onClose={handleCloseModal} 
+      <Modal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
         size="lg"
         className="dark:bg-gray-800"
       >
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader className="flex flex-col gap-1 text-gray-800 dark:text-gray-200">
-                Upload {imageType} Image
+              <ModalHeader className="flex flex-col gap-1 text-gray-800 dark:text-gray-200 text-center">
+                Upload {imageType.charAt(0).toUpperCase() + imageType.slice(1)}
               </ModalHeader>
               <ModalBody>
                 {!uploadType && (
                   <div className="flex gap-4 justify-center">
-                    <Button 
+                    <Button
                       onClick={() => setUploadType("file")}
                       color="primary"
-                      variant="flat"
+                      variant="solid"
+                      className="border-2 border-gray-300 dark:border-gray-600 bg-blue-500 dark:bg-gray-800"
+                      startContent={<UploadCloudIcon className="w-4 h-4" />}
                     >
                       Upload File
                     </Button>
-                    <Button 
+                    <Button
                       onClick={() => setUploadType("link")}
                       color="secondary"
-                      variant="flat"
+                      variant="solid"
+                      className="border-2 border-gray-300 dark:border-gray-600 bg-blue-500 dark:bg-gray-800"
+                      startContent={<LinkIcon className="w-4 h-4" />}
                     >
-                      Upload Link
+                      Insert Link
                     </Button>
                   </div>
                 )}
@@ -287,7 +331,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
                       onChange={(e) => setImageUrl(e.target.value)}
                       className="text-sm text-gray-800 dark:text-gray-200"
                     />
-                    <Button 
+                    <Button
                       onClick={handleLinkSubmit}
                       color="primary"
                       variant="flat"
@@ -302,26 +346,23 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
                       image={imageUrl}
                       crop={crop}
                       zoom={zoom}
-                      aspect={IMAGE_TYPES[imageType].width / IMAGE_TYPES[imageType].height}
+                      aspect={
+                        IMAGE_TYPES[imageType].width /
+                        IMAGE_TYPES[imageType].height
+                      }
                       onCropChange={setCrop}
                       onZoomChange={setZoom}
                       onCropComplete={handleCropComplete}
                     />
                   </div>
                 )}
-                {error && (
-                  <p className="text-red-500 text-sm mt-2">{error}</p>
-                )}
+                {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
               </ModalBody>
               <ModalFooter>
-                <Button 
-                  color="danger" 
-                  variant="flat"
-                  onClick={onClose}
-                >
+                <Button color="danger" variant="flat" onClick={onClose}>
                   Cancel
                 </Button>
-                <Button 
+                <Button
                   color="primary"
                   variant="flat"
                   onClick={handleUpload}

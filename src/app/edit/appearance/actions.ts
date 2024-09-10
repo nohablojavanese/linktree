@@ -21,7 +21,9 @@ const profileSchema = z.object({
   bio: bioSchema,
 });
 
-export async function updateProfile(data: Partial<z.infer<typeof profileSchema>>) {
+type ProfileUpdateData = Partial<z.infer<typeof profileSchema>>;
+
+export async function updateProfile(data: ProfileUpdateData) {
   const user = await getAuthenticatedUser();
   const supabase = createClient();
 
@@ -35,9 +37,9 @@ export async function updateProfile(data: Partial<z.infer<typeof profileSchema>>
 
     if (error) {
       if (error.code === "23505") {
-        throw new Error("Username is already taken");
+        throw new Error(ERROR_MESSAGES.USERNAME_TAKEN);
       }
-      throw new Error("Failed to update profile");
+      throw new Error(ERROR_MESSAGES.UPDATE_FAILED);
     }
 
     revalidatePath("/edit");
@@ -66,3 +68,66 @@ export async function updateTheme(formData: FormData) {
   if (error) throw error;
   revalidatePath("/edit");
 }
+
+type ImageUrlField = 'background_url' | 'hero_url' | 'image_url';
+type ProfileData = {
+  [K in ImageUrlField]?: string | null;
+};
+
+export async function removeImage(imageType: 'image' | 'hero' | 'background') {
+  const user = await getAuthenticatedUser();
+  const supabase = createClient();
+
+  try {
+    const urlField: ImageUrlField = `${imageType}_url`;
+
+    // First, get the current image URL
+    const { data, error: profileError } = await supabase
+      .from("user_profiles")
+      .select(urlField)
+      .eq("id", user.id)
+      .single();
+
+    if (profileError) throw profileError;
+
+    const profileData = data as ProfileData;
+    const currentImageUrl = profileData[urlField];
+
+    if (currentImageUrl) {
+      // Extract filename from URL
+      const fileName = currentImageUrl.split('/').pop();
+      const bucketName = `user_${imageType}`;
+
+      if (!fileName) {
+        throw new Error('Invalid file name');
+      }
+
+      // Remove file from storage using the Storage API
+      const { error: removeError } = await supabase.storage
+        .from(bucketName)
+        .remove([fileName]);
+
+      if (removeError) throw removeError;
+
+      // Update profile to remove image URL
+      const { error: updateError } = await supabase
+        .from("user_profiles")
+        .update({ [urlField]: null })
+        .eq("id", user.id);
+
+      if (updateError) throw updateError;
+    }
+
+    revalidatePath("/edit");
+    return { success: true };
+  } catch (error) {
+    console.error('Error removing image:', error);
+    return { success: false, error: ERROR_MESSAGES.REMOVE_FAILED };
+  }
+}
+
+const ERROR_MESSAGES = {
+  USERNAME_TAKEN: "Username is already taken",
+  UPDATE_FAILED: "Failed to update profile",
+  REMOVE_FAILED: "Failed to remove image",
+};

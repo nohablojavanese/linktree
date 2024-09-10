@@ -14,9 +14,16 @@ export const createImage = (url: string): Promise<HTMLImageElement> =>
     image.src = url;
   });
 
+interface PixelCrop {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
 export const getCroppedImg = async (
   imageSrc: string,
-  pixelCrop: any,
+  pixelCrop: PixelCrop,
   width: number,
   height: number
 ): Promise<string> => {
@@ -42,15 +49,17 @@ export const getCroppedImg = async (
     height
   );
 
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     canvas.toBlob((blob) => {
       if (!blob) {
-        throw new Error('Canvas is empty');
+        reject(new Error('Canvas is empty'));
+        return;
       }
       resolve(URL.createObjectURL(blob));
     }, 'image/jpeg');
   });
 };
+
 export function validateEmail(email: string): boolean {
   const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   return re.test(email);

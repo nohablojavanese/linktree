@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useCallback, useMemo } from "react";
 import { Card, CardBody, Input } from "@nextui-org/react";
-import { updateProfile } from "@/app/edit/appearance/actions";
+import { updateProfile, removeImage } from "@/app/edit/appearance/actions";
 import { z } from "zod";
 import { debounce } from "lodash";
 import { ImageUploader } from "./ImageUploader";
@@ -73,13 +73,13 @@ export const EditProfile: React.FC<EditProfileProps> = ({ profile }) => {
             error={errors.bio}
             onChange={(value) => handleChange('bio', value)}
           />
-          {['image', 'hero', 'background'].map((type) => (
+          {IMAGE_TYPES.map((type) => (
             <ImageUploader 
               key={type}
-              imageType={type as 'image' | 'hero' | 'background'}
-              currentImageUrl={profile[`${type}_url` as 'image_url' | 'hero_url' | 'background_url']}
-              onUploadComplete={(url) => handleImageUploadComplete(`${type}_url` as 'image_url' | 'hero_url' | 'background_url', url)}
-              onRemoveImage={() => handleRemoveImage(`${type}_url` as 'image_url' | 'hero_url' | 'background_url')}
+              imageType={type}
+              currentImageUrl={profile[`${type}_url` as keyof typeof profile]}
+              onUploadComplete={(url) => handleImageUploadComplete(`${type}_url` as keyof typeof profile, url)}
+              onRemoveImage={() => handleRemoveImage(`${type}_url` as keyof typeof profile)}
             />
           ))}
         </div>
@@ -111,16 +111,21 @@ function useProfileForm(initialProfile: EditProfileProps['profile']) {
     debouncedUpdate(field, value);
   }, [debouncedUpdate]);
 
-  const handleImageUploadComplete = useCallback((field: 'background_url' | 'hero_url' | 'image_url', url: string) => {
+  const handleImageUploadComplete = useCallback((field: keyof typeof initialProfile, url: string) => {
     setUpdatedFields((prev) => ({ ...prev, [field]: url }));
     handleUpdate(field, url);
   }, [handleUpdate]);
 
-  const handleRemoveImage = useCallback(async (field: 'background_url' | 'hero_url' | 'image_url') => {
+  const handleRemoveImage = useCallback(async (field: keyof typeof initialProfile) => {
     try {
-      await updateProfile({ [field]: null });
-      setUpdatedFields((prev) => ({ ...prev, [field]: null }));
-      setErrors((prev) => ({ ...prev, [field]: undefined }));
+      const imageType = field.replace('_url', '') as 'image' | 'hero' | 'background';
+      const result = await removeImage(imageType);
+      if (result.success) {
+        setUpdatedFields((prev) => ({ ...prev, [field]: null }));
+        setErrors((prev) => ({ ...prev, [field]: undefined }));
+      } else {
+        throw new Error(result.error);
+      }
     } catch (error) {
       if (error instanceof Error) {
         setErrors((prev) => ({ ...prev, [field]: error.message }));
@@ -150,3 +155,5 @@ const ProfileInput: React.FC<{
     onChange={(e) => onChange(e.target.value)}
   />
 );
+
+const IMAGE_TYPES = ['image', 'hero', 'background'] as const;
