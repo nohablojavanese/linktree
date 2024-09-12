@@ -62,6 +62,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({ profile }) => {
           <ProfileInput
             name="username"
             label="Username"
+            
             defaultValue={profile.username}
             error={errors.username}
             onChange={(value) => handleChange('username', value)}
@@ -141,13 +142,15 @@ const ProfileInput: React.FC<{
   name: string;
   label: string;
   defaultValue?: string;
+  isDisabled?: boolean;
   error?: string;
   onChange: (value: string) => void;
-}> = ({ name, label, defaultValue, error, onChange }) => (
+}> = ({ name, label, defaultValue, error, onChange, isDisabled }) => (
   <Input
     name={name}
     label={label}
     defaultValue={defaultValue}
+    isDisabled={isDisabled}
     className="w-full"
     isInvalid={!!error}
     isClearable

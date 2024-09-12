@@ -118,29 +118,29 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
     }
   };
 
-  const handleLinkSubmit = () => {
-    setError(null);
-    try {
-      urlSchema.parse(imageUrl);
-      // If parsing succeeds, proceed with loading the image
-      const img = new HTMLImageElement();
-      img.onload = () => {
-        // Image loaded successfully, no need to set cropping state here
-      };
-      img.onerror = () => {
-        setError(
-          "Unable to load the image. Please check the URL and try again."
-        );
-      };
-      img.src = imageUrl;
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        setError(error.errors[0].message);
-      } else {
-        setError("Invalid image URL. Please try again.");
-      }
-    }
-  };
+  // const handleLinkSubmit = () => {
+  //   setError(null);
+  //   try {
+  //     urlSchema.parse(imageUrl);
+  //     // If parsing succeeds, proceed with loading the image
+  //     const img = new HTMLImageElement();
+  //     img.onload = () => {
+  //       // Image loaded successfully, no need to set cropping state here
+  //     };
+  //     img.onerror = () => {
+  //       setError(
+  //         "Unable to load the image. Please check the URL and try again."
+  //       );
+  //     };
+  //     img.src = imageUrl;
+  //   } catch (error) {
+  //     if (error instanceof z.ZodError) {
+  //       setError(error.errors[0].message);
+  //     } else {
+  //       setError("Invalid image URL. Please try again.");
+  //     }
+  //   }
+  // };
 
   const handleCropComplete = (croppedArea: any, croppedAreaPixels: any) => {
     setCroppedAreaPixels(croppedAreaPixels);
@@ -308,8 +308,10 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
                       onClick={() => setUploadType("link")}
                       color="secondary"
                       variant="solid"
+                      
                       className="border-2 border-gray-300 dark:border-gray-600 bg-blue-500 dark:bg-gray-800"
                       startContent={<LinkIcon className="w-4 h-4" />}
+                      
                     >
                       Insert Link
                     </Button>
@@ -320,24 +322,29 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
                     type="file"
                     onChange={handleFileChange}
                     accept="image/*"
+                    description="Upload Image file less than 3MB."
+
                     className="text-sm text-gray-600 dark:text-gray-300"
                   />
                 )}
                 {uploadType === "link" && (
                   <div className="flex flex-col gap-2">
                     <Input
-                      placeholder="Enter image URL"
+                      placeholder="Enter Image URL"
                       value={imageUrl}
+                      startContent={<LinkIcon className="w-4 h-4" />}
                       onChange={(e) => setImageUrl(e.target.value)}
                       className="text-sm text-gray-800 dark:text-gray-200"
+                      description="Enter a valid image URL, that ends with a valid image extension (.jpg, .png, .gif, .webp)."
+
                     />
-                    <Button
+                    {/* <Button
                       onClick={handleLinkSubmit}
                       color="primary"
                       variant="flat"
                     >
                       Submit
-                    </Button>
+                    </Button> */}
                   </div>
                 )}
                 {imageUrl && (

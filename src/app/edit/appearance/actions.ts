@@ -7,10 +7,27 @@ import { z } from "zod";
 
 const usernameSchema = z
   .string()
-  .min(3)
+  .min(6)
   .max(20)
   .regex(/^[a-zA-Z0-9_]+$/);
-const urlSchema = z.string().optional();
+const urlSchema = z
+  .string()
+  .url("Invalid URL format")
+  .refine(
+    (url) => {
+      const parsedUrl = new URL(url);
+      const pathname = parsedUrl.pathname.toLowerCase();
+      return [".jpg", ".jpeg", ".png", ".gif", ".webp", ".svg"].some((ext) =>
+        pathname.endsWith(ext)
+      );
+    },
+    {
+      message:
+        "URL must end with a valid image file extension (.jpg, .jpeg, .png, .gif, .webp, .svg)",
+    }
+  )
+  .optional()
+  .nullable();
 const bioSchema = z.string().max(160).optional();
 
 const profileSchema = z.object({
@@ -69,12 +86,12 @@ export async function updateTheme(formData: FormData) {
   revalidatePath("/edit");
 }
 
-type ImageUrlField = 'background_url' | 'hero_url' | 'image_url';
+type ImageUrlField = "background_url" | "hero_url" | "image_url";
 type ProfileData = {
   [K in ImageUrlField]?: string | null;
 };
 
-export async function removeImage(imageType: 'image' | 'hero' | 'background') {
+export async function removeImage(imageType: "image" | "hero" | "background") {
   const user = await getAuthenticatedUser();
   const supabase = createClient();
 
@@ -95,11 +112,11 @@ export async function removeImage(imageType: 'image' | 'hero' | 'background') {
 
     if (currentImageUrl) {
       // Extract filename from URL
-      const fileName = currentImageUrl.split('/').pop();
+      const fileName = currentImageUrl.split("/").pop();
       const bucketName = `user_${imageType}`;
 
       if (!fileName) {
-        throw new Error('Invalid file name');
+        throw new Error("Invalid file name");
       }
 
       // Remove file from storage using the Storage API
@@ -121,7 +138,7 @@ export async function removeImage(imageType: 'image' | 'hero' | 'background') {
     revalidatePath("/edit");
     return { success: true };
   } catch (error) {
-    console.error('Error removing image:', error);
+    console.error("Error removing image:", error);
     return { success: false, error: ERROR_MESSAGES.REMOVE_FAILED };
   }
 }

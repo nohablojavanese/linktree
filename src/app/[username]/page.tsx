@@ -1,5 +1,6 @@
 import React from "react";
-import { createClient } from "@/lib/supabase/client";
+import { createClients } from "@/lib/supabase/client"; //createBrowserClient Supabase
+import { createClient } from "@/lib/supabase/server"; //createServerClient Supabase
 import { UserNotFound } from "@/components/NotFound";
 import { redirect } from "next/navigation";
 import UserPageReturn from "@/components/RenderUsername";
@@ -9,39 +10,69 @@ import Watermark from "@/components/Watermark";
 export const dynamicParams = true;
 export const revalidate = 0; // Disable static generation for this route
 
-export async function generateStaticParams() {
-  const supabase = createClient();
-  const { data: profiles } = await supabase
-    .from("user_profiles")
-    .select("username");
+// export async function generateStaticParams() {
+//   const supabase = createClients();
+//   const { data: profiles } = await supabase
+//     .from("user_profiles")
+//     .select("username");
 
-  return (
-    profiles?.map(({ username }) => ({
-      username,
-    })) || []
-  );
-}
+//   return (
+//     profiles?.map(({ username }) => ({
+//       username,
+//     })) || []
+//   );
+// }
 type Props = {
   params: { username: string };
-  searchParams: { [key: string]: string | string[] | undefined };
 };
 
-export async function generateMetadata(
-  { params, searchParams }: Props,
-  parent: ResolvingMetadata
-): Promise<Metadata> {
+async function fetchUserProfile(username: string) {
   const supabase = createClient();
-
-  const { data: profile } = await supabase
+  const { data: profile, error } = await supabase
     .from("user_profiles")
     .select("*")
-    .eq("username", params.username)
+    .eq("username", username)
     .single();
 
+  if (error) throw error;
+  return profile;
+}
+// sample
+async function fetchUserStatus(username: string) {
+  const supabase = createClient();
+  const { data: profile, error } = await supabase
+    .from("user_profiles")
+    .select("*")
+    .eq("username", username)
+    .single();
+
+  if (error) throw error;
+  return profile;
+}
+
+async function fetchUserData(userId: string) {
+  const supabase = createClient();
+  const [links, socialLinks, theme] = await Promise.all([
+    supabase.from("links").select("*").eq("user_id", userId),
+    supabase.from("social_links").select("*").eq("user_id", userId),
+    supabase.from("themes").select("*").eq("user_id", userId).single(),
+  ]);
+
+  return {
+    links: links.data || [],
+    socialLinks: socialLinks.data || [],
+    theme: theme.data,
+  };
+}
+
+export async function generateMetadata(
+  { params }: Props,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  const profile = await fetchUserProfile(params.username);
+
   if (!profile) {
-    return {
-      title: "User Not Found",
-    };
+    return { title: "User Not Found" };
   }
 
   return {
@@ -72,49 +103,22 @@ export async function generateMetadata(
   };
 }
 
-export default async function UserPage({
-  params,
-}: {
-  params: { username: string };
-}) {
-  const supabase = createClient();
-
+export default async function UserPage({ params }: Props) {
   try {
-    const { data: profile, error: profileError } = await supabase
-      .from("user_profiles")
-      .select("*")
-      .eq("username", params.username)
-      .single();
+    const profile = await fetchUserProfile(params.username);
+    if (profile.Deeplink === true) {
+      redirect(`https://${profile.url}`);
+    }
 
-    if (profileError || !profile) {
+    if (!profile) {
       return <UserNotFound username={params.username} />;
     }
-    // Check if the current username matches the one in the database (Ex: /jEREMyperwIra can be redirected to /jeremyperwira)
+
     if (params.username !== profile.username) {
-      redirect(`/${profile.username}`); // Redirect to the new username
+      redirect(`/${profile.username}`);
     }
-    const { data: links, error: linksError } = await supabase
-      .from("links")
-      .select("*")
-      .eq("user_id", profile.id);
 
-    const { data: socialLinks, error: socialLinksError } = await supabase
-      .from("social_links")
-      .select("*")
-      .eq("user_id", profile.id);
-
-    const { data: theme, error: themeError } = await supabase
-      .from("themes")
-      .select("*")
-      .eq("user_id", profile.id)
-      .single();
-
-    if (linksError || socialLinksError || themeError) {
-      console.error("Error fetching links:", linksError);
-      console.error("Error fetching social links:", socialLinksError);
-      console.error("Error fetching social links:", themeError);
-      return <div>Error loading data. Please try again later.</div>;
-    }
+    const { links, socialLinks, theme } = await fetchUserData(profile.id);
 
     return (
       <>
@@ -122,7 +126,7 @@ export default async function UserPage({
           profile={profile}
           links={links}
           socialLinks={socialLinks}
-          themes={theme}
+          themes={theme || {}}
         />
         <Watermark username={profile.username} verified={profile.verified} />
       </>
