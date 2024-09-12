@@ -11,11 +11,11 @@ import {
   ModalFooter,
 } from "@nextui-org/react";
 import { createClient } from "@/lib/supabase/client";
-import Cropper from "react-easy-crop";
-import { getCroppedImg } from "@/lib/utils";
+import Cropper from "react-easy-crop"; // Import the Cropper component
+import { getCroppedImg } from "@/lib/utils"; // Contain the getCroppedImg function to crop the image
 import { z } from "zod";
-import { redirect } from "next/navigation";
 import { LinkIcon, UploadCloud, UploadCloudIcon } from "lucide-react";
+import { getAuthenticatedUser } from "@/app/edit/actions"; // Contain the supabase client to get the authenticated user
 
 // Define the image types and their corresponding dimensions
 const IMAGE_TYPES = {
@@ -38,50 +38,6 @@ const urlSchema = z
   .refine((url) => {
     return /\.(jpeg|jpg|gif|png|webp)$/i.test(url);
   }, "URL must end with a valid image extension (.jpg, .png, .gif, .webp)");
-async function getAuthenticatedUser() {
-  const supabase = createClient();
-  const session = await supabase.auth.getSession();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
-  if (!session) redirect("/login");
-
-  return user;
-}
-
-// Use a custom hook for image loading and error handling
-const useImageLoader = (url: string) => {
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!url) {
-      setIsLoaded(false);
-      setError(null);
-      return;
-    }
-
-    const img = document.createElement("img");
-
-    img.onload = () => {
-      setIsLoaded(true);
-      setError(null);
-    };
-    img.onerror = () => {
-      setIsLoaded(false);
-      setError("Unable to load the image. Please check the URL and try again.");
-    };
-    img.src = url;
-
-    return () => {
-      img.onload = null;
-      img.onerror = null;
-    };
-  }, [url]);
-
-  return { isLoaded, error };
-};
 
 export const ImageUploader: React.FC<ImageUploaderProps> = ({
   imageType,
@@ -117,30 +73,6 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
       setImageUrl(URL.createObjectURL(file));
     }
   };
-
-  // const handleLinkSubmit = () => {
-  //   setError(null);
-  //   try {
-  //     urlSchema.parse(imageUrl);
-  //     // If parsing succeeds, proceed with loading the image
-  //     const img = new HTMLImageElement();
-  //     img.onload = () => {
-  //       // Image loaded successfully, no need to set cropping state here
-  //     };
-  //     img.onerror = () => {
-  //       setError(
-  //         "Unable to load the image. Please check the URL and try again."
-  //       );
-  //     };
-  //     img.src = imageUrl;
-  //   } catch (error) {
-  //     if (error instanceof z.ZodError) {
-  //       setError(error.errors[0].message);
-  //     } else {
-  //       setError("Invalid image URL. Please try again.");
-  //     }
-  //   }
-  // };
 
   const handleCropComplete = (croppedArea: any, croppedAreaPixels: any) => {
     setCroppedAreaPixels(croppedAreaPixels);
@@ -229,12 +161,10 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
               <Image
                 src={currentImageUrl}
                 alt={`Current Image`}
-                layout="fill"
-                objectFit="cover"
+                fill
+                className="object-cover"
                 onError={() => setImageError(true)}
                 loading="lazy"
-                placeholder="blur"
-                blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
               />
             </div>
           ) : (
@@ -308,10 +238,8 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
                       onClick={() => setUploadType("link")}
                       color="secondary"
                       variant="solid"
-                      
                       className="border-2 border-gray-300 dark:border-gray-600 bg-blue-500 dark:bg-gray-800"
                       startContent={<LinkIcon className="w-4 h-4" />}
-                      
                     >
                       Insert Link
                     </Button>
@@ -323,7 +251,6 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
                     onChange={handleFileChange}
                     accept="image/*"
                     description="Upload Image file less than 3MB."
-
                     className="text-sm text-gray-600 dark:text-gray-300"
                   />
                 )}
@@ -336,15 +263,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
                       onChange={(e) => setImageUrl(e.target.value)}
                       className="text-sm text-gray-800 dark:text-gray-200"
                       description="Enter a valid image URL, that ends with a valid image extension (.jpg, .png, .gif, .webp)."
-
                     />
-                    {/* <Button
-                      onClick={handleLinkSubmit}
-                      color="primary"
-                      variant="flat"
-                    >
-                      Submit
-                    </Button> */}
                   </div>
                 )}
                 {imageUrl && (

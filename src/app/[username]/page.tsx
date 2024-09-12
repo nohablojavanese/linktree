@@ -1,5 +1,4 @@
 import React from "react";
-// import { createClients } from "@/lib/supabase/client"; //createBrowserClient Supabase
 import { createClient } from "@/lib/supabase/server"; //createServerClient Supabase
 import { UserNotFound } from "@/components/NotFound";
 import { redirect } from "next/navigation";
@@ -10,19 +9,6 @@ import Watermark from "@/components/Watermark";
 
 export const dynamicParams = true;
 export const revalidate = 0; // Disable static generation for this route
-
-// export async function generateStaticParams() {
-//   const supabase = createClients();
-//   const { data: profiles } = await supabase
-//     .from("user_profiles")
-//     .select("username");
-
-//   return (
-//     profiles?.map(({ username }) => ({
-//       username,
-//     })) || []
-//   );
-// }
 type Props = {
   params: { username: string };
 };
@@ -103,8 +89,6 @@ export default async function UserPage({ params }: Props) {
     permanentRedirect(redirectUrl);
   }
 
-  // Rest of your component logic
-  // ...
 
   if (!profile) {
     return <UserNotFound username={params.username} />;
