@@ -1,5 +1,5 @@
 import React from "react";
-import { createClients } from "@/lib/supabase/client"; //createBrowserClient Supabase
+// import { createClients } from "@/lib/supabase/client"; //createBrowserClient Supabase
 import { createClient } from "@/lib/supabase/server"; //createServerClient Supabase
 import { UserNotFound } from "@/components/NotFound";
 import { redirect } from "next/navigation";
