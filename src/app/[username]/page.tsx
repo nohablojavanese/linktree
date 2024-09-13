@@ -6,6 +6,7 @@ import { permanentRedirect } from 'next/navigation';
 import UserPageReturn from "@/components/RenderUsername";
 import { Metadata, ResolvingMetadata } from "next";
 import Watermark from "@/components/Watermark";
+import DeepLinkRedirect from "./Deeplink";
 
 export const dynamicParams = true;
 export const revalidate = 0; // Disable static generation for this route
@@ -81,21 +82,17 @@ export async function generateMetadata(
 export default async function UserPage({ params }: Props) {
   const profile = await fetchUserProfile(params.username);
   
-  if (profile.Deeplink === true && profile.url) {
-    let redirectUrl = profile.url;
-    if (!redirectUrl.startsWith('http://') && !redirectUrl.startsWith('https://')) {
-      redirectUrl = 'https://' + redirectUrl;
-    }
-    permanentRedirect(redirectUrl);
-  }
-
-
   if (!profile) {
     return <UserNotFound username={params.username} />;
   }
 
   if (params.username !== profile.username) {
     redirect(`/${profile.username}`);
+  }
+
+  // Handle DeepLink redirection
+  if (profile.Deeplink === true && profile.url) {
+    return <DeepLinkRedirect url={profile.url} />;
   }
 
   const { links, socialLinks, theme } = await fetchUserData(profile.id);
