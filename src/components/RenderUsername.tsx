@@ -18,9 +18,7 @@ const UserPageReturn: React.FC<UserPageProp> = ({
   return (
     <div className="min-h-screen relative">
       {/* Full-page background */}
-      {!profile.background_url && (
-        <div className="absolute bg-white  inset-0" />
-      )}
+      {!profile.background_url && <div className="absolute bg-black inset-0" />}
       {profile.background_url && (
         <div className="fixed inset-0 z-0">
           {!bgLoaded && (
@@ -32,18 +30,22 @@ const UserPageReturn: React.FC<UserPageProp> = ({
             fill
             // priority
             sizes="(max-width: 768px) 100vw, 1920px"
-            className=" object-cover"
+            className="object-cover"
             onLoad={() => setBgLoaded(true)}
           />
         </div>
       )}
       {/* Content overlay */}
-      <div className="relative min-h-screen bg-black bg-opacity-60 flex flex-col items-center">
+      <div
+        className={`relative min-h-screen flex flex-col items-center ${
+          profile.background_url ? "bg-black bg-opacity-60" : ""
+        }`}
+      >
         {/* Hero Image */}
         <div
           className={`w-full max-w-3xl ${
             profile.hero_url ? "h-60" : "h-20"
-          } relative`}
+          } relative overflow-hidden md:rounded-b-3xl`}
         >
           {profile.hero_url && (
             <>
@@ -59,6 +61,7 @@ const UserPageReturn: React.FC<UserPageProp> = ({
                 className=" object-cover"
                 onLoad={() => setHeroLoaded(true)}
               />
+              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black opacity-70"></div>
             </>
           )}
         </div>
@@ -66,15 +69,19 @@ const UserPageReturn: React.FC<UserPageProp> = ({
         {/* Profile section */}
         <div
           className={`w-full max-w-3xl px-4 ${
-            profile.hero_url? "-mt-20" : "mt-4"
+            profile.hero_url ? "-mt-20" : "mt-4"
           }`}
         >
           <UserProfile
             username={profile.username}
             bio={profile.bio}
-            createdAt={profile.created_at}
-            imageUrl={profile.image_url}
+            created_at={profile.created_at}
+            image_url={profile.image_url}
             verified={profile.verified}
+            id={profile.id}
+            random_id={profile.random_id}
+            updated_at={profile.updated_at}
+            redirect={profile.redirect}
           />
 
           {/* Links section */}

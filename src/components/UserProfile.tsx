@@ -3,56 +3,46 @@ import React from "react";
 import { Skeleton, Tooltip } from "@nextui-org/react";
 import Image from "next/image";
 import { MdVerified } from "react-icons/md";
+import { Profile } from "@/lib/types/type";
+import { DefaultAvatar } from "@/components/ui/DefaultAvatar";
 
-export type UserProfileProps = {
-  username: string;
-  bio?: string;
-  createdAt: string;
-  imageUrl?: string | null;
-  verified?: boolean;
-};
-
-const DefaultAvatar: React.FC<{ username: string }> = ({ username }) => {
-  const letter = username.charAt(0).toUpperCase();
-  const color = `hsl(${Math.random() * 360}, 70%, 70%)`;
-
-  return (
-    <div
-      className="w-32 h-32 rounded-full flex items-center justify-center text-white text-4xl font-bold border-4 border-white"
-      style={{ backgroundColor: color }}
-    >
-      {letter}
-    </div>
-  );
-};
-
-const UserProfile: React.FC<UserProfileProps> = ({
+const UserProfile: React.FC<Profile> = ({
   username,
   bio,
-  createdAt,
-  imageUrl,
+  created_at,
+  image_url,
   verified,
+  random_id,
 }) => {
   const [imageLoaded, setImageLoaded] = React.useState(false);
 
   return (
     <div className="flex flex-col items-center text-center">
-      <ProfileImage username={username} imageUrl={imageUrl} onLoad={() => setImageLoaded(true)} />
+      <ProfileImage
+        username={username}
+        imageUrl={image_url}
+        random_id={random_id}
+        onLoad={() => setImageLoaded(true)}
+      />
       <div className="mt-4">
         <Username username={username} verified={verified} />
         <Bio bio={bio} />
-        <JoinDate createdAt={createdAt} />
+        <JoinDate created_at={created_at} />
       </div>
     </div>
   );
 };
 
-const ProfileImage: React.FC<{ username: string; imageUrl?: string | null; onLoad: () => void }> = ({
-  username,
-  imageUrl,
-  onLoad,
-}) => {
-  if (!imageUrl) return <DefaultAvatar username={username} />;
+const ProfileImage: React.FC<{
+  username: string;
+  imageUrl?: string | null;
+  random_id: string;
+  onLoad: () => void;
+}> = ({ username, imageUrl, random_id, onLoad }) => {
+  if (!imageUrl)
+    return (
+      <DefaultAvatar username={username} random_id={random_id} size={128} />
+    );
 
   return (
     <div className="relative">
@@ -69,14 +59,22 @@ const ProfileImage: React.FC<{ username: string; imageUrl?: string | null; onLoa
   );
 };
 
-const Username: React.FC<{ username: string; verified?: boolean }> = ({ username, verified }) => (
+const Username: React.FC<{ username: string; verified?: boolean }> = ({
+  username,
+  verified,
+}) => (
   <h1 className="text-2xl font-bold text-white flex items-center justify-center">
     @{username}
     {verified !== undefined && (
-      <Tooltip className="text-black" content={verified ? "Verified" : "Unverified"}>
+      <Tooltip
+        className="text-black"
+        content={verified ? "Verified" : "Unverified"}
+      >
         <span>
           <MdVerified
-            className={`ml-2 ${verified ? "text-blue-500" : "text-gray-400 hidden"} cursor-help`}
+            className={`ml-2 ${
+              verified ? "text-blue-500" : "text-gray-400 hidden"
+            } cursor-help`}
             size={24}
           />
         </span>
@@ -85,14 +83,14 @@ const Username: React.FC<{ username: string; verified?: boolean }> = ({ username
   </h1>
 );
 
-const Bio: React.FC<{ bio?: string }> = ({ bio }) => (
+const Bio: React.FC<{ bio?: string | null }> = ({ bio }) => (
   <h2 className="text-sm text-white mt-2">{bio}</h2>
 );
 
-const JoinDate: React.FC<{ createdAt: string }> = ({ createdAt }) => (
+const JoinDate: React.FC<{ created_at: string }> = ({ created_at }) => (
   <p className="text-xs text-gray-300 mt-1">
     Joined{" "}
-    {new Date(createdAt).toLocaleDateString("en-US", {
+    {new Date(created_at).toLocaleDateString("en-US", {
       month: "long",
       year: "numeric",
     })}
