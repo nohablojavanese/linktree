@@ -2,7 +2,7 @@ import React from "react";
 import { createClient } from "@/lib/supabase/server"; //createServerClient Supabase
 import { UserNotFound } from "@/components/NotFound";
 import { redirect } from "next/navigation";
-import { permanentRedirect } from 'next/navigation';
+import { permanentRedirect } from "next/navigation";
 import UserPageReturn from "@/components/RenderUsername";
 import { Metadata, ResolvingMetadata } from "next";
 import Watermark from "@/components/Watermark";
@@ -81,7 +81,6 @@ export async function generateMetadata(
 
 export default async function UserPage({ params }: Props) {
   const profile = await fetchUserProfile(params.username);
-  
   if (!profile) {
     return <UserNotFound username={params.username} />;
   }

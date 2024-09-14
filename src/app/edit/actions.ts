@@ -30,10 +30,11 @@ export async function getAuthenticatedUser() {
 export async function createLink(formData: FormData) {
   const user = await getAuthenticatedUser();
   const supabase = createClient();
-
   const title = formData.get("title") as string;
   const url = formData.get("url") as string;
   const description = formData.get("description") as string;
+  const app = formData.get("app") as string;
+  const isVisible = formData.get("isVisible") === "true";
 
   try {
     z.string()
@@ -45,6 +46,9 @@ export async function createLink(formData: FormData) {
       .max(500, "Description must be at most 500 characters long")
       .optional()
       .parse(description);
+    z.string().optional().parse(app);
+    z.boolean().parse(isVisible);
+
 
     const { data: maxOrderData, error: maxOrderError } = await supabase
       .from("links")
@@ -63,7 +67,8 @@ export async function createLink(formData: FormData) {
       title: title,
       url: url,
       description: description,
-      order: newOrder, 
+      order: newOrder,
+      app: app, // Add the app field
     });
     if (error) throw new Error("Failed to create link");
     revalidatePath("/edit");
@@ -78,7 +83,7 @@ export async function createLink(formData: FormData) {
 export async function updateLink(formData: FormData) {
   const user = await getAuthenticatedUser();
   const supabase = createClient();
-
+  
   const id = formData.get("id") as string;
   const updateData: { title: string; url: string; description?: string } = {
     title: formData.get("title") as string,

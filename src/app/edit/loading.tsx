@@ -1,6 +1,5 @@
-import React from 'react';
+import React from "react";
 import { Skeleton } from "@nextui-org/react";
-
 const EditPageLoading = () => {
   return (
     <div className="mx-auto p-4 bg-gray-50 dark:bg-gray-900 min-h-screen overflow-hidden">

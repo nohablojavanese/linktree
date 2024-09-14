@@ -1,6 +1,5 @@
 "use client";
 import React, { useState, useTransition, useEffect } from "react";
-import { Select, SelectItem } from "@nextui-org/react";
 import {
   Button,
   Input,
@@ -16,8 +15,6 @@ import {
 } from "@nextui-org/react";
 import { Link, Plus, X } from "lucide-react";
 import { BiSolidPaste } from "react-icons/bi";
-import { AppSelector } from "./AppsComponent";
-
 import { createLink } from "@/app/edit/actions";
 import { z } from "zod";
 import { toast } from "sonner";
@@ -41,7 +38,6 @@ const linkSchema = z.object({
     .string()
     .max(30, "Description must be 30 characters or less")
     .optional(),
-  app: z.string().optional(),
 });
 
 type LinkItem = {
@@ -56,7 +52,7 @@ type YourLinksProps = {
   links: LinkItem[];
 };
 
-export const AddLink: React.FC<YourLinksProps> = ({ links }) => {
+export const AddApp: React.FC<YourLinksProps> = ({ links }) => {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isPending, startTransition] = useTransition();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -112,10 +108,6 @@ export const AddLink: React.FC<YourLinksProps> = ({ links }) => {
         await createLink(formDataToSend);
         onClose();
         setFormData({ title: "", url: "", description: "", app: "" });
-        toast.success("Link has been created", {
-          description: `Added ${formData.title} to your page`,
-          icon: "🚀",
-        });
       });
     }
   };
@@ -126,10 +118,6 @@ export const AddLink: React.FC<YourLinksProps> = ({ links }) => {
 
   const handleClearForm = () => {
     setFormData({ title: "", url: "", description: "", app: "" });
-  };
-
-  const handleAppSelect = (app: string) => {
-    setFormData((prevState) => ({ ...prevState, app }));
   };
 
   return (
@@ -150,7 +138,6 @@ export const AddLink: React.FC<YourLinksProps> = ({ links }) => {
       <Modal
         isOpen={isOpen}
         onClose={onClose}
-        size="2xl"
         backdrop="opaque"
         placement="bottom-center"
         className="text-gray-900 dark:text-gray-100"
@@ -211,12 +198,6 @@ export const AddLink: React.FC<YourLinksProps> = ({ links }) => {
                 isInvalid={!!errors.description}
                 errorMessage={errors.description}
               />
-              <div className="w-full">
-                <AppSelector
-                  selectedApp={formData.app}
-                  onAppSelect={handleAppSelect}
-                />
-              </div>
             </ModalBody>
             <ModalFooter>
               <Button color="danger" variant="light" onPress={onClose}>

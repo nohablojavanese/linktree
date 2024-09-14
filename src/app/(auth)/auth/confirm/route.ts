@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
       });
 
       if (!error) {
-        console.log("Successful Authentication");
+        // console.log("Successful Authentication");
         // Redirect to the next URL after successful verification
         return NextResponse.redirect(new URL(next, request.url));
       } else {

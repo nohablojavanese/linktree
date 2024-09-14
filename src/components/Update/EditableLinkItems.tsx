@@ -58,6 +58,7 @@ type EditableLinkItemProps = LinkType & {
 export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
   id,
   title,
+  app,
   url,
   description,
   isVisible,
@@ -67,7 +68,6 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
 }) => {
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
 
-  // const [isEditing, setIsEditing] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isPending, startTransition] = useTransition();
   const {
@@ -144,8 +144,8 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
     <>
       <Card className="w-full">
         <CardBody className="p-4">
-          <div className="flex flex-col space-y-2">
-            <div className="flex items-center space-x-2 group">
+          <div className="flex flex-col justify-center text-center">
+            <div className="space-x-2 group">
               <a href={formattedUrl} target="_blank" rel="noopener noreferrer">
                 <Link
                   size={16}
@@ -153,28 +153,19 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
                 />
               </a>
               <h3 className="text-md md:text-lg font-semibold text-gray-900 dark:text-gray-100 break-all">
-                {title}
+                {title} - {app}
               </h3>
             </div>
-            <div className="text-xs md:text-sm text-gray-500 dark:text-gray-400 break-all">
+            <div className="text-xs md:text-sm flex flex-col text-gray-500 dark:text-gray-400 break-all">
               {isDescriptionExpanded ? url : truncatedUrl}
               {url.length > 40 && (
                 <a
-                  className="ml-2 cursor-pointer hover:text-blue-600"
-                  // size="sm"
-                  // variant="light"
+                  className="text-xs cursor-pointer hover:text-blue-600"
                   onClick={() =>
                     setIsDescriptionExpanded(!isDescriptionExpanded)
                   }
-                  // endContent={
-                  //   isDescriptionExpanded ? (
-                  //     <ChevronUp size={16} />
-                  //   ) : (
-                  //     <ChevronDown size={16} />
-                  //   )
-                  // }
                 >
-                  {isDescriptionExpanded ? "Hide" : "More"}
+                  {isDescriptionExpanded ? "Hide" : "Show More"}
                 </a>
               )}
             </div>
@@ -203,7 +194,7 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
           </div>
         </CardBody>
 
-        <CardFooter className="flex justify-center mt-4 space-x-4">
+        <CardFooter className="flex justify-center space-x-4">
           <ButtonGroup>
             <Button
               onClick={onEditModalOpen}

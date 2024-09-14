@@ -24,7 +24,7 @@ export async function resetPassword(formData: FormData, code: string | null) {
   const { error } = await supabase.auth.updateUser({ password });
 
   if (error) {
-    console.log(error);
+    // console.log(error);
     return { error: "Unable to reset Password. Try again!" };
   }
 

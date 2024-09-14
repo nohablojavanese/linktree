@@ -1,4 +1,3 @@
-import React from "react";
 import type { Metadata } from "next";
 
 import { createClient } from "@/lib/supabase/server";
@@ -10,6 +9,8 @@ import { AddSocial } from "@/components/Create/AddSocial";
 import { DragLinks } from "@/components/Drag/ServerDrag";
 import SignOutButton from "@/components/SignOut";
 import { Suspense } from "react";
+import { AddApp } from "@/components/Create/AddApp";
+import { AddHeader } from "@/components/Create/AddHeader";
 
 async function fetchUserData() {
   const supabase = createClient();
@@ -71,18 +72,16 @@ export default async function EditPage() {
         Profile not found. Please contact support.
       </div>
     );
-  }   
+  }
 
   return (
     <div className="mx-auto p-4 bg-[#F3F3F1] dark:bg-gray-900  min-h-screen overflow-hidden pb-20">
       <div className="max-w-md mx-auto space-y-6">
+        <AddHeader />
+        {/* <AddApp links={links || []} /> */}
         <AddLink links={links || []} />
         <Suspense fallback={<p>Loading Links...</p>}>
-          {links && links.length > 0 ? (
-            <DragLinks links={links} />
-          ) : (
-            null
-          )}
+          {links && links.length > 0 ? <DragLinks links={links} /> : null}
         </Suspense>
         <AddSocial socialLinks={socialLinks || []} />
         <div className="space-y-4">
