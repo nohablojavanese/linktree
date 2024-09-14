@@ -2,11 +2,13 @@ import React from "react";
 import { createClient } from "@/lib/supabase/server"; //createServerClient Supabase
 import { UserNotFound } from "@/components/NotFound";
 import { redirect } from "next/navigation";
-import { permanentRedirect } from "next/navigation";
+
 import UserPageReturn from "@/components/RenderUsername";
 import { Metadata, ResolvingMetadata } from "next";
 import Watermark from "@/components/Watermark";
 import DeepLinkRedirect from "./Deeplink";
+// import { UserProfileProps } from "@/components/UserProfile";
+import { Profile } from "@/lib/types/type";
 
 export const dynamicParams = true;
 export const revalidate = 0; // Disable static generation for this route
@@ -17,11 +19,12 @@ type Props = {
 async function fetchUserProfile(username: string) {
   const supabase = createClient();
   const { data: profile, error } = await supabase
-    .from("user_profiles")
-    .select("*")
-    .eq("username", username)
-    .single();
+    .rpc('clean_user_profile', { search_username: username })
+    .single<Profile>();
 
+  if (error && error.code === 'PGRST116') {
+    return null; // User not found
+  }
   if (error) throw error;
   return profile;
 }
@@ -55,7 +58,7 @@ export async function generateMetadata(
     title: `${profile.username} Links`,
     description: profile.bio || `Check out ${profile.username}'s profile`,
     openGraph: {
-      title: `${profile.display_name || profile.username}'s Profile`,
+      title: `${profile.username}'s Profile`,
       description: profile.bio || `Check out ${profile.username}'s profile`,
       url: `https://yourdomain.com/${profile.username}`,
       siteName: "Linked.id",
@@ -72,7 +75,7 @@ export async function generateMetadata(
     },
     twitter: {
       card: "summary_large_image",
-      title: `${profile.display_name || profile.username}'s Profile`,
+      title: `${profile.username}'s Profile`,
       description: profile.bio || `Check out ${profile.username}'s profile`,
       images: [profile.image_url || "/image.png"],
     },
@@ -81,6 +84,7 @@ export async function generateMetadata(
 
 export default async function UserPage({ params }: Props) {
   const profile = await fetchUserProfile(params.username);
+  
   if (!profile) {
     return <UserNotFound username={params.username} />;
   }
@@ -90,7 +94,7 @@ export default async function UserPage({ params }: Props) {
   }
 
   // Handle DeepLink redirection
-  if (profile.Deeplink === true && profile.url) {
+  if (profile.redirect === true && profile.url) {
     return <DeepLinkRedirect url={profile.url} />;
   }
 
