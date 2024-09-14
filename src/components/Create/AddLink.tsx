@@ -160,81 +160,91 @@ export const AddLink: React.FC<YourLinksProps> = ({ links }) => {
         }}
       >
         <ModalContent>
-          <form onSubmit={handleSubmit}>
-            <ModalHeader className="flex flex-col gap-1">
-              Add New Link
-            </ModalHeader>
-            <ModalBody>
-              <Input
-                name="title"
-                label="Title"
-                placeholder="Enter link title"
-                className="dark:text-white"
-                value={formData.title}
-                onValueChange={handleInputChange("title")}
-                isInvalid={!!errors.title}
-                errorMessage={errors.title}
-              />
-              <Input
-                name="url"
-                label="URL"
-                placeholder="Enter link URL"
-                className="dark:text-white"
-                value={formData.url}
-                onValueChange={handleInputChange("url")}
-                isInvalid={!!errors.url}
-                errorMessage={errors.url}
-                endContent={
-                  <Button
-                    isIconOnly
-                    variant="flat"
-                    onPress={() =>
-                      navigator.clipboard.readText().then((text) =>
-                        setFormData((prevState) => ({
-                          ...prevState,
-                          url: text,
-                        }))
-                      )
-                    }
-                  >
-                    <BiSolidPaste />
-                  </Button>
-                }
-              />
-              <Textarea
-                name="description"
-                label="Description"
-                placeholder="Enter link description"
-                className="dark:text-white"
-                value={formData.description}
-                onValueChange={handleInputChange("description")}
-                isInvalid={!!errors.description}
-                errorMessage={errors.description}
-              />
-              <div className="w-full">
-                <AppSelector
-                  selectedApp={formData.app}
-                  onAppSelect={handleAppSelect}
+          {(onClose) => (
+            <form onSubmit={handleSubmit}>
+              <ModalHeader className="flex text-center flex-col gap-1">
+                Add {formData.app || "Link"} 
+              </ModalHeader>
+              <ModalBody>
+                <Input
+                  name="title"
+                  label="Title"
+                  placeholder="Enter link title"
+                  className="dark:text-white"
+                  value={formData.title}
+                  onValueChange={handleInputChange("title")}
+                  isInvalid={!!errors.title}
+                  isClearable
+                  errorMessage={errors.title}
                 />
-              </div>
-            </ModalBody>
-            <ModalFooter>
-              <Button color="danger" variant="light" onPress={onClose}>
-                Cancel
-              </Button>
-              <Button
-                color="warning"
-                variant="light"
-                onPress={handleClearForm}
-                startContent={<X size={16} />}
-              >
-                Clear
-              </Button>
-              <Button color="primary" type="submit" isLoading={isPending}>
-                {isPending ? "Adding..." : "Add Link"}
-              </Button>
-            </ModalFooter>
-          </form>
+                <Input
+                  name="url"
+                  label="URL"
+                  placeholder="Enter link URL"
+                  className="dark:text-white"
+                  value={formData.url}
+                  onValueChange={handleInputChange("url")}
+                  isInvalid={!!errors.url}
+                  errorMessage={errors.url}
+                  isClearable
+                  endContent={
+                    <Button
+                      isIconOnly
+                      variant="flat"
+                      onPress={() =>
+                        navigator.clipboard.readText().then((text) =>
+                          setFormData((prevState) => ({
+                            ...prevState,
+                            url: text,
+                          }))
+                        )
+                      }
+                    >
+                      <BiSolidPaste />
+                    </Button>
+                  }
+                />
+                <Textarea
+                  name="description"
+                  label="Description"
+                  placeholder="Enter link description"
+                  className="dark:text-white"
+                  value={formData.description}
+                  onValueChange={handleInputChange("description")}
+                  isInvalid={!!errors.description}
+                  errorMessage={errors.description}
+                />
+                <div className="w-full" onClick={(e) => e.preventDefault()}>
+                  <AppSelector
+                    selectedApp={formData.app}
+                    onAppSelect={handleAppSelect}
+                  />
+                </div>
+              </ModalBody>
+              <ModalFooter>
+                <Button
+                  color="danger"
+                  variant="light"
+                  onPress={onClose}
+                  type="button"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  color="warning"
+                  variant="light"
+                  onPress={handleClearForm}
+                  startContent={<X size={16} />}
+                  type="button"
+                >
+                  Clear
+                </Button>
+                <Button color="primary" type="submit" isLoading={isPending}>
+                  {isPending ? "Adding..." : "Add Link"}
+                </Button>
+              </ModalFooter>
+            </form>
+          )}
         </ModalContent>
       </Modal>
     </>
