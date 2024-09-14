@@ -47,6 +47,24 @@ export async function updateProfile(data: ProfileUpdateData) {
   try {
     const validatedData = profileSchema.partial().parse(data);
 
+    if (validatedData.username) {
+      // Check if the username already exists (case-insensitive)
+      const { data: existingUser, error: checkError } = await supabase
+        .from("user_profiles")
+        .select("id")
+        .neq("id", user.id)
+        .filter('username', 'ilike', validatedData.username)
+        .single();
+
+      if (checkError && checkError.code !== 'PGRST116') {
+        throw new Error(ERROR_MESSAGES.UPDATE_FAILED);
+      }
+
+      if (existingUser) {
+        throw new Error(ERROR_MESSAGES.USERNAME_TAKEN);
+      }
+    }
+
     const { error } = await supabase
       .from("user_profiles")
       .update(validatedData)
