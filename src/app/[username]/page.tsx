@@ -1,13 +1,11 @@
 import React from "react";
-import { createClient } from "@/lib/supabase/server"; //createServerClient Supabase
+import { createClient } from "@/lib/supabase/server"; 
 import { UserNotFound } from "@/components/NotFound";
 import { redirect } from "next/navigation";
-
 import UserPageReturn from "@/components/RenderUsername";
 import { Metadata, ResolvingMetadata } from "next";
 import Watermark from "@/components/Watermark";
 import DeepLinkRedirect from "./Deeplink";
-// import { UserProfileProps } from "@/components/UserProfile";
 import { Profile } from "@/lib/types/type";
 
 export const dynamicParams = true;
@@ -32,7 +30,7 @@ async function fetchUserProfile(username: string) {
 async function fetchUserData(userId: string) {
   const supabase = createClient();
   const [links, socialLinks, theme] = await Promise.all([
-    supabase.from("links").select("*").eq("user_id", userId),
+    supabase.from("links").select("*").eq("user_id", userId).order('order', { ascending: true }),
     supabase.from("social_links").select("*").eq("user_id", userId),
     supabase.from("themes").select("*").eq("user_id", userId).single(),
   ]);
