@@ -3,6 +3,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { toast } from "sonner";
 import { z } from "zod";
 
 const urlSchema = z
@@ -77,6 +78,18 @@ export async function createLink(formData: FormData) {
       throw new Error(error.errors[0].message);
     }
     throw error;
+  }
+}
+
+export async function fetchMetadata(url: string): Promise<string> {
+  try {
+    const validatedUrl = z.string().url().parse(url);
+    const response = await fetch(validatedUrl);
+    const html = await response.text();
+    const match = html.match(/<title>(.*?)<\/title>/i);
+    return match && match[1] ? match[1] : url;
+  } catch (error) {
+    throw new Error(`Failed to fetch metadata for ${url}: ${error}`);
   }
 }
 
