@@ -12,7 +12,7 @@ import {
 import { Link, Upload, ImageIcon, MoreHorizontal } from "lucide-react";
 import { InstagramLogoIcon, TwitterLogoIcon } from "@radix-ui/react-icons";
 import { MdFacebook, MdYoutubeSearchedFor } from "react-icons/md";
-import { BiLogoTiktok } from "react-icons/bi";
+import { BiLogoSpotify, BiLogoTiktok } from "react-icons/bi";
 import Image from "next/image";
 import Autoplay from "embla-carousel-autoplay";
 import AutoScroll from "embla-carousel-auto-scroll";
@@ -29,6 +29,8 @@ const appOptions: AppOption[] = [
   { key: "File Upload", icon: <Upload size={24} />, label: "Upload" },
   { key: "Facebook", icon: <MdFacebook size={24} />, label: "Facebook" },
   { key: "Twitter", icon: <TwitterLogoIcon />, label: "Twitter" },
+  { key: "Spotify", icon: <BiLogoSpotify />, label: "Spotify" },
+
   {
     key: "Tiktok Profile",
     icon: <BiLogoTiktok size={24} />,
@@ -63,6 +65,7 @@ export const AppSelector: React.FC<AppSelectorProps> = ({
   const [api, setApi] = useState<CarouselApi>();
   const [thumbApi, setThumbApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
+  const [userSelected, setUserSelected] = useState<number | null>(null);
 
   useEffect(() => {
     if (!api || !thumbApi) return;
@@ -83,6 +86,8 @@ export const AppSelector: React.FC<AppSelectorProps> = ({
 
   const handleThumbClick = (index: number) => {
     api?.scrollTo(index);
+    setUserSelected(index);
+    onAppSelect(appOptions[index].key);
   };
 
   return (
@@ -94,8 +99,8 @@ export const AppSelector: React.FC<AppSelectorProps> = ({
             speed: 2,
             startDelay: 1000,
             stopOnFocusIn: true,
-            // stopOnInteraction: true,
             stopOnMouseEnter: true,
+            // stopOnInteraction: false,
           }),
         ]}
         setApi={setApi}
@@ -130,7 +135,7 @@ export const AppSelector: React.FC<AppSelectorProps> = ({
       <Carousel
         setApi={setThumbApi}
         opts={{
-          align: "start",
+          align: "center",
           loop: true,
         }}
         className="w-full"
@@ -144,14 +149,11 @@ export const AppSelector: React.FC<AppSelectorProps> = ({
               <Card
                 className={cn(
                   "flex flex-col items-center justify-center p-2 cursor-pointer transition-all w-full h-20 md:h-24",
-                  current === index
+                  userSelected === index
                     ? "border-blue-500 bg-blue-50 dark:bg-blue-900"
                     : "border-gray-200 hover:border-gray-300 dark:border-gray-700 dark:hover:border-gray-600"
                 )}
-                onClick={() => {
-                  handleThumbClick(index);
-                  onAppSelect(app.key);
-                }}
+                onClick={() => handleThumbClick(index)}
               >
                 <CardContent className="flex flex-col items-center justify-center p-1 md:p-2">
                   <div className="text-2xl md:text-3xl">{app.icon}</div>

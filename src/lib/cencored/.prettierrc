@@ -1,0 +1,20 @@
+{
+  "printWidth": 80,
+  "overrides": [
+    {
+      "files": "src/blocklist/blockedUrls.ts",
+      "options": {
+        "printWidth": 120,
+        "singleQuote": true,
+        "trailingComma": "none"
+      }
+    },
+    {
+      "files": "src/lib/cencored/BlockedUrl.ts",
+      "options": {
+        "printWidth": 80,
+        "singleQuote": false
+      }
+    }
+  ]
+}

@@ -23,7 +23,7 @@ const IMAGE_TYPES = {
   hero: { width: 1500, height: 500 },
   background: { width: 1920, height: 1080 },
 };
-type ImageType = keyof typeof IMAGE_TYPES;
+export type ImageType = keyof typeof IMAGE_TYPES;
 
 interface ImageUploaderProps {
   imageType: ImageType;

@@ -13,6 +13,7 @@ export type LinkItemProps = {
   imageUrl: string;
   isVisible: boolean;
   themes: ThemeTypes;
+  app?: string;
 };
 export const LinkItem: React.FC<LinkItemProps> = ({
   title,

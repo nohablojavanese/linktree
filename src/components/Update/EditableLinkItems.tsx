@@ -145,7 +145,7 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
       <Card className="w-full">
         <CardBody className="p-4">
           <div className="flex flex-col justify-center text-center">
-            <div className="space-x-2 group">
+            <div className=" group">
               <a href={formattedUrl} target="_blank" rel="noopener noreferrer">
                 <Link
                   size={16}
@@ -153,7 +153,7 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
                 />
               </a>
               <h3 className="text-md md:text-lg font-semibold text-gray-900 dark:text-gray-100 break-all">
-                {title} - {app}
+                {title}
               </h3>
             </div>
             <div className="text-xs md:text-sm flex flex-col text-gray-500 dark:text-gray-400 break-all">
@@ -171,6 +171,7 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
             </div>
 
             <div className="mt-2 text-gray-700 dark:text-gray-300 text-xs md:text-md">
+              {app} 
               {isDescriptionExpanded ? description : truncatedDescription}
               {description?.length > 40 && (
                 <Button

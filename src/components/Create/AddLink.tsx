@@ -1,6 +1,5 @@
 "use client";
-import React, { useState, useTransition, useEffect } from "react";
-import { Select, SelectItem } from "@nextui-org/react";
+import React, { useState, useTransition } from "react";
 import {
   Button,
   Input,
@@ -18,29 +17,24 @@ import { Link, Plus, X } from "lucide-react";
 import { BiSolidPaste } from "react-icons/bi";
 import { AppSelector } from "./AppsComponent";
 
-import { createLink } from "@/app/edit/actions";
+import { createLink, fetchMetadata } from "@/app/edit/actions";
 import { z } from "zod";
 import { toast } from "sonner";
+import { censoredString, censoredUrl } from "@/lib/cencored/zodProvanity";
 
 const linkSchema = z.object({
-  title: z
-    .string()
-    .min(1, "Title is required")
-    .max(100, "Title must be 100 characters or less"),
-  url: z.string().refine(
-    (url) => {
-      const urlPattern =
-        /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d+)?(\/.*)?$/;
-      return urlPattern.test(url);
-    },
-    {
-      message: "Invalid URL format",
-    }
+  title: censoredString(
+    z
+      .string()
+      .min(1, "Title is required")
+      .max(100, "Title must be 100 characters or less"),
+    "Title contains inappropriate language"
   ),
-  description: z
-    .string()
-    .max(30, "Description must be 30 characters or less")
-    .optional(),
+  url: censoredUrl(z.string()),
+  description: censoredString(
+    z.string().max(30, "Description must be 30 characters or less").optional(),
+    "Description contains inappropriate language"
+  ),
   app: z.string().optional(),
 });
 
@@ -66,21 +60,7 @@ export const AddLink: React.FC<YourLinksProps> = ({ links }) => {
     description: "",
     app: "",
   });
-
-  useEffect(() => {
-    const getClipboardContent = async () => {
-      try {
-        const text = await navigator.clipboard.readText();
-        setFormData((prevState) => ({ ...prevState, url: text }));
-      } catch (error) {
-        console.error("Failed to read clipboard contents: ", error);
-      }
-    };
-
-    if (isOpen) {
-      getClipboardContent();
-    }
-  }, [isOpen]);
+  const [isLoadingMetadata, setIsLoadingMetadata] = useState(false);
 
   const validateForm = (data: typeof formData) => {
     try {
@@ -101,22 +81,60 @@ export const AddLink: React.FC<YourLinksProps> = ({ links }) => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (validateForm(formData)) {
-      startTransition(async () => {
-        const formDataToSend = new FormData();
-        Object.entries(formData).forEach(([key, value]) => {
-          formDataToSend.append(key, value);
+    let validatedFormData = { ...formData };
+
+    try {
+      // Validate URL
+      const validatedUrl = censoredUrl(z.string()).parse(formData.url);
+      validatedFormData.url = validatedUrl.startsWith("http")
+        ? validatedUrl
+        : `https://${validatedUrl}`;
+
+      // If title is empty, fetch metadata
+      if (!formData.title.trim()) {
+        setIsLoadingMetadata(true);
+        try {
+          const metadata = await fetchMetadata(validatedFormData.url);
+          validatedFormData.title = metadata;
+          setFormData(validatedFormData);
+        } catch (error) {
+          toast.error("Error fetching metadata from URL", {
+            description: `Error ${validatedFormData.url}: ${error}`,
+            icon: "🚨",
+          });
+        } finally {
+          setIsLoadingMetadata(false);
+        }
+      }
+
+      // Validate the entire form data
+      if (validateForm(validatedFormData)) {
+        startTransition(async () => {
+          const formDataToSend = new FormData();
+          Object.entries(validatedFormData).forEach(([key, value]) => {
+            formDataToSend.append(key, value);
+          });
+          await createLink(formDataToSend);
+          onClose();
+          setFormData({ title: "", url: "", description: "", app: "" });
+          toast.success("Link has been created", {
+            description: `Added ${validatedFormData.title} to your page`,
+            icon: "🚀",
+          });
         });
-        await createLink(formDataToSend);
-        onClose();
-        setFormData({ title: "", url: "", description: "", app: "" });
-        toast.success("Link has been created", {
-          description: `Added ${formData.title} to your page`,
-          icon: "🚀",
+      }
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const newErrors: { [key: string]: string } = {};
+        error.errors.forEach((err) => {
+          if (err.path) {
+            newErrors[err.path[0]] = err.message;
+          }
         });
-      });
+        setErrors(newErrors);
+      }
     }
   };
 
@@ -130,6 +148,20 @@ export const AddLink: React.FC<YourLinksProps> = ({ links }) => {
 
   const handleAppSelect = (app: string) => {
     setFormData((prevState) => ({ ...prevState, app }));
+  };
+
+  const ErrorMessage: React.FC<{ error: string }> = ({ error }) => {
+    if (error.includes("blocked domain")) {
+      return (
+        <span>
+          URL contains a blocked domain. Please check our{" "}
+          <a href="/terms" className="text-red-500 underline">
+            Terms of Service
+          </a>
+        </span>
+      );
+    }
+    return <span>{error}</span>;
   };
 
   return (
@@ -163,30 +195,30 @@ export const AddLink: React.FC<YourLinksProps> = ({ links }) => {
           {(onClose) => (
             <form onSubmit={handleSubmit}>
               <ModalHeader className="flex text-center flex-col gap-1">
-                Add {formData.app || "Link"} 
+                Add {formData.app || "Link"}
               </ModalHeader>
               <ModalBody>
                 <Input
-                  name="title"
-                  label="Title"
-                  placeholder="Enter link title"
-                  className="dark:text-white"
-                  value={formData.title}
-                  onValueChange={handleInputChange("title")}
-                  isInvalid={!!errors.title}
-                  isClearable
-                  errorMessage={errors.title}
-                />
-                <Input
                   name="url"
                   label="URL"
-                  placeholder="Enter link URL"
+                  placeholder="enter link URL"
                   className="dark:text-white"
                   value={formData.url}
                   onValueChange={handleInputChange("url")}
                   isInvalid={!!errors.url}
-                  errorMessage={errors.url}
-                  isClearable
+                  errorMessage={
+                    errors.url && <ErrorMessage error={errors.url} />
+                  }
+                  isDisabled={isLoadingMetadata}
+                  startContent={
+                    !formData.url.startsWith("http") && (
+                      <div className="pointer-events-none flex items-center">
+                        <span className="text-default-400 text-small">
+                          https://
+                        </span>
+                      </div>
+                    )
+                  }
                   endContent={
                     <Button
                       isIconOnly
@@ -204,10 +236,22 @@ export const AddLink: React.FC<YourLinksProps> = ({ links }) => {
                     </Button>
                   }
                 />
+                <Input
+                  name="title"
+                  label="Title"
+                  placeholder="Add title for your viewer"
+                  className="dark:text-white"
+                  value={formData.title}
+                  onValueChange={handleInputChange("title")}
+                  isInvalid={!!errors.title}
+                  isClearable
+                  errorMessage={errors.title}
+                  isDisabled={isLoadingMetadata}
+                />
                 <Textarea
                   name="description"
                   label="Description"
-                  placeholder="Enter link description"
+                  placeholder="Add description (optional)"
                   className="dark:text-white"
                   value={formData.description}
                   onValueChange={handleInputChange("description")}
@@ -239,8 +283,12 @@ export const AddLink: React.FC<YourLinksProps> = ({ links }) => {
                 >
                   Clear
                 </Button>
-                <Button color="primary" type="submit" isLoading={isPending}>
-                  {isPending ? "Adding..." : "Add Link"}
+                <Button
+                  color="primary"
+                  type="submit"
+                  isLoading={isPending || isLoadingMetadata}
+                >
+                  {isPending || isLoadingMetadata ? "Adding..." : "Add Link"}
                 </Button>
               </ModalFooter>
             </form>
