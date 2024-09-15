@@ -261,7 +261,7 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
               handleSubmit(new FormData(e.target as HTMLFormElement));
             }}
           >
-            <ModalHeader className="flex flex-col gap-1">Edit Link</ModalHeader>
+            <ModalHeader className="flex flex-col gap-1 text-center">Edit Link</ModalHeader>
             <ModalBody>
               <input type="hidden" name="id" value={id} />
               <Input
@@ -271,27 +271,27 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
                 className="dark:text-white"
                 isInvalid={!!errors.title}
                 errorMessage={errors.title}
-                description={`Tersimpan: ${title}`}
+                description={`${title}`}
               />
               <Input
                 label="URL"
                 name="url"
-                // isClearable
+                isClearable
                 onValueChange={setUrl}
-                // defaultValue={url}
-                description={`Tersimpan: ${truncatedUrl}`}
-                value={copyUrl}
+                defaultValue={url}
+                // description={`Tersimpan: ${truncatedUrl}`}
+                // value={url}
                 className="dark:text-white"
                 isInvalid={!!errors.url}
                 errorMessage={errors.url}
-                endContent={
-                  <Button
-                    startContent={<BiSolidPaste />}
-                    onPress={handlePasteFromClipboard}
-                    isIconOnly
-                    color="warning"
-                  ></Button>
-                }
+                // endContent={
+                //   <Button
+                //     startContent={<BiSolidPaste />}
+                //     onPress={handlePasteFromClipboard}
+                //     isIconOnly
+                //     color="warning"
+                //   ></Button>
+                // }
               />
 
               <Textarea

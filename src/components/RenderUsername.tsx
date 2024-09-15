@@ -1,8 +1,6 @@
-"use client";
-import React, { useState } from "react";
 import Image from "next/image";
 import { Skeleton } from "@nextui-org/react";
-import { LinkItem } from "@/components/LinkItems";
+import LinkItem from "@/components/App/LinkItems";
 import { SocialLink } from "@/components/SocialLinks";
 import { UserProfile } from "@/components/UserProfile";
 import { UserPageProp } from "@/lib/types/type";
@@ -13,17 +11,17 @@ const UserPageReturn: React.FC<UserPageProp> = ({
   socialLinks,
   themes,
 }) => {
-  const [bgLoaded, setBgLoaded] = useState(false);
-  const [heroLoaded, setHeroLoaded] = useState(false);
+  // const [bgLoaded, setBgLoaded] = useState(false);
+  // const [heroLoaded, setHeroLoaded] = useState(false);
   return (
-    <div className="min-h-screen relative">
+    <div className="min-h-screen relative pb-20">
       {/* Full-page background */}
       {!profile.background_url && <div className="absolute bg-black inset-0" />}
       {profile.background_url && (
         <div className="fixed inset-0 z-0">
-          {!bgLoaded && (
+          {/* {!bgLoaded && (
             <div className="absolute inset-0 bg-gray-200 animate-pulse" />
-          )}
+          )} */}
           <Image
             src={profile.background_url}
             alt="Background"
@@ -31,7 +29,7 @@ const UserPageReturn: React.FC<UserPageProp> = ({
             // priority
             sizes="(max-width: 768px) 100vw, 1920px"
             className="object-cover"
-            onLoad={() => setBgLoaded(true)}
+            // onLoad={() => setBgLoaded(true)}
           />
         </div>
       )}
@@ -49,9 +47,9 @@ const UserPageReturn: React.FC<UserPageProp> = ({
         >
           {profile.hero_url && (
             <>
-              {!heroLoaded && (
+              {/* {!heroLoaded && (
                 <div className="absolute inset-0 bg-gray-200 animate-pulse" />
-              )}
+              )} */}
               <Image
                 src={profile.hero_url}
                 alt="Hero"
@@ -59,7 +57,7 @@ const UserPageReturn: React.FC<UserPageProp> = ({
                 priority
                 sizes="(max-width: 768px) 100vw, 1500px"
                 className=" object-cover"
-                onLoad={() => setHeroLoaded(true)}
+                // onLoad={() => setHeroLoaded(true)}
               />
               <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black opacity-70"></div>
             </>
@@ -81,7 +79,7 @@ const UserPageReturn: React.FC<UserPageProp> = ({
             id={profile.id}
             random_id={profile.random_id}
             updated_at={profile.updated_at}
-            redirect={profile.redirect}
+            redirect={false}
           />
 
           {/* Links section */}
@@ -91,12 +89,13 @@ const UserPageReturn: React.FC<UserPageProp> = ({
                 link.isVisible && (
                   <LinkItem
                     key={link.id}
-                    themes={themes}
                     id={link.id}
                     title={link.title}
                     url={link.url}
                     imageUrl={link.imageUrl}
                     isVisible={link.isVisible}
+                    app={link.app}
+                    themes={themes}
                   />
                 )
             )}

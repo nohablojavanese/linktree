@@ -1,22 +1,30 @@
 export const FormatTheme = {
-    default: "bg-white dark:bg-gray-800 bg-opacity-70 dark:bg-opacity-70 text-gray-800 dark:text-white backdrop-filter backdrop-blur-lg rounded-full shadow-md",
-    simple: "bg-gray-100 dark:bg-gray-700 bg-opacity-70 dark:bg-opacity-70 text-gray-700 dark:text-gray-200",
-    elegant: "bg-gray-800 dark:bg-white bg-opacity-70 dark:bg-opacity-70 text-white dark:text-gray-800",
-    minimal: "bg-gray-200 dark:bg-gray-600 bg-opacity-70 dark:bg-opacity-70 text-gray-600 dark:text-gray-300",
-    colorful: "bg-gradient-to-r from-purple-400 to-pink-500 bg-opacity-70 text-white border-black border-2  ",
+    modernMinimal: "bg-gray-50 text-gray-800 border border-gray-200 rounded-lg shadow-sm hover:shadow-md hover:border-gray-300 transition-all duration-300",
+    neonPulse: "bg-black text-neon-green border-2 border-neon-green rounded-lg shadow-neon-glow animate-pulse transition-all duration-300 hover:bg-neon-green hover:text-black",
+    frostyGlass: "bg-white bg-opacity-20 backdrop-filter backdrop-blur-xl border border-white border-opacity-25 rounded-xl shadow-lg text-white",
+    gradientFlow: "bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 animate-gradient-x",
+    organicShape: "bg-green-100 text-green-800 rounded-blob shadow-md hover:shadow-lg transition-all duration-300 border-2 border-green-300",
+    retroWave: "bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 border-b-4 border-yellow-300",
+    paperCut: "bg-white text-gray-800 rounded-lg shadow-paper-cut hover:shadow-paper-cut-hover transition-all duration-300",
+    cosmicDust: "bg-indigo-900 text-white rounded-lg relative overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 before:content-[''] before:absolute before:inset-0 before:bg-sparkles before:opacity-30 before:animate-twinkle",
+    liquidMetal: "bg-gradient-to-r from-gray-300 via-gray-400 to-gray-500 text-white rounded-lg shadow-inner hover:shadow-lg transition-all duration-300 animate-shine",
+    carbonFiber: "bg-black text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 bg-carbon-fiber",
+    holographic: "bg-gradient-to-r from-pink-300 via-purple-300 to-indigo-300 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 animate-holographic",
+    pixelated: "bg-white text-black rounded-lg shadow-md hover:shadow-lg transition-all duration-300 border-2 border-black pixelated-border",
+    brushStroke: "bg-white text-black rounded-lg shadow-md hover:shadow-lg transition-all duration-300 brush-stroke-border",
+    glitchEffect: "bg-cyan-500 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 animate-glitch",
+    origami: "bg-white text-gray-800 rounded-lg shadow-origami hover:shadow-origami-hover transition-all duration-300 origami-fold",
+    neonOutline: "bg-transparent text-neon-blue border-2 border-neon-blue rounded-lg shadow-neon-glow transition-all duration-300 hover:bg-neon-blue hover:text-white",
+    marbleTexture: "bg-marble text-gray-800 rounded-lg shadow-md hover:shadow-lg transition-all duration-300",
+    rainbowGradient: "bg-gradient-to-r from-red-500 via-yellow-500 via-green-500 via-blue-500 to-purple-500 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300",
+    frostedGlass: "bg-white bg-opacity-10 backdrop-filter backdrop-blur-md border border-white border-opacity-20 rounded-xl shadow-lg text-white",
+    neoBrutalism: "bg-yellow-400 text-black border-4 border-black rounded-none shadow-brutal hover:shadow-brutal-hover transition-all duration-200 transform hover:translate-x-1 hover:translate-y-1",
 
-    neon: "bg-black dark:bg-gray-900 text-white border-2 border-neon-pink dark:border-neon-blue rounded-lg shadow-neon-glow dark:shadow-neon-glow-dark transition-all duration-300 hover:bg-neon-pink dark:hover:bg-neon-blue hover:text-black dark:hover:text-white",
-    glassmorphism: "bg-white dark:bg-gray-800 bg-opacity-20 dark:bg-opacity-20 backdrop-filter backdrop-blur-xl border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg text-gray-800 dark:text-white",
-    neumorphism: "bg-gray-100 dark:bg-gray-800 rounded-xl shadow-neumorphic dark:shadow-neumorphic-dark text-gray-800 dark:text-white",
-    gradient: "bg-gradient-to-r from-purple-500 to-pink-500 dark:from-blue-600 dark:to-purple-600 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300",
-    outlined: "bg-transparent border-2 border-gray-300 dark:border-gray-600 text-gray-800 dark:text-white rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-300",
-    pillSoft: "bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white rounded-full px-6 py-3 shadow-inner hover:shadow-md transition-all duration-300",
-    cyberpunk: "bg-yellow-400 dark:bg-purple-700 text-black dark:text-white border-b-4 border-r-4 border-black dark:border-neon-pink rounded-md transform hover:translate-x-1 hover:translate-y-1 transition-all duration-200",
-    nature: "bg-gradient-to-b from-green-400 to-green-600 dark:from-teal-500 dark:to-teal-700 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 border-2 border-white dark:border-teal-300",
-    cosmic: "bg-indigo-900 dark:bg-gray-900 text-white rounded-lg relative overflow-hidden shadow-md hover:shadow-lg transition-all duration-300",
-  };
-  
-  export const FormatFont = {
+    pillButton: "bg-blue-600 text-white font-bold rounded-2xl py-3 px-6 shadow-[0_8px_0_0_rgba(0,0,0,0.3)] hover:shadow-[0_6px_0_0_rgba(0,0,0,0.3)] active:shadow-[0_2px_0_0_rgba(0,0,0,0.3)] hover:translate-y-[2px] active:translate-y-[6px] transition-all duration-150",
+
+};
+
+export const FormatFont = {
     sans: "font-sans",
     serif: "font-serif",
     mono: "font-mono",
