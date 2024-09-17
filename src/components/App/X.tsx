@@ -14,10 +14,11 @@ const TwitterEmbed: React.FC<LinkItemProps> = (props) => {
         <div className="text-left md:mx-auto block">
           <div className="w-full rounded-xl ">
             <Suspense fallback={<TweetSkeleton />}>
-                <Tweet
-                  id={tweetId}
-                  fallback={<TweetNotFound />}
-                />
+              <Tweet
+                id={tweetId}
+                fallback={<TweetNotFound />}
+                onError={() => {}}
+              />
             </Suspense>
           </div>
         </div>
