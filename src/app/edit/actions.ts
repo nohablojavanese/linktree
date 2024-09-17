@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { toast } from "sonner";
 import { z } from "zod";
+import Stripe from 'stripe';
 
 const urlSchema = z
   .string()
@@ -211,4 +212,40 @@ export async function updateLinkOrder(
 
   if (error) throw error;
   revalidatePath("/edit");
+}
+
+export async function createStripePaymentLink(productId: string) {
+  const user = await getAuthenticatedUser();
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+    apiVersion: '2024-06-20',
+  });
+
+  try {
+    // Fetch the product to get its default price ID
+    const product = await stripe.products.retrieve(productId);
+    const priceId = product.default_price as string;
+
+    if (!priceId) {
+      throw new Error('No default price found for this product');
+    }
+
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      line_items: [
+        {
+          price: priceId,
+          quantity: 1,
+        },
+      ],
+      mode: 'payment',
+      success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/success`,
+      cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/cancel`,
+      customer_email: user.email,
+    });
+
+    return session.url;
+  } catch (error) {
+    console.error('Error creating Stripe payment link:', error);
+    throw new Error('Failed to create payment link');
+  }
 }
