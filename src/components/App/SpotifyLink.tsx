@@ -21,6 +21,7 @@ const SpotifyLink: React.FC<LinkItemProps> = (props) => {
           height="352"
           // allowTransparency={true}
           allow="encrypted-media"
+          className="rounded-xl"
         ></iframe>
       </div>
     </LinkWrapper>

@@ -6,6 +6,7 @@ import HeadlineLink from "./HeadlineLink";
 import Youtube from "./Youtube";
 import TikTok from "./Tiktok";
 import TwitterEmbed from "./X";
+import InstagramEmbed from "./Instagram";
 export type LinkItemProps = {
   id: string;
   title: string;
@@ -22,6 +23,8 @@ const LinkItem: React.FC<LinkItemProps> = (props) => {
   switch (app) {
     case "Spotify":
       return <SpotifyLink {...props} />;
+    case "Instagram":
+      return <InstagramEmbed {...props} />;
     case "Youtube":
       return <Youtube {...props} />;
     case "TikTok":

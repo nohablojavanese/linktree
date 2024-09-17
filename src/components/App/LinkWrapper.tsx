@@ -1,6 +1,5 @@
-"use client";
 import React from "react";
-import { motion } from "framer-motion";
+// import { motion } from "framer-motion";
 import { LinkItemProps } from "./LinkItems";
 import { getThemeClass, FormatTheme, FormatFont } from "@/lib/theme/basic";
 
@@ -21,9 +20,9 @@ const LinkWrapper: React.FC<LinkWrapperProps> = ({ themes, url, children }) => {
   );
 
   return (
-    <motion.div
-      whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.98 }}
+    <div
+      // whileHover={{ scale: 1.02 }}
+      // whileTap={{ scale: 0.98 }}
       className="w-full mb-3"
     >
       <a
@@ -34,7 +33,7 @@ const LinkWrapper: React.FC<LinkWrapperProps> = ({ themes, url, children }) => {
       >
         {children}
       </a>
-    </motion.div>
+    </div>
   );
 };
 

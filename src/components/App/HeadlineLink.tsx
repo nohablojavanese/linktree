@@ -7,7 +7,7 @@ const HeadlineLink: React.FC<LinkItemProps> = (props) => {
 
   return (
     <div className="flex flex-col items-center">
-      <h1 className="text-lg font-semibold mb-2">{title}</h1>
+      <h1 className="text-lg font-semibold mt-10 mb-4">{title}</h1>
     </div>
   );
 };
