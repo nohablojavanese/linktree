@@ -6,7 +6,7 @@ import { createStripePaymentLink } from "@/app/edit/actions";
 const products = [
   { id: "prod_Qrgy27QhIF35Yv", name: "Creator", price: "$1" },
   { id: "prod_Qe66Vs4O5LG4g8", name: "Premium", price: "$19.99" },
-  { id: "price_9012", name: "Enterprise Plan", price: "$49.99" },
+  // { id: "price_9012", name: "Enterprise Plan", price: "$49.99" },
 ];
 
 export default function ProductList() {
