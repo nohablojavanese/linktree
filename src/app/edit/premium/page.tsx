@@ -1,4 +1,4 @@
-import ProductList from "@/components/BuyButton";
+import ProductList from "@/components/Stripe/BuyButton";
 
 export default function ProductsPage() {
   return (

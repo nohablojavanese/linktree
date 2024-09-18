@@ -2,24 +2,27 @@
 
 import { useState } from "react";
 import { createStripePaymentLink } from "@/app/edit/actions";
+import { toast } from "sonner";
 
 const products = [
-  { id: "prod_Qrgy27QhIF35Yv", name: "Creator", price: "$1" },
-  { id: "prod_Qe66Vs4O5LG4g8", name: "Premium", price: "$19.99" },
-  // { id: "price_9012", name: "Enterprise Plan", price: "$49.99" },
-];
+  { id: "prod_Qe66Vs4O5LG4g8", name: "Premium", price: "$1" },
+  // { id: "price_Qe66Vs4O5LG4g8", name: "Premium", price: "$19.99" },
+];    
 
 export default function ProductList() {
   const [loading, setLoading] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const handlePayment = async (productId: string) => {
-    setLoading(productId);
+  const handlePayment = async (priceId: string) => {
+    setLoading(priceId);
+    setError(null);
     try {
-      const paymentLink = await createStripePaymentLink(productId);
-      window.location.href = paymentLink!;
+      const checkoutUrl = await createStripePaymentLink(priceId);
+      window.location.href = checkoutUrl;
     } catch (error) {
-      console.error("Error creating payment link:", error);
-      alert("Failed to create payment link. Please try again.");
+      console.error("Error creating checkout session:", error);
+      toast.error("Failed to create checkout session. Please try again.");
+      setError("Failed to create checkout session. Please try again.");
     } finally {
       setLoading(null);
     }
@@ -40,6 +43,7 @@ export default function ProductList() {
           </button>
         </div>
       ))}
+      {error && <p className="text-red-500 mt-4">{error}</p>}
     </div>
   );
 }

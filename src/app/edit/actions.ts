@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { toast } from "sonner";
 import { z } from "zod";
-import Stripe from 'stripe';
+import Stripe from "stripe";
 
 const urlSchema = z
   .string()
@@ -50,7 +50,6 @@ export async function createLink(formData: FormData) {
       .parse(description);
     z.string().optional().parse(app);
     z.boolean().parse(isVisible);
-
 
     const { data: maxOrderData, error: maxOrderError } = await supabase
       .from("links")
@@ -97,7 +96,7 @@ export async function fetchMetadata(url: string): Promise<string> {
 export async function updateLink(formData: FormData) {
   const user = await getAuthenticatedUser();
   const supabase = createClient();
-  
+
   const id = formData.get("id") as string;
   const updateData: { title: string; url: string; description?: string } = {
     title: formData.get("title") as string,
@@ -217,35 +216,45 @@ export async function updateLinkOrder(
 export async function createStripePaymentLink(productId: string) {
   const user = await getAuthenticatedUser();
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-    apiVersion: '2024-06-20',
+    apiVersion: "2024-06-20",
   });
+  const baseUrl =
+    process.env.NEXT_PUBLIC_BASE_URL || "https://dev.jeremyperwira.com/";
 
   try {
-    // Fetch the product to get its default price ID
     const product = await stripe.products.retrieve(productId);
     const priceId = product.default_price as string;
 
     if (!priceId) {
-      throw new Error('No default price found for this product');
+      throw new Error("No default price found for this product");
     }
 
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
+      payment_method_types: ["card"],
       line_items: [
         {
           price: priceId,
           quantity: 1,
         },
       ],
-      mode: 'payment',
-      success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/success`,
-      cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/cancel`,
+      mode: "subscription",
+      expires_at: Math.floor(Date.now() / 1000) + 5 * 60, // 5 minutes from now
+      success_url: `${baseUrl}/?success`,
+      cancel_url: `${baseUrl}/?cancel`,
       customer_email: user.email,
+      metadata: {
+        user_id: user.id,
+        
+      },
     });
+
+    if (!session.url) {
+      throw new Error("Failed to create Stripe session");
+    }
 
     return session.url;
   } catch (error) {
-    console.error('Error creating Stripe payment link:', error);
-    throw new Error('Failed to create payment link');
+    console.error("Error creating Stripe payment link:", error);
+    throw new Error("Failed to create payment link");
   }
 }
