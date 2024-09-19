@@ -58,7 +58,7 @@ export const AddLink: React.FC<YourLinksProps> = ({ links }) => {
     title: "",
     url: "",
     description: "",
-    app: "",
+    app: "Link",
   });
   const [isLoadingMetadata, setIsLoadingMetadata] = useState(false);
 
@@ -150,6 +150,11 @@ export const AddLink: React.FC<YourLinksProps> = ({ links }) => {
     setFormData((prevState) => ({ ...prevState, app }));
   };
 
+  const handleCloseApp = () => {
+    // This function is opt
+    
+  };
+
   const ErrorMessage: React.FC<{ error: string }> = ({ error }) => {
     if (error.includes("blocked domain")) {
       return (
@@ -201,7 +206,7 @@ export const AddLink: React.FC<YourLinksProps> = ({ links }) => {
                 <Input
                   name="url"
                   label="URL"
-                  placeholder="enter link URL"
+                  placeholder={`Enter ${formData.app || "link"} URL`}
                   className="dark:text-white"
                   value={formData.url}
                   onValueChange={handleInputChange("url")}
@@ -248,7 +253,7 @@ export const AddLink: React.FC<YourLinksProps> = ({ links }) => {
                   errorMessage={errors.title}
                   isDisabled={isLoadingMetadata}
                 />
-                <Textarea
+                <Input
                   name="description"
                   label="Description"
                   placeholder="Add description (optional)"
@@ -262,6 +267,7 @@ export const AddLink: React.FC<YourLinksProps> = ({ links }) => {
                   <AppSelector
                     selectedApp={formData.app}
                     onAppSelect={handleAppSelect}
+                    onClose={handleCloseApp}
                   />
                 </div>
               </ModalBody>

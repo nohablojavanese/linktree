@@ -31,7 +31,7 @@ const LinkItem: React.FC<LinkItemProps> = (props) => {
       return <TikTok {...props} />;
     case "Twitter":
       return <TwitterEmbed {...props} />;
-    case "header":
+    case "Header":
       return <HeadlineLink {...props} />;
     default:
       return <DefaultLink {...props} />;

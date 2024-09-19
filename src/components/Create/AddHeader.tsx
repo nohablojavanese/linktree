@@ -14,7 +14,7 @@ export const AddHeader: React.FC = () => {
       formData.append("title", "Headline");
       formData.append("url", "");
       formData.append("description", "");
-      formData.append("app", "header");
+      formData.append("app", "Header");
       formData.append("isVisible", "false");
 
       try {
