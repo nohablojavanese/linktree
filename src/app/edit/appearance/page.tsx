@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { EditProfile } from "@/components/Update/EditProfile";
 import { UpdateTheme } from "@/components/Update/UpdateTheme";
 
-async function fetchUserData() {
+export async function fetchUserData() {
   const supabase = createClient();
   const {
     data: { user },
@@ -18,7 +18,7 @@ async function fetchUserData() {
   const [profileResult, themeResult] = await Promise.all([
     supabase
       .from("user_profiles")
-      .select("username, background_url, hero_url, image_url, bio")
+      .select("*")
       .eq("id", user.id)
       .single(),
     supabase.from("themes").select("*").eq("user_id", user.id).single(),
@@ -26,7 +26,7 @@ async function fetchUserData() {
 
   return {
     profile: profileResult.data,
-    theme: themeResult.data,
+    theme: themeResult.data,  
     error: profileResult.error || themeResult.error,
   };
 }

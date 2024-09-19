@@ -5,7 +5,6 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { toast } from "sonner";
 import { z } from "zod";
-import Stripe from "stripe";
 
 const urlSchema = z
   .string()
@@ -36,7 +35,7 @@ export async function createLink(formData: FormData) {
   const url = formData.get("url") as string;
   const description = formData.get("description") as string;
   const app = formData.get("app") as string;
-  const isVisible = formData.get("isVisible") === "true";
+  const isVisible = formData.get("isVisible") === "false";
 
   try {
     z.string()
