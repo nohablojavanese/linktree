@@ -2,7 +2,7 @@
 "use client";
 
 import { Button } from "@nextui-org/react";
-// import LogoCloud from '@/components/ui/LogoCloud';
+import { CheckIcon } from "lucide-react";
 import type { Tables } from "../../../type_db";
 import { getStripe } from "@/lib/stripe/client";
 import { checkoutWithStripe } from "@/lib/stripe/server";
@@ -11,6 +11,7 @@ import { User } from "@supabase/supabase-js";
 import { cn } from "@/lib/utils";
 import { useRouter, usePathname } from "next/navigation";
 import { useState } from "react";
+import { Card } from "../shadcn/ui/card";
 
 type Subscription = Tables<"subscriptions">;
 type Product = Tables<"products">;
@@ -84,14 +85,14 @@ export default function Pricing({ user, products, subscription }: Props) {
 
   if (!products.length) {
     return (
-      <section className="bg-white bg-opacity-70 dark:bg-black dark:bg-opacity-70 backdrop-filter backdrop-blur-md rounded-xl transition-colors duration-200">
+      <Card className="bg-white bg-opacity-70 dark:bg-black dark:bg-opacity-70 backdrop-filter backdrop-blur-md rounded-xl transition-colors duration-200">
         <div className="max-w-6xl px-4 py-8 mx-auto sm:py-24 sm:px-6 lg:px-8">
           <div className="sm:flex sm:flex-col sm:align-center"></div>
           <p className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-gray-800 dark:text-white text-center">
-            We currently don't have subscription plans available. Please check back
-            later for exciting new offerings!{" "}
+            We currently don't have subscription plans available. Please check
+            back later for exciting new offerings!{" "}
             <a
-              className="text-pink-500 dark:text-pink-400 underline hover:text-pink-600 dark:hover:text-pink-300 transition-colors duration-200"
+              className="text-blue-500 dark:text-blue-400 underline hover:text-blue-600 dark:hover:text-blue-300 transition-colors duration-200"
               href="/"
               rel="noopener noreferrer"
               target="_blank"
@@ -101,21 +102,21 @@ export default function Pricing({ user, products, subscription }: Props) {
             .
           </p>
         </div>
-      </section>
+      </Card>
     );
   } else {
     return (
-      <section className="bg-black">
+      <Card className="my-10 w-full  mx-auto p-6 shadow-lg  bg-white bg-opacity-70 dark:bg-black dark:bg-opacity-70 backdrop-filter backdrop-blur-md rounded-xl transition-colors duration-200">
         <div className="max-w-6xl px-4 py-8 mx-auto sm:py-24 sm:px-6 lg:px-8">
           <div className="sm:flex sm:flex-col sm:align-center">
-            <h1 className="text-4xl font-extrabold text-white sm:text-center sm:text-6xl">
+            <h1 className="text-4xl font-extrabold text-blue-500 dark:text-white sm:text-center sm:text-6xl">
               Pricing Plans
             </h1>
-            <p className="max-w-2xl m-auto mt-5 text-xl text-zinc-200 sm:text-center sm:text-2xl">
+            <p className="max-w-2xl m-auto mt-5 text-xl text-zinc-700 sm:text-center sm:text-2xl">
               Start building for free, then add a site plan to go live. Account
               plans unlock additional features.
             </p>
-            <div className="relative self-center mt-6 bg-zinc-900 rounded-lg p-0.5 flex sm:mt-8 border border-zinc-800">
+            <div className="relative self-center mt-6 bg-zinc-900 rounded-full p-0.5 flex sm:mt-8 border border-zinc-800">
               {intervals.includes("month") && (
                 <button
                   onClick={() => setBillingInterval("month")}
@@ -124,7 +125,7 @@ export default function Pricing({ user, products, subscription }: Props) {
                     billingInterval === "month"
                       ? "relative w-1/2 bg-zinc-700 border-zinc-800 shadow-sm text-white"
                       : "ml-0.5 relative w-1/2 border border-transparent text-zinc-400"
-                  } rounded-md m-1 py-2 text-sm font-medium whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-opacity-50 focus:z-10 sm:w-auto sm:px-8`}
+                  } rounded-full m-1 py-2 text-sm font-medium whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 focus:z-10 sm:w-auto sm:px-8`}
                 >
                   Monthly billing
                 </button>
@@ -137,7 +138,7 @@ export default function Pricing({ user, products, subscription }: Props) {
                     billingInterval === "year"
                       ? "relative w-1/2 bg-zinc-700 border-zinc-800 shadow-sm text-white"
                       : "ml-0.5 relative w-1/2 border border-transparent text-zinc-400"
-                  } rounded-md m-1 py-2 text-sm font-medium whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-opacity-50 focus:z-10 sm:w-auto sm:px-8`}
+                  } rounded-full m-1 py-2 text-sm font-medium whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 focus:z-10 sm:w-auto sm:px-8`}
                 >
                   Yearly billing
                 </button>
@@ -145,7 +146,7 @@ export default function Pricing({ user, products, subscription }: Props) {
             </div>
           </div>
           <div className="mt-12 space-y-0 sm:mt-16 flex flex-wrap justify-center gap-6 lg:max-w-4xl lg:mx-auto xl:max-w-none xl:mx-0">
-            {products.map((product) => {
+            {products.map((product, index) => {
               const price = product?.prices?.find(
                 (price) => price.interval === billingInterval
               );
@@ -155,26 +156,39 @@ export default function Pricing({ user, products, subscription }: Props) {
                 currency: price.currency!,
                 minimumFractionDigits: 0,
               }).format((price?.unit_amount || 0) / 100);
+              const isCurrentPlan =
+                subscription?.prices?.products?.name === product.name;
+              const isBasicPlan = index === 0; // Assuming the first plan is always the Basic/free plan
+              const isDisabled = isCurrentPlan || isBasicPlan;
+
+              let buttonText = "Subscribe";
+              if (isBasicPlan) {
+                buttonText = "Current Plan";
+              } else if (subscription) {
+                buttonText = isCurrentPlan ? "Current Plan" : "Upgrade";
+              }
+
               return (
                 <div
                   key={product.id}
                   className={cn(
-                    "flex flex-col rounded-lg shadow-sm divide-y divide-zinc-600 bg-zinc-900",
+                    "flex flex-col rounded-2xl shadow-sm divide-y divide-zinc-600 bg-zinc-900",
                     {
-                      "border border-pink-500": subscription
-                        ? product.name === subscription?.prices?.products?.name
-                        : product.name === "Freelancer",
+                      "border-2 border-blue-500": isCurrentPlan || isBasicPlan,
                     },
-                    "flex-1", // This makes the flex item grow to fill the space
-                    "basis-1/3", // Assuming you want each card to take up roughly a third of the container's width
-                    "max-w-xs" // Sets a maximum width to the cards to prevent them from getting too large
+                    "flex-1",
+                    "max-w-xs",
+                    "relative", // Add relative positioning
+                    "pb-16" // Add padding at the bottom for the button
                   )}
                 >
                   <div className="p-6">
                     <h2 className="text-2xl font-semibold leading-6 text-white">
                       {product.name}
                     </h2>
-                    <p className="mt-4 text-zinc-300">{product.description}</p>
+                    <p className="mt-4 text-sm text-zinc-300">
+                      {product.description}
+                    </p>
                     <p className="mt-8">
                       <span className="text-5xl font-extrabold white">
                         {priceString}
@@ -183,14 +197,40 @@ export default function Pricing({ user, products, subscription }: Props) {
                         /{billingInterval}
                       </span>
                     </p>
+
+                    {/* Add this new section for features */}
+                    {product.features && product.features.length > 0 && (
+                      <ul className="mt-6 space-y-4">
+                        {product.features.map((feature, index) => (
+                          <li key={index} className="flex items-start">
+                            <div className="flex-shrink-0">
+                              <CheckIcon
+                                className="h-6 w-6 text-green-500"
+                                aria-hidden="true"
+                              />
+                            </div>
+                            <p className="ml-3 text-base text-gray-300">
+                              {feature}
+                            </p>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+
                     <Button
-                      variant="solid"
+                      variant="flat"
                       type="button"
                       isLoading={priceIdLoading === price.id}
+                      isDisabled={isDisabled}
                       onClick={() => handleStripeCheckout(price)}
-                      className="block w-full py-2 mt-8 text-sm font-semibold text-center text-white rounded-md hover:bg-zinc-900"
+                      className={cn(
+                        "absolute bottom-2 left-2 right-2 py-2 text-sm font-semibold text-center text-white rounded-2xl",
+                        isDisabled
+                          ? "bg-gray-600 cursor-not-allowed"
+                          : "bg-gray-800 hover:bg-blue-500"
+                      )}
                     >
-                      {subscription ? "Manage" : "Subscribe"}
+                      {buttonText}
                     </Button>
                   </div>
                 </div>
@@ -198,7 +238,7 @@ export default function Pricing({ user, products, subscription }: Props) {
             })}
           </div>
         </div>
-      </section>
+      </Card>
     );
   }
 }
