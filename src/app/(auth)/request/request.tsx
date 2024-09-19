@@ -4,6 +4,8 @@ import { Button, Input } from "@nextui-org/react";
 import React, { useState } from "react";
 import { requestPasswordReset } from "./actions";
 import { validateEmail } from "@/lib/utils"; // Assume this function exists in utils
+import { toast } from "sonner";
+import { Mail } from "lucide-react";
 
 export default function ForgotPasswordForm({ ip }: { ip: string }) {
   const [email, setEmail] = useState("");
@@ -19,6 +21,17 @@ export default function ForgotPasswordForm({ ip }: { ip: string }) {
     setIsLoading(true);
     setMessage("");
     setIsError(false);
+
+
+    ///Tester toast
+    toast.promise(
+      requestPasswordReset(email, ip),
+      {
+        loading: 'Sending reset request...',
+        success: 'Password reset email sent. Check your inbox.',
+        error: 'Error sending reset password email. Please try again.',
+      }
+    );
 
     const result = await requestPasswordReset(email, ip);
     setMessage(result.message);
@@ -50,14 +63,16 @@ export default function ForgotPasswordForm({ ip }: { ip: string }) {
           className="mb-4 text-center text-gray-600 dark:text-gray-300"
           required
           isClearable
-          isDisabled={isLoading  || isDisabled }
-          errorMessage={!isValidEmail && email ? "Please enter a valid email" : ""}
+          isDisabled={isLoading || isDisabled}
+          errorMessage={
+            !isValidEmail && email ? "Please enter a valid email" : ""
+          }
         />
         <Button
           type="submit"
           variant="bordered"
           className="w-full hover:bg-blue-600 hover:text-blue-50 text-blue-600 dark:text-blue-400 relative overflow-hidden group"
-          isDisabled={isLoading || !isValidEmail || isDisabled} 
+          isDisabled={isLoading || !isValidEmail || isDisabled}
         >
           <span className="relative z-10">
             {isLoading ? "Sending..." : "Reset Password"}

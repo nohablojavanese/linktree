@@ -8,7 +8,7 @@ export async function requestPasswordReset(email: string, ip: string) {
   if (!success) {
     return { 
       success: false, 
-      message: `Too many attempts. Please try again later. Remaining attempts: ${remainingAttempts}`,
+      message: `Too many attempts. Please try again later!`,
       remainingAttempts
     };
   }
