@@ -84,6 +84,7 @@ export interface Database {
           image: string | null
           metadata: Json | null
           name: string | null
+          features?: string[] | null
         }
         Insert: {
           active?: boolean | null
@@ -92,6 +93,7 @@ export interface Database {
           image?: string | null
           metadata?: Json | null
           name?: string | null
+          features?: string[] | null
         }
         Update: {
           active?: boolean | null
@@ -100,6 +102,7 @@ export interface Database {
           image?: string | null
           metadata?: Json | null
           name?: string | null
+          features?: string[] | null
         }
         Relationships: []
       }
@@ -172,7 +175,7 @@ export interface Database {
           }
         ]
       }
-      users: {
+      user_profiles: {
         Row: {
           avatar_url: string | null
           billing_address: Json | null
