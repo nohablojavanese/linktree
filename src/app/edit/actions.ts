@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { toast } from "sonner";
 import { z } from "zod";
+import { AppInputConfig, defaultApp } from "@/lib/types/type";
 
 const urlSchema = z
   .string()
@@ -97,15 +98,16 @@ export async function updateLink(formData: FormData) {
   const supabase = createClient();
 
   const id = formData.get("id") as string;
-  const updateData: { title: string; url: string; description?: string } = {
-    title: formData.get("title") as string,
-    url: formData.get("url") as string,
-  };
+  const app = defaultApp(formData.get("app"));
 
-  const description = formData.get("description") as string;
-  if (description) {
-    updateData.description = description;
-  }
+  const updateData: { [key: string]: string } = {};
+
+  AppInputConfig[app].forEach((field) => {
+    const value = formData.get(field);
+    if (value !== null && value !== "") {
+      updateData[field] = value as string;
+    }
+  });
 
   const { error } = await supabase
     .from("links")
@@ -116,7 +118,6 @@ export async function updateLink(formData: FormData) {
   if (error) throw error;
   revalidatePath("/edit");
 }
-
 export async function deleteLink(formData: FormData) {
   const user = await getAuthenticatedUser();
   const supabase = createClient();

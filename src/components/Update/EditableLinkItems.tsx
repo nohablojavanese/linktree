@@ -1,6 +1,5 @@
 "use client";
 import React, { useState, useTransition } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import {
   BiSolidShow,
   BiSolidHide,
@@ -27,27 +26,36 @@ import {
 import { LinkType } from "@/lib/types/type";
 import { z } from "zod";
 import { Link, ChevronDown, ChevronUp } from "lucide-react";
+import { AppInputType, AppInputConfig, defaultApp } from "@/lib/types/type";
+import { toast } from "sonner";
+import { censoredString, censoredUrl } from "@/lib/cencored/zodProvanity";
 
-const linkItemSchema = z.object({
-  title: z
-    .string()
-    .min(1, "Title is required")
-    .max(100, "Title must be 100 characters or less"),
-  url: z.string().refine(
-    (url) => {
-      const urlPattern =
-        /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d+)?(\/.*)?$/;
-      return urlPattern.test(url);
-    },
-    {
-      message: "Invalid URL format",
-    }
-  ),
-  description: z
-    .string()
-    .max(30, "Description must be 30 characters or less")
-    .optional(),
-});
+const getAppSchema = (app: AppInputType | null | undefined) => {
+  const defaultApp: AppInputType = "Link";
+  const appType = app || defaultApp;
+
+  const baseSchema: z.ZodRawShape = {};
+
+  if (AppInputConfig[appType].includes("title")) {
+    baseSchema.title = z
+      .string()
+      .min(1, "Title is required")
+      .max(100, "Title must be 100 characters or less");
+  }
+
+  if (AppInputConfig[appType].includes("url")) {
+    baseSchema.url = censoredUrl(z.string().url("Invalid URL format, please add http:// or https://"));
+  }
+
+  if (AppInputConfig[appType].includes("description")) {
+    baseSchema.description = z
+      .string()
+      .max(30, "Description must be 30 characters or less")
+      .optional();
+  }
+
+  return z.object(baseSchema);
+};
 
 type EditableLinkItemProps = LinkType & {
   onUpdate: (formData: FormData) => Promise<void>;
@@ -80,29 +88,56 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
     onOpen: onEditModalOpen,
     onClose: onEditModalClose,
   } = useDisclosure();
-  const [copyUrl, setUrl] = useState<string>("");
+  const [copyUrl, setUrl] = useState<string>(url || "");
 
-  const handlePasteFromClipboard = async () => {
-    try {
-      const text = await navigator.clipboard.readText();
-      setUrl(text);
-    } catch (error) {
-      console.error("Failed to read clipboard contents: ", error);
+  const validApp = defaultApp(app);
+
+  const handleSubmit = async (
+    e: React.FormEvent<HTMLFormElement> | FormData
+  ) => {
+    console.log("handleSubmit called");
+    let formData: FormData;
+
+    if (e instanceof FormData) {
+      formData = e;
+    } else {
+      e.preventDefault();
+      formData = new FormData(e.currentTarget);
     }
-  };
-  const handleSubmit = async (formData: FormData) => {
+
+    formData.append("id", id);
+    formData.append("app", validApp);
+
+    console.log("FormData:", Object.fromEntries(formData));
+
     try {
-      linkItemSchema.parse({
-        title: formData.get("title"),
-        url: formData.get("url"),
-        description: formData.get("description"),
+      const schema = getAppSchema(validApp);
+      const dataToValidate: { [key: string]: FormDataEntryValue | null } = {};
+
+      AppInputConfig[validApp].forEach((field) => {
+        dataToValidate[field] = formData.get(field);
       });
+
+      console.log("Data to validate:", dataToValidate);
+
+      schema.parse(dataToValidate);
+      console.log("Validation passed");
+
       setErrors({});
       startTransition(async () => {
-        await onUpdate(formData);
-        onEditModalClose();
+        console.log("Starting update transition");
+        try {
+          await onUpdate(formData);
+          console.log("Update completed");
+          toast.success("Update completed");
+          onEditModalClose();
+        } catch (updateError) {
+          console.error("Error during update:", updateError);
+          toast.error("Error during update");
+        }
       });
     } catch (error) {
+      console.error("Validation or other error:", error);
       if (error instanceof z.ZodError) {
         const newErrors: { [key: string]: string } = {};
         error.errors.forEach((err) => {
@@ -140,6 +175,53 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
   const truncatedDescription =
     description?.length > 40 ? `${description.slice(0, 40)}...` : description;
 
+  const AppInput = () => {
+    return AppInputConfig[validApp].map((inputType) => {
+      switch (inputType) {
+        case "title":
+          return (
+            <Input
+              key="title"
+              label="Title"
+              name="title"
+              defaultValue={title}
+              className="dark:text-white"
+              isInvalid={!!errors.title}
+              errorMessage={errors.title}
+            />
+          );
+        case "url":
+          return (
+            <Input
+              key="url"
+              label="URL"
+              name="url"
+              isClearable
+              onValueChange={setUrl}
+              defaultValue={url}
+              className="dark:text-white"
+              isInvalid={!!errors.url}
+              errorMessage={errors.url}
+            />
+          );
+        case "description":
+          return (
+            <Input
+              key="description"
+              label="Description"
+              name="description"
+              defaultValue={description}
+              className="dark:text-white"
+              isInvalid={!!errors.description}
+              errorMessage={errors.description}
+            />
+          );
+        default:
+          return null;
+      }
+    });
+  };
+
   return (
     <>
       <Card className="w-full">
@@ -171,7 +253,6 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
             </div>
 
             <div className="mt-2 text-gray-700 dark:text-gray-300 text-xs md:text-md">
-              {app} 
               {isDescriptionExpanded ? description : truncatedDescription}
               {description?.length > 40 && (
                 <Button
@@ -242,6 +323,7 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
           </ButtonGroup>
         </CardFooter>
       </Card>
+
       {/* Edit Modal */}
       <Modal
         isOpen={isEditModalOpen}
@@ -261,58 +343,29 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
               handleSubmit(new FormData(e.target as HTMLFormElement));
             }}
           >
-            <ModalHeader className="flex flex-col gap-1 text-center">Edit Link</ModalHeader>
+            <ModalHeader className="flex flex-col gap-1 text-center">
+              Edit {validApp}
+            </ModalHeader>
             <ModalBody>
               <input type="hidden" name="id" value={id} />
-              <Input
-                label="Title"
-                name="title"
-                defaultValue={title}
-                className="dark:text-white"
-                isInvalid={!!errors.title}
-                errorMessage={errors.title}
-                description={`${title}`}
-              />
-              <Input
-                label="URL"
-                name="url"
-                isClearable
-                onValueChange={setUrl}
-                defaultValue={url}
-                // description={`Tersimpan: ${truncatedUrl}`}
-                // value={url}
-                className="dark:text-white"
-                isInvalid={!!errors.url}
-                errorMessage={errors.url}
-                // endContent={
-                //   <Button
-                //     startContent={<BiSolidPaste />}
-                //     onPress={handlePasteFromClipboard}
-                //     isIconOnly
-                //     color="warning"
-                //   ></Button>
-                // }
-              />
-
-              <Textarea
-                label="Description"
-                name="description"
-                defaultValue={description}
-                className="dark:text-white"
-                isInvalid={!!errors.description}
-                errorMessage={errors.description}
-              />
+              {AppInput()}
             </ModalBody>
             <ModalFooter>
               <Button color="danger" variant="light" onPress={onEditModalClose}>
                 Cancel
               </Button>
               <Button
-                color="success"
-                variant="shadow"
+                color="primary"
                 type="submit"
                 isLoading={isPending}
-                className="text-white"
+                onClick={() => {
+                  console.log("Submit button clicked");
+                  handleSubmit(
+                    new FormData(
+                      document.querySelector("form") as HTMLFormElement
+                    )
+                  );
+                }}
               >
                 {isPending ? "Updating..." : "Update"}
               </Button>
@@ -339,8 +392,8 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
           </ModalHeader>
           <ModalBody>
             <p>
-              Anda akan menghapus <span className="font-bold">{title}</span>{" "}
-              menuju link {url}
+              You are about to delete <span className="font-bold">{title}</span>{" "}
+              leading to the link {url}
             </p>
           </ModalBody>
           <ModalFooter>
@@ -352,7 +405,7 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
               Cancel
             </Button>
             <Button color="danger" onPress={handleDelete} isLoading={isPending}>
-              {isPending ? "Menghapus..." : "Hapus"}
+              {isPending ? "Deleting..." : "Delete"}
             </Button>
           </ModalFooter>
         </ModalContent>

@@ -29,20 +29,29 @@ export const censoredUrl = (schema: z.ZodString) =>
   schema
     .refine(
       (url) => {
-        const urlPattern =
-          /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d+)?(\/.*)?$/;
+        // Allow both domain-only and full URL formats
+        const urlPattern = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d+)?(\/.*)?$/;
         return urlPattern.test(url);
       },
-      { message: "Invalid URL format" }
+      { message: "Invalid URL or domain format" }
     )
     .refine(
       (url) => {
-        return !BlockedUrl.some((domain) =>
-          url.toLowerCase().includes(domain.toLowerCase())
+        // Normalize the URL for checking against blocked domains
+        const normalizedUrl = url.startsWith('http') ? url : `https://${url}`;
+        const urlObject = new URL(normalizedUrl);
+        const domain = urlObject.hostname.toLowerCase();
+
+        return !BlockedUrl.some((blockedDomain) =>
+          domain.includes(blockedDomain.toLowerCase())
         );
       },
       {
         message: "URL contains a blocked domain",
         params: { isBlocked: true },
       }
-    );
+    )
+    .transform((url) => {
+      // Normalize the URL by adding https:// if it's missing
+      return url.startsWith('http') ? url : `https://${url}`;
+    });

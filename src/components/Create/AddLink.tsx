@@ -22,7 +22,7 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { censoredString, censoredUrl } from "@/lib/cencored/zodProvanity";
 
-const linkSchema = z.object({
+const CreateLinkSchema = z.object({
   title: censoredString(
     z
       .string()
@@ -30,7 +30,7 @@ const linkSchema = z.object({
       .max(100, "Title must be 100 characters or less"),
     "Title contains inappropriate language"
   ),
-  url: censoredUrl(z.string()),
+  url: censoredUrl(z.string().min(1, "URL is required")),
   description: censoredString(
     z.string().max(30, "Description must be 30 characters or less").optional(),
     "Description contains inappropriate language"
@@ -64,7 +64,7 @@ export const AddLink: React.FC<YourLinksProps> = ({ links }) => {
 
   const validateForm = (data: typeof formData) => {
     try {
-      linkSchema.parse(data);
+      CreateLinkSchema.parse(data);
       setErrors({});
       return true;
     } catch (error) {
@@ -86,22 +86,32 @@ export const AddLink: React.FC<YourLinksProps> = ({ links }) => {
     let validatedFormData = { ...formData };
 
     try {
+      // Normalize URL
+      validatedFormData.url = validatedFormData.url.trim();
+      if (
+        !validatedFormData.url.startsWith("http://") &&
+        !validatedFormData.url.startsWith("https://")
+      ) {
+        validatedFormData.url = `https://${validatedFormData.url}`;
+      }
+
       // Validate URL
-      const validatedUrl = censoredUrl(z.string()).parse(formData.url);
-      validatedFormData.url = validatedUrl.startsWith("http")
-        ? validatedUrl
-        : `https://${validatedUrl}`;
+      const validatedUrl = censoredUrl(z.string().url()).parse(
+        validatedFormData.url
+      );
+      validatedFormData.url = validatedUrl;
 
       // If title is empty, fetch metadata
-      if (!formData.title.trim()) {
+      if (!validatedFormData.title.trim()) {
         setIsLoadingMetadata(true);
         try {
           const metadata = await fetchMetadata(validatedFormData.url);
           validatedFormData.title = metadata;
           setFormData(validatedFormData);
         } catch (error) {
-          toast.error("Error fetching metadata from URL", {
-            description: `Error ${validatedFormData.url}: ${error}`,
+          console.error("Error fetching metadata:", error);
+          toast.error("Error Finding your Title", {
+            description: `We cant Find the Title from ${validatedFormData.url}`,
             icon: "🚨",
           });
         } finally {
@@ -134,6 +144,10 @@ export const AddLink: React.FC<YourLinksProps> = ({ links }) => {
           }
         });
         setErrors(newErrors);
+      } else {
+        // Handle non-Zod errors
+        console.error("Unexpected error:", error);
+        setErrors({ url: "Please Add a Valid URL" });
       }
     }
   };
@@ -152,7 +166,6 @@ export const AddLink: React.FC<YourLinksProps> = ({ links }) => {
 
   const handleCloseApp = () => {
     // This function is opt
-    
   };
 
   const ErrorMessage: React.FC<{ error: string }> = ({ error }) => {

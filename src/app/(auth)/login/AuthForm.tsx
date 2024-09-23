@@ -10,10 +10,11 @@ import {
   CardFooter,
 } from "@/components/shadcn/ui/card";
 import { Label } from "@/components/shadcn/ui/label";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Key } from "lucide-react";
 import { z } from "zod";
 import { IoIosEye, IoIosEyeOff } from "react-icons/io";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { MdEmail, MdPassword } from "react-icons/md";
 
 interface AuthFormProps {
   formType: "login" | "signup";
@@ -52,7 +53,7 @@ export default function AuthForm({
     password: "",
     // confirmPassword: "",
   });
-  const [isVisible, setIsVisible] = React.useState(false);
+  const [isVisible, setIsVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const toggleVisibility = () => setIsVisible(!isVisible);
@@ -123,6 +124,7 @@ export default function AuthForm({
               required
               value={formData.email}
               onChange={handleInputChange}
+              isDisabled={remainingAttempts === 0}
               className={`bg-gray-50 dark:bg-gray-700 rounded-xl ${
                 errors.email
                   ? "border-red-500 dark:border-red-500 border-1"
@@ -131,7 +133,7 @@ export default function AuthForm({
             />
             {errors.email && (
               <p className="text-sm text-red-500 flex items-center">
-                <AlertCircle className="w-4 h-4 mr-1" />
+                <MdEmail className="w-4 h-4 mr-1" />
                 {errors.email[0]}
               </p>
             )}
@@ -146,6 +148,7 @@ export default function AuthForm({
             <Input
               id="password"
               name="password"
+              isDisabled={remainingAttempts === 0}
               required
               value={formData.password}
               endContent={
@@ -172,7 +175,7 @@ export default function AuthForm({
             />
             {errors.password && (
               <p className="text-sm text-red-500 flex items-center">
-                <AlertCircle className="w-4 h-4 mr-1" />
+                <Key className="w-4 h-4 mr-1" />
                 {errors.password[0]}
               </p>
             )}
@@ -191,10 +194,10 @@ export default function AuthForm({
                 required
                 onChange={handleInputChange}
                 type={isVisible ? "text" : "password"}
-                className={`bg-gray-50 dark:bg-gray-700 rounded-full ${
+                className={`bg-gray-50 dark:bg-gray-700 rounded-xl ${
                   errors.confirmPassword
-                    ? "border-red-500"
-                    : "border-gray-300 dark:border-gray-600"
+                    ? "border-red-500 dark:border-red-500 border-1"
+                    : "border-gray-200 dark:border-gray-600 border-1"
                 }`}
               />
               {errors.confirmPassword && (
@@ -205,27 +208,27 @@ export default function AuthForm({
               )}
             </div>
           )}
-          {errors.general && (
-            <p className="text-sm text-red-500 flex items-center">
-              <AlertCircle className="w-4 h-4 mr-1" />
-              {errors.general[0]}
-            </p>
+          {errors.general && remainingAttempts !== 0 && (
+            <div className="flex items-center justify-center text-center text-red-500">
+              <AlertCircle className="w-4 h-4 mr-1 text-center justify-center items-center" />
+              <p className="text-sm ">{errors.general[0]}</p>
+            </div>
           )}
           <Button
             type="submit"
             className={`w-full ${
-              isFormValid()
+              isFormValid() && remainingAttempts > 0
                 ? "bg-blue-600 hover:bg-blue-700 text-white"
                 : "bg-gray-300 text-gray-600 cursor-not-allowed"
             }`}
-            isDisabled={!isFormValid()}
+            isDisabled={!isFormValid() || remainingAttempts === 0}
             isLoading={isLoading}
           >
             {formType === "login" ? "Login" : "Sign Up"}
           </Button>
         </form>
       </CardContent>
-      <CardFooter>
+      <CardFooter className="text-center justify-center ">
         {remainingAttempts > 0 && remainingAttempts < 3 && (
           <p className="text-sm text-gray-500 dark:text-gray-400">
             You have {remainingAttempts} remaining attempts left!
@@ -233,7 +236,7 @@ export default function AuthForm({
         )}
         {remainingAttempts === 0 && (
           <p className="text-sm text-red-500 dark:text-red-400">
-            No attempts left. Please try again later.
+            You have no remaining attempts left. Please try again later.
           </p>
         )}
       </CardFooter>

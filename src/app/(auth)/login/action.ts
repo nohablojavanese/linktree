@@ -25,6 +25,7 @@ interface AuthResult {
   errors?: { [key: string]: string[] };
   remainingAttempts: number;
   shouldRedirect?: boolean; // Add this line
+  TTL?: number | null
 }
 
 export async function handleAuth(
@@ -52,6 +53,7 @@ export async function handleAuth(
       success: false,
       errors: { general: ["Too many attempts. Please try again later."] },
       remainingAttempts: rateLimitResult.remainingAttempts,
+      TTL: rateLimitResult.ttl
     };
   }
 
@@ -76,9 +78,26 @@ export async function handleAuth(
         password: data.password as string,
       });
       if (error) {
+        let errorMessage: string;
+
+        // Customize error messages based on error code
+        switch (error.message) {
+          case "Invalid login credentials":
+            errorMessage = "The email or password you entered is incorrect.";
+            break;
+          case "User not found":
+            errorMessage = "No account found with this email address.";
+            break;
+          case "Too many login attempts":
+            errorMessage = "Too many login attempts. Please try again later.";
+            break;
+          default:
+            errorMessage = "An unexpected error occurred. Please try again.";
+        }
+
         return {
           success: false,
-          errors: { general: [error.message] },
+          errors: { general: [errorMessage] },
           remainingAttempts: rateLimitResult.remainingAttempts,
         };
       }
@@ -103,8 +122,8 @@ export async function handleAuth(
     const redirectUrl =
       action === "login"
         ? "/edit?onboard=false"
-        : `/auth/success?status=Waiting for confirmation&message=Please check your email (${encodeURIComponent(
-            data.email as string)}) for a confirmation link.`;
+        : `/auth/success?status=Waiting+for+confirmation&message=Please+check+your+email+(${encodeURIComponent(
+            data.email as string)})+for+a+confirmation+link.+Please+note+that+the+email+might+be+in+your+spam+folder. `;
 
     return {
       success: true,

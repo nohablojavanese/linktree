@@ -83,7 +83,7 @@ export default async function EditPage() {
         <Suspense fallback={<p>Loading Links...</p>}>
           {links && links.length > 0 ? <DragLinks links={links} /> : null}
         </Suspense>
-        <AddSocial socialLinks={socialLinks || []} />
+        {/* <AddSocial socialLinks={socialLinks || []} />
         <div className="space-y-4">
           {socialLinks?.map((socialLink) => (
             <EditableSocialLink
@@ -93,7 +93,7 @@ export default async function EditPage() {
               onDelete={deleteSocialLink}
             />
           ))}
-        </div>
+        </div> */}
         <SignOutButton />
       </div>
     </div>

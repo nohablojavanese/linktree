@@ -46,3 +46,20 @@ export interface UserPageProp {
   socialLinks: SocialLinkType[];
   themes: ThemeTypes;
 }
+
+export const AppInputConfig = {
+  Link: ['title', 'url', 'description'],
+  Instagram: ['title', 'url', 'description'],
+  Tiktok: ['title', 'url', 'description'],
+  Header: ['title'],
+  // Add more app types as needed
+};
+
+export type AppInputType = keyof typeof AppInputConfig;
+
+export function defaultApp(app: FormDataEntryValue | null): AppInputType {
+  if (typeof app === 'string' && app in AppInputConfig) {
+    return app as AppInputType;
+  }
+  return 'Link'; // Default to 'Link' if app is null, empty, or invalid
+}

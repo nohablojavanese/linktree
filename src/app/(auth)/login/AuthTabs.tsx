@@ -4,8 +4,7 @@ import React, { Suspense, useState } from "react";
 import { Tabs, Tab } from "@nextui-org/react";
 import AuthForm from "./AuthForm";
 import { z } from "zod";
-import { KeyRound, KeyRoundIcon, LogIn } from "lucide-react";
-import { IdCardIcon } from "@radix-ui/react-icons";
+import { KeyRoundIcon } from "lucide-react";
 import { BiIdCard } from "react-icons/bi";
 
 const emailSchema = z.string().email("Invalid email format");

@@ -5,6 +5,7 @@ import { EditableLinkItem } from "../Update/EditableLinkItems";
 import { LinkType } from "@/lib/types/type";
 import { GripVertical } from "lucide-react";
 import { DropResult } from "@hello-pangea/dnd";
+import { AppInputType } from "@/lib/types/type";
 interface ClientDraggableLinkListProps {
   links: LinkType[];
   updateLinkOrder: (newOrder: { id: string; order: number }[]) => Promise<void>;
@@ -77,6 +78,7 @@ export const ClientDraggableLinkList: React.FC<
                       <div className="flex-grow  ">
                         <EditableLinkItem
                           {...link}
+                          // app={link.app as AppInputType}
                           onUpdate={updateLink}
                           onDelete={deleteLink}
                           onVisible={updateLinkVisibility}
