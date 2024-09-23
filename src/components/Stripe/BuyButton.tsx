@@ -49,24 +49,33 @@ export default function Pricing({ user, products, subscription }: Props) {
   const currentPath = usePathname();
 
   const handleStripeCheckout = async (price: Price) => {
+    const DEBUG_PREFIX = "DEBUG_STRIPE_CHECKOUT_CLIENT:";
+    
     setPriceIdLoading(price.id);
 
     if (!user) {
+      console.log(`${DEBUG_PREFIX} No user, redirecting to login`);
       setPriceIdLoading(undefined);
       return router.push("/login");
     }
+
+    console.log(`${DEBUG_PREFIX} Initiating checkout for price:`, price.id);
 
     const { errorRedirect, sessionId } = await checkoutWithStripe(
       price,
       currentPath
     );
 
+    console.log(`${DEBUG_PREFIX} Checkout response:`, { errorRedirect, sessionId });
+
     if (errorRedirect) {
+      console.log(`${DEBUG_PREFIX} Redirecting to error page:`, errorRedirect);
       setPriceIdLoading(undefined);
       return router.push(errorRedirect);
     }
 
     if (!sessionId) {
+      console.log(`${DEBUG_PREFIX} No session ID received, redirecting to error page`);
       setPriceIdLoading(undefined);
       return router.push(
         getErrorRedirect(
@@ -77,8 +86,15 @@ export default function Pricing({ user, products, subscription }: Props) {
       );
     }
 
+    console.log(`${DEBUG_PREFIX} Attempting to redirect to Stripe checkout`);
+
     const stripe = await getStripe();
-    stripe?.redirectToCheckout({ sessionId });
+    if (stripe) {
+      console.log(`${DEBUG_PREFIX} Stripe loaded, redirecting to checkout`);
+      stripe.redirectToCheckout({ sessionId });
+    } else {
+      console.error(`${DEBUG_PREFIX} Failed to load Stripe`);
+    }
 
     setPriceIdLoading(undefined);
   };
