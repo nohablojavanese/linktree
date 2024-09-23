@@ -84,22 +84,38 @@ export async function checkoutWithStripe(
       };
     }
 
+    // TODO: REMOVE_DEBUG_LOGS
+    const DEBUG_PREFIX = "DEBUG_STRIPE_CHECKOUT:";
+
     // Create a checkout session in Stripe
     let session;
     try {
+      // TODO: REMOVE_DEBUG_LOGS
+      console.log(`${DEBUG_PREFIX} Creating Stripe checkout session with params:`, JSON.stringify(params, null, 2));
       session = await stripe.checkout.sessions.create(params);
+      // TODO: REMOVE_DEBUG_LOGS
+      console.log(`${DEBUG_PREFIX} Checkout session created successfully:`, session.id);
     } catch (err) {
-      console.error(err);
+      // TODO: REMOVE_DEBUG_LOGS
+      console.error(`${DEBUG_PREFIX} Error creating Stripe checkout session:`, err);
+      if (err instanceof Error) {
+        // TODO: REMOVE_DEBUG_LOGS
+        console.error(`${DEBUG_PREFIX} Error message:`, err.message);
+        console.error(`${DEBUG_PREFIX} Error stack:`, err.stack);
+      }
       throw new Error("Unable to create checkout session.");
     }
 
     // Instead of returning a Response, just return the data or error.
     if (session) {
+      console.log('Checkout session created:', session.id);
       return { sessionId: session.id };
     } else {
+      console.error('Failed to create checkout session');
       throw new Error("Unable to create checkout session.");
     }
   } catch (error) {
+    console.error('Error in checkoutWithStripe:', error);
     if (error instanceof Error) {
       return {
         errorRedirect: getErrorRedirect(
