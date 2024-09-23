@@ -95,7 +95,7 @@ const Navbar = () => {
           <Dropdown className="bg-black text-white">
             <DropdownTrigger>
               <Button //is icon only for mobile
-                className={`font-bold accordion-uptext-white shadow-lg 
+                className={`font-bold accordion-up text-white shadow-lg 
                   ${isScrolled ? "bg-black text-white" : ""}
                   p-0 min-w-0 sm:p-2 sm:min-w-[100px]`}
                 endContent={<MdArrowDropDown className="hidden sm:inline" />}

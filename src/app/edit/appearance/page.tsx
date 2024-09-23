@@ -61,16 +61,20 @@ export default async function EditPage() {
   }
 
   return (
-    <div className="mx-auto p-4 bg-[#F3F3F1] dark:bg-gray-900 min-h-screen overflow-hidden">
-      <div className="max-w-md mx-auto space-y-6">
+    <div className="w-full h-full mx-auto p-4 min-h-screen overflow-hidden">
+      <div className="w-full flex flex-col space-y-6">
+        <p className="text-center text-2xl font-bold text-black">
+          Edit Profile Test
+        </p>
+        <Suspense fallback={<a>Loading...</a>}>
+          <EditProfile profile={profile} />
+        </Suspense>
+        <p className="text-center text-2xl font-bold text-black">Theme</p>
         <Suspense fallback={<a>Loading...</a>}>
           <UpdateTheme
             currentTheme={theme?.theme || "default"}
             currentFontFamily={theme?.font_family || ""}
           />
-        </Suspense>
-        <Suspense fallback={<a>Loading...</a>}>
-          <EditProfile profile={profile} />
         </Suspense>
       </div>
     </div>

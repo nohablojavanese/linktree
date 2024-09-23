@@ -60,7 +60,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({ profile }) => {
   } = useProfileForm(profile);
 
   return (
-    <Card className="w-full max-w-md mx-auto mb-4 dark:bg-gray-800">
+    <Card className="w-full h-full dark:bg-gray-800">
       <CardBody>
         <div className="space-y-4">
           <ProfileInput

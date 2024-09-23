@@ -27,7 +27,7 @@ const UserProfile: React.FC<Profile> = ({
       <div className="mt-4">
         <Username username={username} verified={verified} />
         <Bio bio={bio} />
-        <JoinDate created_at={created_at} />
+        {/* <JoinDate created_at={created_at} /> */}
       </div>
     </div>
   );

@@ -1,10 +1,9 @@
 "use client";
 import React, { useState } from "react";
-import { Card, CardBody, Button, Select, SelectItem } from "@nextui-org/react";
+import { Card, CardBody, Image, Tooltip } from "@nextui-org/react";
 import { updateTheme } from "@/app/edit/appearance/actions";
 import { z } from "zod";
 import { FormatTheme, FormatFont, ThemeKey, FontKey } from "@/lib/theme/basic";
-import { GrFormEdit } from "react-icons/gr";
 
 const themeSchema = z.enum(
   Object.keys(FormatTheme) as [ThemeKey, ...ThemeKey[]]
@@ -22,17 +21,16 @@ export const UpdateTheme: React.FC<UpdateThemeProps> = ({
   currentTheme,
   currentFontFamily,
 }) => {
-  const [isEditing, setIsEditing] = useState(false);
   const [themeError, setThemeError] = useState("");
   const [fontFamilyError, setFontFamilyError] = useState("");
+  const [selectedTheme, setSelectedTheme] = useState<ThemeKey>(currentTheme);
+  const [selectedFontFamily, setSelectedFontFamily] = useState<FontKey>(currentFontFamily);
 
-  const validateForm = (formData: FormData) => {
-    const newTheme = formData.get("theme") as string;
-    const newFontFamily = formData.get("font_family") as string;
+  const validateForm = () => {
     let isValid = true;
 
     try {
-      themeSchema.parse(newTheme);
+      themeSchema.parse(selectedTheme);
       setThemeError("");
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -42,7 +40,7 @@ export const UpdateTheme: React.FC<UpdateThemeProps> = ({
     }
 
     try {
-      fontFamilySchema.parse(newFontFamily);
+      fontFamilySchema.parse(selectedFontFamily);
       setFontFamilyError("");
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -54,14 +52,14 @@ export const UpdateTheme: React.FC<UpdateThemeProps> = ({
     return isValid;
   };
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
+  const handleSubmit = async () => {
+    if (validateForm()) {
+      const formData = new FormData();
+      formData.append("theme", selectedTheme);
+      formData.append("font_family", selectedFontFamily);
 
-    if (validateForm(formData)) {
       try {
         await updateTheme(formData);
-        setIsEditing(false);
       } catch (error) {
         if (error instanceof Error) {
           setThemeError(error.message);
@@ -70,65 +68,64 @@ export const UpdateTheme: React.FC<UpdateThemeProps> = ({
     }
   };
 
+  const handleThemeClick = (theme: ThemeKey) => {
+    setSelectedTheme(theme);
+    handleSubmit();
+  };
+
+  const handleFontClick = (font: FontKey) => {
+    setSelectedFontFamily(font);
+    handleSubmit();
+  };
+
   return (
-    <Card className="w-full max-w-md mx-auto mb-4 dark:bg-gray-800">
+    <Card className="w-full h-full dark:bg-gray-800">
       <CardBody>
-        {!isEditing ? (
-          <Button
-            onClick={() => setIsEditing(true)}
-            color="primary"
-            className="w-full text-gray-400 dark:text-gray-400"
-          >
-            <GrFormEdit size={20} />
-            Edit Theme
-          </Button>
-        ) : (
-          <form onSubmit={handleSubmit}>
-            <Select
-              name="theme"
-              label="Theme"
-              placeholder="Select a theme"
-              defaultSelectedKeys={[currentTheme]}
-              className="mb-4 "
-              isInvalid={!!themeError}
-              errorMessage={themeError}
-            >
+        <div className="mb-4">
+          <div className="flex justify-center">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {Object.keys(FormatTheme).map((theme) => (
-                <SelectItem className="text-gray-400" key={theme} value={theme}>
-                  {theme.charAt(0).toUpperCase() + theme.slice(1)}
-                </SelectItem>
+                <div key={theme} className="m-2 text-center cursor-pointer ">
+                  <Tooltip content={theme} placement="top" className="text-blue-400 cursor-pointer">
+                    <Image
+                      // src={`/path/to/theme/images/${theme}.png`}
+                      src={`/theme/${theme}.png`}
+                      alt={theme}
+                      
+                      className={`cursor-pointer object-cover w-40 h-60 sm:w-48 sm:h-72 md:w-48 md:h-64 ${selectedTheme === theme ? 'border-2 border-blue-500' : ''}`}
+                      onClick={() => handleThemeClick(theme as ThemeKey)}
+                    />
+                  </Tooltip>
+                  <p className={`mt-2 text-xs ${selectedTheme === theme ? 'bg-blue-500 rounded-full font-bold text-white' : 'text-gray-400'} `}>{theme}</p>
+                </div>
               ))}
-            </Select>
-            <Select
-              name="font_family"
-              label="Font Family"
-              placeholder="Select a font family"
-              defaultSelectedKeys={[currentFontFamily]}
-              className="mb-4"
-              isInvalid={!!fontFamilyError}
-              errorMessage={fontFamilyError}
-            >
-              {Object.keys(FormatFont).map((font) => (
-                <SelectItem className="text-gray-400" key={font} value={font}>
-                  {font.charAt(0).toUpperCase() + font.slice(1)}
-                </SelectItem>
-              ))}
-            </Select>
-            <div className="flex justify-between">
-              <Button type="submit" color="primary" className="text-gray-400">
-                Update Theme
-              </Button>
-              <Button
-                onClick={() => setIsEditing(false)}
-                color="secondary"
-                className="text-gray-400"
-              >
-                Cancel
-              </Button>
             </div>
-          </form>
-        )}
+          </div>
+          {themeError && <p className="text-red-500">{themeError}</p>}
+        </div>
+        {/* Add Font Family */}
       </CardBody>
     </Card>
   );
 };
+
+        // <div className="mb-4">
+        //   <label className="block text-gray-400 mb-2">Font Family</label>
+        //   <div className="flex flex-wrap justify-center">
+        //     {Object.keys(FormatFont).map((font) => (
+        //       <div key={font} className="m-2 text-center">
+        //         <Tooltip content={font} placement="top">
+        //           <Image
+        //             // src={`/path/to/font/images/${font}.png`}
+        //             src="/image.png"
+        //             alt={font}
+        //             className={`cursor-pointer w-full h-auto max-w-xs ${selectedFontFamily === font ? 'border-2 border-blue-500' : ''}`}
+        //             onClick={() => handleFontClick(font as FontKey)}
+        //           />
+        //         </Tooltip>
+        //         {/* <p className="mt-2 text-sm text-gray-400">{font}</p> */}
+        //       </div>
+        //     ))}
+        //   </div>
+        //   {fontFamilyError && <p className="text-red-500">{fontFamilyError}</p>}
+        // </div>

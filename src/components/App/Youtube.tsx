@@ -7,7 +7,9 @@ const Youtube: React.FC<LinkItemProps> = (props) => {
   const { title, url } = props;
 
   // Extract video ID from the URL
-  const videoId = url.split("v=")[1];
+  const videoId = url.includes("youtu.be") 
+    ? url.split("youtu.be/")[1].split("?")[0] // For short links
+    : url.split("v=")[1].split("&")[0]; // For standard links
 
   const embedParams = [
     "controls=0",

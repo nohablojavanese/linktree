@@ -9,9 +9,9 @@ interface LinkWrapperProps extends LinkItemProps {
 
 const LinkWrapper: React.FC<LinkWrapperProps> = ({ themes, url, children }) => {
   const themeClass = getThemeClass(
-    themes.theme || "modernMinimal", // Set modernMinimal as default
+    themes.theme || "default", // Set modernMinimal as default
     FormatTheme,
-    "modernMinimal"
+    "default"
   );
   const fontClass = getThemeClass(
     themes.font_family || "sans",
@@ -21,15 +21,13 @@ const LinkWrapper: React.FC<LinkWrapperProps> = ({ themes, url, children }) => {
 
   return (
     <div
-      // whileHover={{ scale: 1.02 }}
-      // whileTap={{ scale: 0.98 }}
       className="w-full mb-3"
     >
       <a
         href={url}
         target="_blank"
         rel="noopener noreferrer"
-        className={`block w-full p-4 ${themeClass} ${fontClass} text-center transition-all duration-300`}
+        className={`block w-full p-4 ${themeClass} ${fontClass} text-center`}
       >
         {children}
       </a>
