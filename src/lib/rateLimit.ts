@@ -25,33 +25,48 @@ function hashIP(encryptedIP: string): string {
   return crypto.createHash("sha256").update(encryptedIP).digest("hex");
 }
 
+function getRateLimitKey(ip: string): string {
+  const encryptedIP = encryptIP(ip);
+  const hashedIP = hashIP(encryptedIP);
+  return `${process.env.NEXT_PUBLIC_SITE_URL}-${hashedIP}`;
+}
+
 export async function rateLimit(
   ip: string
-): Promise<{ success: boolean; remainingAttempts: number }> {
-  const encryptedIP = encryptIP(ip); // Encrypt the IP first
-  const hashedIP = hashIP(encryptedIP); // Hash the encrypted IP
-  const key = `Login_Attempts: ${hashedIP}`; // Use the hashed value as the Redis key
+): Promise<{ success: boolean; remainingAttempts: number; ttl?: number | null }> {
+  const key = getRateLimitKey(ip);
 
-  const limit = 10;
-  const windowInSeconds = 3600; // 1 hour
+  const limit = parseInt(process.env.RATE_LIMIT || "10", 10); 
+  const windowInSeconds = parseInt(process.env.RATE_LIMIT_WINDOW || "600", 10); 
 
-  const attempts = await redis.incr(key);
-  if (attempts === 1) {
-    await redis.expire(key, windowInSeconds);
+  try {
+    const attempts = await redis.incr(key);
+    if (attempts === 1) {
+      await redis.expire(key, windowInSeconds);
+    }
+
+    const remainingAttempts = Math.max(0, limit - attempts);
+    
+    // Get the TTL for the key
+    const ttl = await redis.ttl(key);
+
+    if (attempts > limit) {
+      return { success: false, remainingAttempts, ttl };
+    }
+
+    return { success: true, remainingAttempts, ttl };
+  } catch (error) {
+    console.error("Rate limit error:", error);
+    return { success: true, remainingAttempts: limit, ttl: null }; // Fallback to allow access
   }
-
-  const remainingAttempts = Math.max(0, limit - attempts);
-
-  if (attempts > limit) {
-    return { success: false, remainingAttempts };
-  }
-
-  return { success: true, remainingAttempts };
 }
 
 export async function resetRateLimit(ip: string): Promise<void> {
-  const encryptedIP = encryptIP(ip);
-  const hashedIP = hashIP(encryptedIP);
-  const key = `Login_Attempts: ${hashedIP}`;
-  await redis.del(key);
+  const key = getRateLimitKey(ip);
+  
+  try {
+    await redis.del(key);
+  } catch (error) {
+    console.error("Error resetting rate limit:", error);
+  }
 }

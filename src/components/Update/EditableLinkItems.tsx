@@ -44,7 +44,9 @@ const getAppSchema = (app: AppInputType | null | undefined) => {
   }
 
   if (AppInputConfig[appType].includes("url")) {
-    baseSchema.url = censoredUrl(z.string().url("Invalid URL format, please add http:// or https://"));
+    baseSchema.url = censoredUrl(
+      z.string().url("Invalid URL format, please add http:// or https://")
+    );
   }
 
   if (AppInputConfig[appType].includes("description")) {
@@ -63,7 +65,7 @@ type EditableLinkItemProps = LinkType & {
   onVisible: (id: string, isVisible: boolean) => Promise<void>;
 };
 
-export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
+export const EditableLinkItem = ({
   id,
   title,
   app,
@@ -73,9 +75,8 @@ export const EditableLinkItem: React.FC<EditableLinkItemProps> = ({
   onUpdate,
   onDelete,
   onVisible,
-}) => {
+}: EditableLinkItemProps) => {
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
-
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isPending, startTransition] = useTransition();
   const {
