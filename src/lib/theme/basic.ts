@@ -7,14 +7,19 @@ export const FormatTheme = {
   Sunflower: "bg-yellow-400 text-black border-4 border-black rounded-none shadow-brutal hover:shadow-brutal-hover transition-all duration-200 transform hover:translate-x-1 hover:translate-y-1",
   pillButton: "bg-blue-600 text-white font-bold rounded-2xl py-3 px-6 shadow-[0_8px_0_0_rgba(0,0,0,0.3)] hover:shadow-[0_6px_0_0_rgba(0,0,0,0.3)] active:shadow-[0_2px_0_0_rgba(0,0,0,0.3)] hover:translate-y-[2px] active:translate-y-[6px] transition-all duration-150",
   cosmicRipple: "bg-gradient-to-br from-purple-600 to-blue-500 text-white font-semibold rounded-lg py-3 px-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 relative overflow-hidden before:content-[''] before:absolute before:top-1/2 before:left-1/2 before:w-0 before:h-0 before:bg-white before:opacity-30 before:rounded-full hover:before:animate-ripple",
-  neonOutline: "bg-transparent border-2 border-pink-500 text-pink-500 hover:bg-pink-500 hover:text-white font-bold py-2 px-4 rounded-full transition-all duration-300",
+  neonOutline: "bg-transparent border-2 border-pink-500 text-pink-500 hover:bg-pink-500 hover:text-white font-bold py-2 px-4 rounded-2xl transition-all duration-300",
   gradientShift: "bg-gradient-to-r from-green-400 to-blue-500 hover:from-blue-500 hover:to-green-400 text-white font-bold py-2 px-4 rounded-md transition-all duration-500",
   dButton: "bg-yellow-400 text-yellow-900 font-bold py-2 px-4 border-b-4 border-yellow-700 hover:border-yellow-500 rounded-md active:border-b-0 active:translate-y-[4px] transition-all duration-150",
   glowPulse: "bg-purple-600 text-white font-bold py-2 px-4 rounded-md animate-pulse shadow-[0_0_15px_rgba(147,51,234,0.5)] hover:shadow-[0_0_25px_rgba(147,51,234,0.8)] transition-shadow duration-300",
   pixelated: "bg-gray-800 text-white font-pixel py-2 px-4 border-2 border-white hover:bg-white hover:text-gray-800 transition-colors duration-300 transform hover:scale-105 active:scale-95",
-  liquidBubble: "bg-cyan-500 text-white font-bold py-3 px-6 rounded-full hover:bg-cyan-600 transition-all duration-300 shadow-lg hover:shadow-cyan-300/50 active:shadow-inner",
+  liquidBubble: "bg-cyan-500 text-white font-bold py-3 px-6 rounded-2xl hover:bg-cyan-600 transition-all duration-300 shadow-lg hover:shadow-cyan-300/50 active:shadow-inner",
   retroWave: "bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 text-white font-bold py-2 px-4 rounded-md hover:from-indigo-500 hover:via-purple-500 hover:to-pink-500 transition-all duration-500 shadow-md hover:shadow-lg",
-  natureInspired: "bg-green-600 text-white font-semibold py-2 px-4 rounded-full border-2 border-green-700 hover:bg-green-700 hover:border-green-800 transition-all duration-300 shadow-md hover:shadow-lg",
+  natureInspired: "bg-green-600 text-white font-semibold py-2 px-4 rounded-2xl border-2 border-green-700 hover:bg-green-700 hover:border-green-800 transition-all duration-300 shadow-md hover:shadow-lg",
+  shimmer: "bg-gray-200 text-transparent bg-clip-text font-bold py-2 px-4 rounded-md relative overflow-hidden before:absolute before:inset-0 before:-translate-x-full before:animate-shimmer before:bg-gradient-to-r before:from-transparent before:via-white before:to-transparent",
+  borderMagic: "bg-purple-600 text-white font-bold py-2 px-4 rounded-md relative before:absolute before:inset-0 before:rounded-md before:border-2 before:border-white before:animate-borderMagic",
+  neonBlink: "bg-black text-white font-bold py-2 px-4 rounded-md relative overflow-hidden before:absolute before:inset-0 before:bg-blue-500 before:opacity-0 before:animate-neonBlink",
+  elasticPop: "bg-green-500 text-white font-bold py-2 px-4 rounded-md transition-all duration-300 hover:animate-elasticPop active:animate-none",
+  rainbowText: "bg-gradient-to-r from-red-500 via-yellow-500 to-blue-500 text-transparent bg-clip-text font-bold py-2 px-4 rounded-md animate-rainbowShift",
 };
 
 // Define the available font families with their corresponding CSS classes

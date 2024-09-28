@@ -92,7 +92,7 @@ export async function updateTheme(formData: FormData) {
 
   const ThemeData = {
     theme: formData.get("theme") as string,
-    font_family: formData.get("font_family") as string,
+    // font_family: formData.get("font_family") as string,
   };
 
   const { error } = await supabase
