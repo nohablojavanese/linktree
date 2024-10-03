@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 import { ThemeSwitcher } from "@/components/DarkMode";
 import { Toaster } from "@/components/shadcn/ui/sonner";
 import GlobalMenu from "@/components/Profile/GlobalMenu";
+import Username from "@/components/ui/Username";
 
 interface EditLayoutProps {
   children: ReactNode;
@@ -29,7 +30,7 @@ export default async function EditLayout({ children }: EditLayoutProps) {
 
   return (
     <div className="flex">
-      <GlobalMenu/>
+      <GlobalMenu />
       <div className="flex-1 overflow-hidden">
         <Toaster />
         <div className="container mx-auto pb-20 px-0">
@@ -37,11 +38,14 @@ export default async function EditLayout({ children }: EditLayoutProps) {
             <div className="w-full lg:w-2/3">{children}</div>
 
             <div id="mobile-preview" className="hidden lg:block lg:w-1/3">
-              <div className="fixed top-0 right-0 w-1/3 h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-800">
-                <div className="transform scale-[0.85] origin-center">
+              <div className="fixed top-0 right-0 w-1/3 h-screen flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-800">
+                <div className="transform scale-[1] origin-center rounded-full">
                   <MobileMockup>
                     <UserPagePreview />
                   </MobileMockup>
+                </div>
+                <div className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
+                  <Username />
                 </div>
               </div>
             </div>
