@@ -19,9 +19,10 @@ export const AddHeader: React.FC = () => {
 
       try {
         await createLink(formData);
-        toast("Header has been created.");
+        toast.success("Header has been created.");
       } catch (error) {
         console.error("Error Adding header:", error);
+        toast.error("Error Adding Header");
       }
     });
   };
