@@ -12,8 +12,8 @@ export const matcher = new RegExpMatcher({
 
 
 export const BlockedWords = [
-    'test',
-    'test2',
-    'test3',
+    // 'test',
+    // 'test2',
+    // 'test3',
   ];
 

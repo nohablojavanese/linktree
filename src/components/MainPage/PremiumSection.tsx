@@ -1,3 +1,4 @@
+"use client";
 import { Rocket, Shield, Sparkle } from "lucide-react";
 import { GrAnalytics, GrSupport } from "react-icons/gr";
 import { UserCog } from "lucide-react";
