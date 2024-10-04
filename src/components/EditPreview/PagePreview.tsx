@@ -8,7 +8,7 @@ const UserPagePreview: React.FC = async () => {
   const { data: { user } } = await supabase.auth.getUser();
   
   if (!user) {
-    return <div>User not authenticated</div>;
+    return <div className="p-4 text-center">User not authenticated</div>;
   }
 
   const { data: profile } = await supabase
@@ -35,11 +35,11 @@ const UserPagePreview: React.FC = async () => {
     .single();
 
   if (!profile) {
-    return <div>Profile not found</div>;
+    return <div className="p-4 text-center">Profile not found</div>;
   }
 
   return (
-    <div className="w-full h-full">
+    <div className="w-full h-full overflow-y-auto">
       <UserPageReturn 
         profile={profile}
         links={links || []}

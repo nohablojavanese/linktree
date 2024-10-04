@@ -86,6 +86,15 @@ export const AddLink: React.FC<YourLinksProps> = ({ links }) => {
     let validatedFormData = { ...formData };
 
     try {
+      // Check if URL is empty
+      if (!validatedFormData.url.trim()) {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          url: "URL is required",
+        }));
+        return;
+      }
+
       // Normalize URL
       validatedFormData.url = validatedFormData.url.trim();
       if (
@@ -96,10 +105,20 @@ export const AddLink: React.FC<YourLinksProps> = ({ links }) => {
       }
 
       // Validate URL
-      const validatedUrl = censoredUrl(z.string().url()).parse(
-        validatedFormData.url
-      );
-      validatedFormData.url = validatedUrl;
+      try {
+        const validatedUrl = censoredUrl(z.string().url()).parse(
+          validatedFormData.url
+        );
+        validatedFormData.url = validatedUrl;
+      } catch (urlError) {
+        if (urlError instanceof z.ZodError) {
+          setErrors((prevErrors) => ({
+            ...prevErrors,
+            url: urlError.errors[0].message,
+          }));
+          return;
+        }
+      }
 
       // If title is empty, fetch metadata
       if (!validatedFormData.title.trim()) {
@@ -136,19 +155,8 @@ export const AddLink: React.FC<YourLinksProps> = ({ links }) => {
         });
       }
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        const newErrors: { [key: string]: string } = {};
-        error.errors.forEach((err) => {
-          if (err.path) {
-            newErrors[err.path[0]] = err.message;
-          }
-        });
-        setErrors(newErrors);
-      } else {
-        // Handle non-Zod errors
-        console.error("Unexpected error:", error);
-        setErrors({ url: "Please Add a Valid URL" });
-      }
+      console.error("Error in form submission:", error);
+      toast.error("An error occurred while submitting the form");
     }
   };
 
@@ -172,7 +180,7 @@ export const AddLink: React.FC<YourLinksProps> = ({ links }) => {
     if (error.includes("blocked domain")) {
       return (
         <span>
-          URL contains a blocked domain. Please check our{" "}
+          URL contains a blocked domain. Please check our{"  "}
           <a href="/terms" className="text-red-500 underline">
             Terms of Service
           </a>
@@ -219,7 +227,7 @@ export const AddLink: React.FC<YourLinksProps> = ({ links }) => {
                 <Input
                   name="url"
                   label="URL"
-                  placeholder={`Enter ${formData.app || "link"} URL`}
+                  placeholder={`enter ${formData.app || "link"} URL`}
                   className="dark:text-white"
                   value={formData.url}
                   onValueChange={handleInputChange("url")}
@@ -262,8 +270,10 @@ export const AddLink: React.FC<YourLinksProps> = ({ links }) => {
                   value={formData.title}
                   onValueChange={handleInputChange("title")}
                   isInvalid={!!errors.title}
+                  errorMessage={
+                    errors.title && <ErrorMessage error={errors.title} />
+                  }
                   isClearable
-                  errorMessage={errors.title}
                   isDisabled={isLoadingMetadata}
                 />
                 <Input
@@ -274,7 +284,11 @@ export const AddLink: React.FC<YourLinksProps> = ({ links }) => {
                   value={formData.description}
                   onValueChange={handleInputChange("description")}
                   isInvalid={!!errors.description}
-                  errorMessage={errors.description}
+                  errorMessage={
+                    errors.description && (
+                      <ErrorMessage error={errors.description} />
+                    )
+                  }
                 />
                 <div className="w-full" onClick={(e) => e.preventDefault()}>
                   <AppSelector

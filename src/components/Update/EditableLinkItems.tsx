@@ -118,22 +118,16 @@ export const EditableLinkItem = ({
       AppInputConfig[validApp].forEach((field) => {
         dataToValidate[field] = formData.get(field);
       });
-
-      console.log("Data to validate:", dataToValidate);
-
       schema.parse(dataToValidate);
-      console.log("Validation passed");
 
       setErrors({});
       startTransition(async () => {
-        console.log("Starting update transition");
         try {
           await onUpdate(formData);
-          console.log("Update completed");
-          toast.success("Update completed");
+          toast.success(`${app ? app : "Link"} updated`); //app name
           onEditModalClose();
         } catch (updateError) {
-          console.error("Error during update:", updateError);
+          // console.error("Error during update:", updateError);
           toast.error("Error during update");
         }
       });
@@ -156,13 +150,28 @@ export const EditableLinkItem = ({
       const formData = new FormData();
       formData.append("id", id);
       await onDelete(formData);
+      toast.warning(`${title ? title : "Link"} deleted`);
       onDeleteModalClose();
     });
   };
 
   const handleVisibilityChange = () => {
     startTransition(async () => {
-      await onVisible(id, !isVisible);
+      try {
+        await onVisible(id, !isVisible);
+        if (!isVisible) {
+          // Turning visibility on
+          toast.success(`${title ? title : "Link"} visibility turned on`, {
+            description: `Link${description ? ` for "${description}"` : ""} is now visible to visitors.`
+          });
+        } else {
+          // Turning visibility off
+          toast.error(`${title ? title : "Link"} visibility turned off`);
+        }
+      } catch (error) {
+        console.error("Error changing visibility:", error);
+        toast.error(`Failed to change ${title ? title : "Link"} visibility`);
+      }
     });
   };
 
