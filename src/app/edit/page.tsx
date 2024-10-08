@@ -75,11 +75,11 @@ export default async function EditPage() {
   }
 
   return (
-    <div className="mx-auto p-4 dark:bg-gray-900 min-h-screen overflow-hidden">
+    <div className="mx-auto p-4 dark:bg-gray-900 bg-white min-h-screen overflow-hidden">
       <div className="max-w-md mx-auto space-y-6">
+        <AddLink links={links || []} />
         <AddHeader />
         {/* <AddApp links={links || []} /> */}
-        <AddLink links={links || []} />
         <Suspense fallback={<p>Loading Links...</p>}>
           {links && links.length > 0 ? <DragLinks links={links} /> : null}
         </Suspense>
@@ -87,7 +87,7 @@ export default async function EditPage() {
         <div className="space-y-4">
           {socialLinks?.map((socialLink) => (
             <EditableSocialLink
-              key={socialLink.id}
+              key={socia}
               {...socialLink}
               onUpdate={updateSocialLink}
               onDelete={deleteSocialLink}

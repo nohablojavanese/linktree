@@ -29,34 +29,40 @@ export default async function EditLayout({ children }: EditLayoutProps) {
   }
 
   return (
-    <div className="flex">
-      <GlobalMenu />
-      <div className="flex-1 overflow-hidden">
-        <Toaster />
-        <div className="container mx-auto pb-20 px-0">
-          <div className="flex flex-col lg:flex-row">
-            <div className="w-full lg:w-2/3">{children}</div>
-
-            <div id="mobile-preview" className="hidden lg:block lg:w-1/3">
-              <div className="fixed top-0 right-0 w-1/3 h-screen flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-800">
-                <div className="transform scale-[1] origin-center rounded-full">
-                  <MobileMockup>
-                    <UserPagePreview />
-                  </MobileMockup>
-                </div>
-                <div className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
-                  <Username />
-                </div>
-              </div>
+    <>
+      <Toaster />
+      <div className="flex h-screen">
+        <GlobalMenu />
+        <div className="flex-1 overflow-hidden flex flex-col md:flex-row md:ml-16 ">
+          {/* Main content area */}
+          <div className="w-full md:w-2/3 overflow-hidden z-20">
+            <div className="h-full overflow-y-auto scrollbar-hide">
+              {children}
+            </div>
+            {/* PreviewOverlay for mobile view */}
+            <div className="md:hidden">
+              <PreviewOverlay>
+                <UserPagePreview />
+              </PreviewOverlay>
             </div>
           </div>
-          <div className="lg:hidden">
-            <PreviewOverlay>
-              <UserPagePreview />
-            </PreviewOverlay>
+
+          {/* Preview section - only visible on desktop */}
+          <div className="hidden md:flex w-1/3 bg-white dark:bg-gray-800 flex-col items-center justify-start p-4">
+            <div className="w-full h-[calc(100vh-2rem)] flex items-center justify-center">
+              <div className="relative" style={{ width: '20vw', height: '40vw' }}>
+                <MobileMockup>
+                  <UserPagePreview />
+                </MobileMockup>
+              </div>
+            </div>
+
+            <div className="text-center text-sm text-gray-600 dark:text-gray-400">
+              <Username />
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

@@ -18,12 +18,19 @@ import { useRouter } from "next/navigation";
 import { Session } from "@supabase/supabase-js"; // Import the Session type
 import { ThemeSwitcher } from "../DarkMode";
 import { MdArrowDropDown } from "react-icons/md";
+import { usePathname } from "next/navigation";
+
+type NavItem = {
+  name: string;
+  href: string;
+};
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [session, setSession] = useState<Session | null>(null); // Set the correct type
   const router = useRouter();
   const supabase = createClient();
+  const pathname = usePathname();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -53,6 +60,15 @@ const Navbar = () => {
     router.push("/");
   };
 
+  const navItems: NavItem[] = [
+    { name: "Templates", href: "/templates" },
+    { name: "Marketplace", href: "/marketplace" },
+    { name: "Discover", href: "/discover" },
+    { name: "Pricing", href: "/pricing" },
+    { name: "Learn", href: "/learn" },
+    { name: "Blog", href: "/blog" },
+  ];
+
   return (
     <motion.header
       initial={{ opacity: 0, y: -50 }}
@@ -72,39 +88,56 @@ const Navbar = () => {
               isScrolled ? "text-[#0070f3]" : ""
             }  `}
           >
-            Link.id
+            Wisp
           </span>
         </Link>
-        <nav className="hidden md:flex items-center gap-4">
-          {["Home", "Features", "Premium", "Demo", "Stats", "Check"].map(
-            (item) => (
-              <Link
-                key={item}
-                href={`#${item.toLowerCase()}`}
-                className={`text-sm font-medium hover:underline underline-offset-4 ${
-                  isScrolled ? "text-black dark:text-white" : "text-white"
-                }`}
-              >
-                {item}
-              </Link>
-            )
-          )}
+        <nav className="hidden md:flex items-center gap-2">
+          {navItems.map((item) => (
+            <Link
+              key={item.name}
+              href={item.href}
+              className={`px-3 py-2 text-sm font-medium
+                transition-all duration-200 ease-in-out rounded-2xl
+                ${
+                  isScrolled
+                    ? "text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700"
+                    : "text-white hover:bg-white/20"
+                }
+                ${
+                  pathname === item.href
+                    ? isScrolled
+                      ? "bg-gray-200 dark:bg-gray-700 rounded-xl"
+                      : "bg-white/20 rounded-xl"
+                    : ""
+                }
+              `}
+              aria-label={`Navigate to ${item.name}`}
+            >
+              {item.name}
+            </Link>
+          ))}
         </nav>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center md:gap-2 gap-0">
           <Dropdown className="bg-black text-white">
             <DropdownTrigger>
-              <Button //is icon only for mobile
-                className={`font-bold accordion-up text-white shadow-lg 
-                  ${isScrolled ? "bg-black text-white" : ""}
-                  p-0 min-w-0 sm:p-2 sm:min-w-[100px]`}
+              <Button 
+                className={`font-bold shadow-lg text-white
+                  ${isScrolled ? "bg-black text-white" : "bg-yellow-500"}
+                  p-2 min-w-[40px] sm:min-w-[120px]`}
                 endContent={<MdArrowDropDown className="hidden sm:inline" />}
                 startContent={
-                  <StarIcon className="text-yellow-500 w-8 h-8 sm:w-5 sm:h-5" />
+                  <>
+                    <StarIcon
+                      className={`w-6 h-6 sm:w-5 sm:h-5 ${
+                        isScrolled ? "text-yellow-500" : "text-white"
+                      }`}
+                    />
+                    <span className="hidden sm:inline ml-1">Get Premium</span>
+                  </>
                 }
-              >
-                <span className="hidden sm:inline">Get Premium</span>
-              </Button>
+                aria-label="Get Premium"
+              />
             </DropdownTrigger>
             <DropdownMenu aria-label="Premium options">
               <DropdownSection title="Trials" showDivider>

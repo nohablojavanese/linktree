@@ -61,7 +61,7 @@ export default async function EditPage() {
   }
 
   return (
-    <div className="w-full h-full mx-auto p-4 min-h-screen overflow-hidden">
+    <div className="w-full h-full mx-auto p-4 min-h-screen ">
       <div className="w-full flex flex-col space-y-6">
         <p className="text-center text-2xl font-bold text-black">
           Edit Profile Test

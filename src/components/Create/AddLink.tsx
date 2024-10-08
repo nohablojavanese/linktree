@@ -166,14 +166,17 @@ export const AddLink: React.FC<YourLinksProps> = ({ links }) => {
 
   const handleClearForm = () => {
     setFormData({ title: "", url: "", description: "", app: "" });
+    setErrors({}); // Clear errors when form is cleared
   };
 
   const handleAppSelect = (app: string) => {
     setFormData((prevState) => ({ ...prevState, app }));
   };
 
-  const handleCloseApp = () => {
-    // This function is opt
+  const handleClose = () => {
+    onClose();
+    setFormData({ title: "", url: "", description: "", app: "Link" });
+    setErrors({}); // Clear errors when modal is closed
   };
 
   const ErrorMessage: React.FC<{ error: string }> = ({ error }) => {
@@ -207,7 +210,7 @@ export const AddLink: React.FC<YourLinksProps> = ({ links }) => {
 
       <Modal
         isOpen={isOpen}
-        onClose={onClose}
+        onClose={handleClose} // Use the new handleClose function
         size="2xl"
         backdrop="opaque"
         placement="bottom-center"
@@ -294,7 +297,7 @@ export const AddLink: React.FC<YourLinksProps> = ({ links }) => {
                   <AppSelector
                     selectedApp={formData.app}
                     onAppSelect={handleAppSelect}
-                    onClose={handleCloseApp}
+                    onClose={handleClose} // Use the new handleClose function
                   />
                 </div>
               </ModalBody>
@@ -302,7 +305,7 @@ export const AddLink: React.FC<YourLinksProps> = ({ links }) => {
                 <Button
                   color="danger"
                   variant="light"
-                  onPress={onClose}
+                  onPress={handleClose} // Use the new handleClose function
                   type="button"
                 >
                   Cancel

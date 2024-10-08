@@ -1,8 +1,8 @@
 import React from "react";
-import { createClient } from "@/lib/supabase/server"; 
-import { UserNotFound } from "@/components/NotFound";
+import { createClient } from "@/lib/supabase/server";
+import { NotFound } from "@/components/NotFound";
 import { redirect } from "next/navigation";
-import UserPageReturn from "@/components/RenderUsername";
+import UserPageReturn from "@/components/Render/RenderUsername";
 import { Metadata, ResolvingMetadata } from "next";
 import Watermark from "@/components/Watermark";
 import DeepLinkRedirect from "./Deeplink";
@@ -17,10 +17,10 @@ type Props = {
 async function fetchUserProfile(username: string) {
   const supabase = createClient();
   const { data: profile, error } = await supabase
-    .rpc('clean_user_profile', { search_username: username })
+    .rpc("clean_user_profile", { search_username: username })
     .single<Profile>();
 
-  if (error && error.code === 'PGRST116') {
+  if (error && error.code === "PGRST116") {
     return null; // User not found
   }
   if (error) throw error;
@@ -30,7 +30,11 @@ async function fetchUserProfile(username: string) {
 async function fetchUserData(userId: string) {
   const supabase = createClient();
   const [links, socialLinks, theme] = await Promise.all([
-    supabase.from("links").select("*").eq("user_id", userId).order('order', { ascending: true }),
+    supabase
+      .from("links")
+      .select("*")
+      .eq("user_id", userId)
+      .order("order", { ascending: true }),
     supabase.from("social_links").select("*").eq("user_id", userId),
     supabase.from("themes").select("*").eq("user_id", userId).single(),
   ]);
@@ -82,9 +86,9 @@ export async function generateMetadata(
 
 export default async function UserPage({ params }: Props) {
   const profile = await fetchUserProfile(params.username);
-  
+
   if (!profile) {
-    return <UserNotFound username={params.username} />;
+    return <NotFound username={params.username} />;
   }
 
   if (params.username !== profile.username) {

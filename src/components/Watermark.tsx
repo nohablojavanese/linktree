@@ -6,9 +6,14 @@ import { motion, AnimatePresence } from "framer-motion";
 interface WatermarkProps {
   username: string;
   verified?: boolean;
+  notFound?: boolean;
 }
 
-const Watermark: React.FC<WatermarkProps> = ({ verified, username }) => {
+const Watermark: React.FC<WatermarkProps> = ({
+  verified,
+  username,
+  notFound = false,
+}) => {
   const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
@@ -33,12 +38,16 @@ const Watermark: React.FC<WatermarkProps> = ({ verified, username }) => {
         >
           {verified ? (
             <div className="flex justify-center items-center">
-              <span>Welcome to @{username} </span>
+              <span>Welcome to @{username}</span>
             </div>
           ) : (
             <div className="flex justify-center items-center">
               <a href="/login" className="">
-                <span>Built by LokerAI, create your own Links.id/you </span>
+                <span>
+                  {notFound
+                    ? `Built using Wisp, create your own Wisp.bio/${username}`
+                    : "Built using Wisp, create your own Wisp.bio/you"}
+                </span>
               </a>
             </div>
           )}

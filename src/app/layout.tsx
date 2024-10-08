@@ -6,7 +6,7 @@ import { poppins, inter, jakarta } from "@/lib/fonts/fonts";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 export const metadata: Metadata = {
-  title: "Link.ID",
+  title: "Wisp Bio",
   description: "Tools Link-in-Bio Gratis",
 };
 

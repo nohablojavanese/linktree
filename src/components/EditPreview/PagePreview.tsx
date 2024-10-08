@@ -1,6 +1,6 @@
 import React from 'react';
 import { createClient } from "@/lib/supabase/server";
-import UserPageReturn from "@/components/RenderUsername";
+import PreviewUserPageReturn from '../Render/PreviewRender';
 
 const UserPagePreview: React.FC = async () => {
   const supabase = createClient();
@@ -40,7 +40,7 @@ const UserPagePreview: React.FC = async () => {
 
   return (
     <div className="w-full h-full overflow-y-auto">
-      <UserPageReturn 
+      <PreviewUserPageReturn 
         profile={profile}
         links={links || []}
         socialLinks={socialLinks || []}

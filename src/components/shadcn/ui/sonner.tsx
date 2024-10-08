@@ -11,7 +11,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
   return (
     <Sonner
       theme={theme as ToasterProps["theme"]}
-      className="toaster group"
+      className="toaster group fixed z-50"
       position="bottom-center" // You can change the position here
       expand={false} // Or any other Sonner props you want to customize
       richColors // Enable rich colors if you want
@@ -19,8 +19,8 @@ const Toaster = ({ ...props }: ToasterProps) => {
         duration: 5000, // Set default duration for all toasts
         classNames: {
           toast:
-            "group toast group-[.toaster]:bg-background group-[.toaster]:text-foreground group-[.toaster]:border-border group-[.toaster]:shadow-lg",
-          description: "group-[.toast]:text-muted-foreground",
+            "group toast group-[.toaster]:bg-background group-[.toaster]:text-foreground group-[.toaster]:border-border group-[.toaster]:shadow-lg ",
+          description: "group-[.toast]:text-muted-foreground ",
           actionButton:
             "group-[.toast]:bg-primary group-[.toast]:text-primary-foreground",
           cancelButton:
@@ -32,7 +32,8 @@ const Toaster = ({ ...props }: ToasterProps) => {
         },
         // You can also add custom styles
         style: {
-          // Add any custom styles here
+          // Add any custom styles herez=
+          
         },
       }}
       {...props}

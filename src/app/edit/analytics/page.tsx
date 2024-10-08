@@ -1,9 +1,12 @@
-import React from "react";
+import React from 'react';
+import ComingSoon from '@/components/ComingSoon';
+import { Metadata } from 'next';
 
-export default function AnalyticsPage() {
-  return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Analytics</h1>
-    </div>
-  );
+export const metadata: Metadata = {
+  title: 'Coming Soon | Your App Name',
+  description: 'We\'re working on something amazing. Stay tuned!',
+};
+
+export default function ComingSoonPage() {
+  return <ComingSoon />;
 }

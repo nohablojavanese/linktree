@@ -12,7 +12,7 @@ const Username = async () => {
   const Url = `${process.env.NEXT_PUBLIC_SITE_URL}/${profile.username}`;
 
   return (
-    <div className="mt-10">
+    <div className="my-6">
       <UsernameClient Url={Url} />
     </div>
   );

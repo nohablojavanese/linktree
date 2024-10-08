@@ -25,13 +25,13 @@ const NavItem: React.FC<NavItemProps> = ({ href, icon, label, isExpanded }) => {
         <TooltipTrigger asChild>
           <Link
             href={href}
-            className={`flex items-center justify-start px-5 py-4 transition-colors hover:bg-blue-100 dark:hover:bg-blue-900 rounded-xl ${
-              isActive
-                ? "bg-blue-500 text-white"
-                : "text-gray-600 dark:text-gray-300"
-            }`}
+            className={`flex items-center justify-start px-5 py-4 transition-colors rounded-xl`}
           >
-            <div className="flex items-center">
+            <div className={`flex items-center ${
+              isActive
+                ? "text-blue-500"
+                : "text-gray-600 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400"
+            }`}>
               {icon}
               {isExpanded && <span className="ml-3">{label}</span>}
             </div>
