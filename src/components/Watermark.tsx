@@ -21,7 +21,7 @@ const Watermark: React.FC<WatermarkProps> = ({
       // Hide after 3 seconds
       const timer = setTimeout(() => {
         setIsVisible(false);
-      }, 3000); // 3 seconds
+      }, 10000);
       return () => clearTimeout(timer);
     }
   }, [verified]);
@@ -34,23 +34,41 @@ const Watermark: React.FC<WatermarkProps> = ({
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 20 }}
           transition={{ duration: 0.5 }}
-          className="fixed bottom-0 left-0 w-full bg-gray-800 p-4 text-center text-white text-xs md:text-md"
+          className="fixed bottom-4 left-0 right-0 mx-auto px-4 z-50"
         >
-          {verified ? (
-            <div className="flex justify-center items-center">
-              <span>Welcome to @{username}</span>
-            </div>
-          ) : (
-            <div className="flex justify-center items-center">
-              <a href="/login" className="">
-                <span>
-                  {notFound
-                    ? `Built using Wisp, create your own Wisp.bio/${username}`
-                    : "Built using Wisp, create your own Wisp.bio/you"}
-                </span>
-              </a>
-            </div>
-          )}
+          <div className="bg-gray-800 text-white text-xs md:text-sm rounded-2xl shadow-lg p-4 max-w-max mx-auto">
+            {verified ? (
+              <div className="flex flex-col justify-center items-center">
+                <span className="font-bold">Welcome to @{username}</span>
+                <a href="/login" className="mt-2">
+                  <span>
+                    {notFound
+                      ? `Built using Wisp, create your own Wisp.bio/${username}`
+                      : "Built using Wisp, create your own Wisp.bio/you"}
+                  </span>
+                </a>
+              </div>
+            ) : (
+              <div className="flex justify-center items-center">
+                <a href="/login">
+                  <span>
+                    {notFound ? (
+                      <>
+                        This Page is available! Create your own{" "}
+                        <strong>Wisp.bio/{username}</strong> before someone else
+                        claims it!
+                      </>
+                    ) : (
+                      <>
+                        Built using Wisp, create your own{" "}
+                        <strong>Wisp.bio/you</strong>
+                      </>
+                    )}
+                  </span>
+                </a>
+              </div>
+            )}
+          </div>
         </motion.footer>
       )}
     </AnimatePresence>

@@ -15,11 +15,12 @@ import QRCodeOption from './ShareChild/QRCodeOption';
 
 interface ShareDialogProps {
   Url: string;
+  className?: string; // Add this line
 }
 
 type ActiveOption = "main" | "share" | "qr";
 
-const ShareDialog: React.FC<ShareDialogProps> = ({ Url }) => {
+const ShareDialog: React.FC<ShareDialogProps> = ({ Url, className }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [activeOption, setActiveOption] = useState<ActiveOption>("main");
 
@@ -52,13 +53,13 @@ const ShareDialog: React.FC<ShareDialogProps> = ({ Url }) => {
   };
 
   return (
-    <>
+    <div className={`${className}`}>
       <Button 
-        className="bg-gray-400 hover:bg-purple-700 text-gray-200"
+        className={`bg-gray-400 hover:bg-purple-700 text-gray-200 ${className}`} 
         onPress={onOpen} 
         startContent={<Share2 className="w-5 h-5" />}
       >
-        Share Link
+        Share
       </Button>
       <Modal 
         isOpen={isOpen} 
@@ -97,7 +98,7 @@ const ShareDialog: React.FC<ShareDialogProps> = ({ Url }) => {
           )}
         </ModalContent>
       </Modal>
-    </>
+    </div>
   );
 };
 

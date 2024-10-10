@@ -7,6 +7,7 @@ import { Metadata, ResolvingMetadata } from "next";
 import Watermark from "@/components/Watermark";
 import DeepLinkRedirect from "./Deeplink";
 import { Profile } from "@/lib/types/type";
+import ShareDialog from "@/components/ui/ShareDialog";
 
 export const dynamicParams = true;
 export const revalidate = 0; // Disable static generation for this route
@@ -115,6 +116,9 @@ export default async function UserPage({ params }: Props) {
 
   const { links, socialLinks, theme } = await fetchUserData(profile.id);
 
+  // Generate the URL
+  const Url = `${process.env.NEXT_PUBLIC_SITE_URL}/${profile.username}`;
+
   return (
     <>
       <UserPageReturn
@@ -124,6 +128,10 @@ export default async function UserPage({ params }: Props) {
         themes={theme || {}}
       />
       <Watermark username={profile.username} verified={profile.verified} />
+      <ShareDialog
+        Url={Url}
+        className="fixed bottom-2 left-1/2 transform -translate-x-1/2 z-40 opacity-70 hover:opacity-100"
+      />
     </>
   );
 }
