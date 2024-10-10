@@ -29,7 +29,7 @@ async function fetchUserProfile(username: string) {
 
 async function fetchUserData(userId: string) {
   const supabase = createClient();
-  const [links, socialLinks, theme] = await Promise.all([
+  const [linksResponse, socialLinks, theme] = await Promise.all([
     supabase
       .from("links")
       .select("*")
@@ -39,8 +39,12 @@ async function fetchUserData(userId: string) {
     supabase.from("themes").select("*").eq("user_id", userId).single(),
   ]);
 
+  const links = linksResponse.data || [];
+  const firstLink = links.length > 0 ? links[0] : null;
+
   return {
-    links: links.data || [],
+    links,
+    firstLink,
     socialLinks: socialLinks.data || [],
     theme: theme.data,
   };
@@ -56,20 +60,27 @@ export async function generateMetadata(
     return { title: "User Not Found" };
   }
 
+  const { firstLink } = await fetchUserData(profile.id);
+
+  const ogImage = `/${profile.username}/opengraph-image`;
+  const description = firstLink
+    ? `Find ${profile.username}'s Wisp and Find ${firstLink.title}`
+    : `Find ${profile.username}'s Wisp and Check out ${profile.bio}`;
+
   return {
     title: `${profile.username} Links`,
-    description: profile.bio || `Check out ${profile.username}'s profile`,
+    description: description,
     openGraph: {
       title: `${profile.username}'s Profile`,
-      description: profile.bio || `Check out ${profile.username}'s profile`,
+      description: description,
       url: `https://yourdomain.com/${profile.username}`,
       siteName: "Linked.id",
       images: [
         {
-          url: profile.image_url || "https://yourdomain.com/default-avatar.png",
+          url: ogImage,
           width: 1200,
           height: 630,
-          alt: `${profile.username}'s profile picture`,
+          alt: `${profile.username}'s profile card`,
         },
       ],
       locale: "en_US",
@@ -78,8 +89,8 @@ export async function generateMetadata(
     twitter: {
       card: "summary_large_image",
       title: `${profile.username}'s Profile`,
-      description: profile.bio || `Check out ${profile.username}'s profile`,
-      images: [profile.image_url || "/image.png"],
+      description: description,
+      images: [ogImage],
     },
   };
 }

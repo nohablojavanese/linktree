@@ -39,7 +39,7 @@ const UserPagePreview: React.FC = async () => {
   }
 
   return (
-    <div className="w-full h-full overflow-y-auto">
+    <div className="w-full h-full overflow-y-auto scrollbar-hide">
       <PreviewUserPageReturn 
         profile={profile}
         links={links || []}

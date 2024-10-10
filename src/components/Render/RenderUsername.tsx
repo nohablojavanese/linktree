@@ -15,7 +15,7 @@ const UserPageReturn: React.FC<UserPageProp> = ({
       {/* Full-page background */}
       {!profile.background_url && <div className="fixed inset-0 bg-black" />}
       {profile.background_url && (
-        <div className="fixed inset-0 -z-10">
+        <div className="fixed inset-0">
           <Image
             src={profile.background_url}
             alt="Background"
@@ -27,7 +27,7 @@ const UserPageReturn: React.FC<UserPageProp> = ({
       )}
       {/* Content overlay */}
       <div
-        className={`flex-grow flex flex-col items-center ${
+        className={`absolute inset-0 flex flex-col items-center ${
           profile.background_url ? "bg-black bg-opacity-60" : ""
         }`}
       >
