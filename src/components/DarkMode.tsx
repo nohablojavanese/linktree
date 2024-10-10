@@ -24,10 +24,7 @@ export function ThemeSwitcher({ className }: ThemeSwitcherProps) {
   return (
     <Button
       onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-      className={cn(
-        "fixed top-4 right-4 rounded-xl border-gray-400 z-50",
-        className
-      )}
+      className={cn(" rounded-xl border-gray-400 z-50", className)}
       variant="outline"
       size="icon"
     >
@@ -39,3 +36,28 @@ export function ThemeSwitcher({ className }: ThemeSwitcherProps) {
     </Button>
   );
 }
+
+export function SimpleThemeSwitcher() {
+  const { theme, setTheme } = useTheme();
+
+  return (
+    <div 
+      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+      className="flex items-center cursor-pointer"
+    >
+      {theme === "dark" ? (
+        <>
+          <SunIcon className="w-4 h-4 mr-2 text-yellow-400" />
+          <span>Light Mode</span>
+        </>
+      ) : (
+        <>
+          <MoonIcon className="w-4 h-4 mr-2 text-blue-600" />
+          <span>Dark Mode</span>
+        </>
+      )}
+    </div>
+  );
+}
+
+
