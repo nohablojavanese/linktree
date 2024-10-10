@@ -1,17 +1,25 @@
-'use client'
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/shadcn/ui/button";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/shadcn/ui/card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "@/components/shadcn/ui/card";
 import { Skeleton } from "@/components/shadcn/ui/skeleton";
-import { ArrowRight, Home } from 'lucide-react';
-
+import { ArrowRight, Home } from "lucide-react";
+import { getGreeting } from "@/lib/helper/greeting";
 interface AuthenticatedUserViewProps {
   setHomepagePreference: () => Promise<void>;
 }
 
-export default function AuthenticatedUserView({ setHomepagePreference }: AuthenticatedUserViewProps) {
+export default function AuthenticatedUserView({
+  setHomepagePreference,
+}: AuthenticatedUserViewProps) {
   const router = useRouter();
   const [isClient, setIsClient] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -20,10 +28,10 @@ export default function AuthenticatedUserView({ setHomepagePreference }: Authent
     setIsClient(true);
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 2000);
+    }, 1000);
 
     const redirectTimer = setTimeout(() => {
-      router.push('/edit');
+      router.push("/edit");
     }, 5000);
 
     return () => {
@@ -34,7 +42,7 @@ export default function AuthenticatedUserView({ setHomepagePreference }: Authent
 
   const handleVisitHomepage = async () => {
     await setHomepagePreference();
-    router.push('/');
+    router.push("/");
   };
 
   if (!isClient) {
@@ -56,7 +64,10 @@ export default function AuthenticatedUserView({ setHomepagePreference }: Authent
             {loading ? (
               <Skeleton className="h-4 w-[200px] mx-auto mt-2 bg-gray-200 dark:bg-gray-700" />
             ) : (
-              "You will be automatically redirected to the dashboard in a moment."
+              <>
+                {getGreeting({ language: "en" })}. Since you are already login,
+                you will be automatically redirected to the dashboard.
+              </>
             )}
           </CardDescription>
         </CardHeader>
@@ -68,8 +79,8 @@ export default function AuthenticatedUserView({ setHomepagePreference }: Authent
               <ArrowRight className="h-8 w-8" />
             </div>
           )}
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             onClick={handleVisitHomepage}
             className="mt-4 rounded-full bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 border-gray-300 dark:border-gray-600 hover:bg-blue-500 hover:text-white dark:hover:bg-blue-600 dark:hover:text-white transition-colors duration-200"
             disabled={loading}
