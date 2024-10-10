@@ -71,10 +71,10 @@ export async function generateMetadata(
     title: `${profile.username} Links`,
     description: description,
     openGraph: {
-      title: `${profile.username}'s Profile`,
+      title: `${profile.username} - Wisp Profile`,
       description: description,
       url: `https://yourdomain.com/${profile.username}`,
-      siteName: "Linked.id",
+      siteName: "Wisp.Bio",
       images: [
         {
           url: ogImage,
@@ -88,7 +88,9 @@ export async function generateMetadata(
     },
     twitter: {
       card: "summary_large_image",
-      title: `${profile.username}'s Profile`,
+      site: "@WispBio",
+      title: `${profile.username} - Wisp Profile`,
+      creator: `${profile.username}`,
       description: description,
       images: [ogImage],
     },

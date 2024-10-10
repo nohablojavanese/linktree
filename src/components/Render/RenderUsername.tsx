@@ -27,8 +27,8 @@ const UserPageReturn: React.FC<UserPageProp> = ({
       )}
       {/* Content overlay */}
       <div
-        className={`absolute inset-0 flex flex-col items-center ${
-          profile.background_url ? "bg-black bg-opacity-60" : ""
+        className={`flex-grow flex flex-col items-center ${
+          profile.background_url ? "bg-black bg-opacity-60 z-10" : ""
         }`}
       >
         {/* Hero Image */}
