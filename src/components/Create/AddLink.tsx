@@ -17,7 +17,7 @@ import { Link, Plus, X } from "lucide-react";
 import { BiSolidPaste } from "react-icons/bi";
 import { AppSelector } from "./AppsComponent";
 
-import { createLink, fetchMetadata } from "@/app/edit/actions";
+import { createLink, fetchMetadataWithTimeout } from "@/app/edit/actions";
 import { z } from "zod";
 import { toast } from "sonner";
 import { censoredString, censoredUrl } from "@/lib/cencored/zodProvanity";
@@ -58,7 +58,7 @@ export const AddLink: React.FC<YourLinksProps> = ({ links }) => {
     title: "",
     url: "",
     description: "",
-    app: "Link",
+    app: "",
   });
   const [isLoadingMetadata, setIsLoadingMetadata] = useState(false);
 
@@ -114,7 +114,7 @@ export const AddLink: React.FC<YourLinksProps> = ({ links }) => {
         if (urlError instanceof z.ZodError) {
           setErrors((prevErrors) => ({
             ...prevErrors,
-            url: urlError.errors[0].message,
+            url: urlError.errors[0].message || "Invalid URL",
           }));
           return;
         }
@@ -122,20 +122,28 @@ export const AddLink: React.FC<YourLinksProps> = ({ links }) => {
 
       // If title is empty, fetch metadata
       if (!validatedFormData.title.trim()) {
-        setIsLoadingMetadata(true);
-        try {
-          const metadata = await fetchMetadata(validatedFormData.url);
-          validatedFormData.title = metadata;
-          setFormData(validatedFormData);
-        } catch (error) {
-          console.error("Error fetching metadata:", error);
-          toast.error("Error Finding your Title", {
-            description: `We cant Find the Title from ${validatedFormData.url}`,
-            icon: "🚨",
-          });
-        } finally {
-          setIsLoadingMetadata(false);
-        }
+        startTransition(async () => {
+          try {
+            const metadata = await fetchMetadataWithTimeout(
+              validatedFormData.url
+            );
+            setFormData((prev) => ({ ...prev, title: metadata }));
+          } catch (error) {
+            console.error("Error fetching metadata:", error);
+            const errorMessage =
+              error instanceof Error &&
+              error.message === "Metadata fetch timed out"
+                ? "We can't detect the Link. Please check the URL or set your own Title."
+                : "We can't detect the Link. Please check the URL or set your own Title.";
+
+            setErrors((prev) => ({ ...prev, url: errorMessage }));
+            toast.error("Error Finding your Title", {
+              description: `We can't find the Title from ${validatedFormData.url}`,
+              icon: "🚨",
+            });
+          }
+        });
+        return; // Exit early to wait for the transition to complete
       }
 
       // Validate the entire form data
@@ -184,7 +192,7 @@ export const AddLink: React.FC<YourLinksProps> = ({ links }) => {
       return (
         <span>
           URL contains a blocked domain. Please check our{"  "}
-          <a href="/terms" className="text-red-500 underline">
+          <a href="/terms" className="text-red-500 underline" target="_blank" rel="noopener noreferrer">
             Terms of Service
           </a>
         </span>

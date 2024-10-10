@@ -212,3 +212,24 @@ export async function updateLinkOrder(
   if (error) throw error;
   revalidatePath("/edit");
 }
+
+export async function fetchMetadataWithTimeout(url: string): Promise<string> {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 3000); // 3 second timeout
+
+  try {
+    const response = await fetch(url, { signal: controller.signal });
+    if (!response.ok) throw new Error('Failed to fetch');
+    
+    const html = await response.text();
+    const titleMatch = html.match(/<title>(.*?)<\/title>/i);
+    return titleMatch ? titleMatch[1] : 'No title found';
+  } catch (error) {
+    if (error instanceof Error && error.name === 'AbortError') {
+      throw new Error('Metadata fetch timed out');
+    }
+    throw error;
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}

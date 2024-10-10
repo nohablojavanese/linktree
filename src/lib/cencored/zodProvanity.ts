@@ -33,7 +33,7 @@ export const censoredUrl = (schema: z.ZodString) =>
         const urlPattern = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d+)?(\/.*)?$/;
         return urlPattern.test(url);
       },
-      { message: "Invalid URL or domain format" }
+      { message: "Invalid URL or Domain format" }
     )
     .refine(
       (url) => {
