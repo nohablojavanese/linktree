@@ -34,7 +34,12 @@ const PreviewUserPageReturn: React.FC<UserPageProp> = ({
         profile.background_url ? "bg-black bg-opacity-60" : ""
       }`}>
         {/* Scrollable content */}
-        <div className="w-full h-full overflow-y-auto">
+        <div className="w-full h-full overflow-y-auto scrollbar-hide">
+          {/* Scrollable content area starts here */}
+          {/* This div enables vertical scrolling for the page content */}
+          {/* while maintaining a fixed background image */}
+
+          
           {/* Hero Image */}
           <div className={`w-full max-w-3xl ${
             profile.hero_url ? "h-60" : "h-20"

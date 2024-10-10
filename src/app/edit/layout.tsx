@@ -49,7 +49,7 @@ export default async function EditLayout({ children }: EditLayoutProps) {
 
           {/* Preview section - only visible on desktop */}
           <div className="hidden md:flex w-1/3 bg-white dark:bg-gray-800 flex-col items-center justify-start p-4">
-            <div className="w-full h-[calc(100vh-2rem)] flex items-center justify-center">
+            <div className="w-full h-[calc(100vh-2rem)] flex items-center justify-center  overflow-y-auto scrollbar-hide">
               <div className="relative" style={{ width: '20vw', height: '40vw' }}>
                 <MobileMockup>
                   <UserPagePreview />

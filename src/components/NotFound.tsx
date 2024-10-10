@@ -3,6 +3,7 @@ import { Skeleton } from "@nextui-org/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import Watermark from "./Watermark";
+import { FaTwitter, FaInstagram, FaLinkedin, FaFacebook } from "react-icons/fa";
 
 interface NotFoundProps {
   username: string;
@@ -57,6 +58,13 @@ export const NotFound = ({ username }: NotFoundProps) => {
     return <UserNotFoundSkeleton username={username} />;
   }
 
+  const socialAccounts = [
+    { icon: FaTwitter, url: `https://twitter.com/${username}` },
+    { icon: FaInstagram, url: `https://instagram.com/${username}` },
+    { icon: FaLinkedin, url: `https://linkedin.com/in/${username}` },
+    { icon: FaFacebook, url: `https://facebook.com/${username}` },
+  ];
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
       <div className="max-w-md mx-auto space-y-6 px-4">
@@ -65,8 +73,8 @@ export const NotFound = ({ username }: NotFoundProps) => {
           <div className="text-xl font-semibold text-gray-800 dark:text-gray-200">
             @{username}
           </div>
-          <div className="text-sm text-gray-600 dark:text-gray-400">
-            User not found, claim this username
+          <div className="text-sm text-center text-gray-600 dark:text-gray-400">
+            User not found, You can claim and use this username
           </div>
         </div>
 
@@ -74,7 +82,7 @@ export const NotFound = ({ username }: NotFoundProps) => {
           href="/login"
           className="block w-full py-3 px-4 bg-blue-500 text-white text-center rounded-lg hover:bg-blue-600 transition-colors"
         >
-          Claim wisp.bio/{username}
+          Claim <strong>wisp.bio/{username}</strong>
         </Link>
         <Link
           href="/reserve"
@@ -84,11 +92,16 @@ export const NotFound = ({ username }: NotFoundProps) => {
         </Link>
 
         <div className="flex justify-center space-x-4">
-          {[...Array(4)].map((_, index) => (
-            <div
+          {socialAccounts.map(({ icon: Icon, url }, index) => (
+            <a
               key={index}
-              className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700"
-            />
+              href={url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+            >
+              <Icon className="text-gray-600 dark:text-gray-300" size={20} />
+            </a>
           ))}
         </div>
       </div>
