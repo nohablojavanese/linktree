@@ -16,9 +16,10 @@ import { motion } from "framer-motion";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { Session } from "@supabase/supabase-js"; // Import the Session type
-import { ThemeSwitcher } from "../DarkMode";
+// import { ThemeSwitcher } from "../DarkMode";
 import { MdArrowDropDown } from "react-icons/md";
 import { usePathname } from "next/navigation";
+import { SimpleThemeSwitcher } from "../DarkMode";
 
 type NavItem = {
   name: string;
@@ -27,7 +28,7 @@ type NavItem = {
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [session, setSession] = useState<Session | null>(null); // Set the correct type
+  const [session, setSession] = useState<Session | null>(null);
   const router = useRouter();
   const supabase = createClient();
   const pathname = usePathname();
@@ -74,134 +75,142 @@ const Navbar = () => {
       initial={{ opacity: 0, y: -50 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled
-          ? "bg-white/80 backdrop-blur-md dark:bg-[#1a1b1e]/80"
-          : "bg-[#0070f3] text-white"
-      }`}
+      className="fixed top-4 left-0 right-0 z-50 mx-auto w-11/12 max-w-7xl"
     >
-      <div className="container mx-auto py-4 px-6 flex items-center justify-between">
-        <Link href="#" className="flex items-center gap-2" prefetch={false}>
-          <Image src="/favicon.png" alt="logo" width={24} height={24} />
-          <span
-            className={`text-lg  font-semibold ${
-              isScrolled ? "text-[#0070f3]" : ""
-            }  `}
-          >
-            Wisp
-          </span>
-        </Link>
-        <nav className="hidden md:flex items-center gap-2">
-          {navItems.map((item) => (
-            <Link
-              key={item.name}
-              href={item.href}
-              className={`px-3 py-2 text-sm font-medium
-                transition-all duration-200 ease-in-out rounded-2xl
-                ${
-                  isScrolled
-                    ? "text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700"
-                    : "text-white hover:bg-white/20"
-                }
-                ${
-                  pathname === item.href
-                    ? isScrolled
-                      ? "bg-gray-200 dark:bg-gray-700 rounded-xl"
-                      : "bg-white/20 rounded-xl"
-                    : ""
-                }
-              `}
-              aria-label={`Navigate to ${item.name}`}
+      <div
+        className={`rounded-full transition-all duration-300 ${
+          isScrolled
+            ? "bg-white/80 backdrop-blur-md dark:bg-[#1a1b1e]/80 shadow-md"
+            : "bg-[#0070f3] text-white"
+        }`}
+      >
+        <div className="container mx-auto py-3 px-6 flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-2" prefetch={false}>
+            <Image src="/favicon.png" alt="logo" width={24} height={24} />
+            <span
+              className={`text-lg font-semibold ${
+                isScrolled ? "text-[#0070f3] dark:text-white" : ""
+              }`}
             >
-              {item.name}
-            </Link>
-          ))}
-        </nav>
+              Wisp
+            </span>
+          </Link>
+          <nav className="hidden md:flex items-center gap-2">
+            {navItems.map((item) => (
+              <Link
+                key={item.name}
+                href={item.href}
+                className={`px-3 py-2 text-sm font-medium
+                  transition-all duration-200 ease-in-out rounded-full
+                  ${
+                    isScrolled
+                      ? "text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700"
+                      : "text-white hover:bg-white/20"
+                  }
+                  ${
+                    pathname === item.href
+                      ? isScrolled
+                        ? "bg-gray-200 dark:bg-gray-700"
+                        : "bg-white/20"
+                      : ""
+                  }
+                `}
+                aria-label={`Navigate to ${item.name}`}
+              >
+                {item.name}
+              </Link>
+            ))}
+          </nav>
 
-        <div className="flex items-center md:gap-2 gap-0">
-          <Dropdown className="bg-black text-white">
-            <DropdownTrigger>
-              <Button 
-                className={`font-bold shadow-lg text-white
-                  ${isScrolled ? "bg-black text-white" : "bg-yellow-500"}
-                  p-2 min-w-[40px] sm:min-w-[120px]`}
-                endContent={<MdArrowDropDown className="hidden sm:inline" />}
-                startContent={
-                  <>
-                    <StarIcon
-                      className={`w-6 h-6 sm:w-5 sm:h-5 ${
-                        isScrolled ? "text-yellow-500" : "text-white"
-                      }`}
-                    />
-                    <span className="hidden sm:inline ml-1">Get Premium</span>
-                  </>
-                }
-                aria-label="Get Premium"
-              />
-            </DropdownTrigger>
-            <DropdownMenu aria-label="Premium options">
-              <DropdownSection title="Trials" showDivider>
-                <DropdownItem
-                  description="Free Trial Premium Features for 14 days"
-                  key="public"
-                >
-                  Free Trial
-                </DropdownItem>
-              </DropdownSection>
-              <DropdownSection title="Limited Events" showDivider>
-                <DropdownItem
-                  description="Content Creators with 1000+ Followers"
-                  key="creator"
-                >
-                  For Creator
-                </DropdownItem>
-                <DropdownItem
-                  description="Business with reputable brand"
-                  key="business"
-                >
-                  For Business Owner
-                </DropdownItem>
-              </DropdownSection>
-            </DropdownMenu>
-          </Dropdown>
-
-          {session ? (
+          <div className="flex items-center md:gap-2 gap-0">
             <Dropdown className="bg-black text-white">
               <DropdownTrigger>
                 <Button
-                  className={`font-bold bg-transparent border-none ${
-                    isScrolled ? " text-blue-500" : "text-white"
-                  }`}
-                  endContent={<MdArrowDropDown />}
-                  startContent={<User />}
-                >
-                  <span className="hidden sm:inline">Account</span>
-                </Button>
+                  className={`font-bold shadow-lg text-white
+                    ${isScrolled ? "bg-black text-white" : "bg-yellow-500"}
+                    p-2 min-w-[40px] sm:min-w-[120px] rounded-full`}
+                  endContent={<MdArrowDropDown className="hidden sm:inline" />}
+                  startContent={
+                    <>
+                      <StarIcon
+                        className={`w-6 h-6 sm:w-5 sm:h-5 ${
+                          isScrolled ? "text-yellow-500" : "text-white"
+                        }`}
+                      />
+                      <span className="hidden sm:inline ml-1">Get Premium</span>
+                    </>
+                  }
+                  aria-label="Get Premium"
+                />
               </DropdownTrigger>
-              <DropdownMenu aria-label="Account options">
-                <DropdownItem
-                  key="signout"
-                  onClick={() => router.push("/edit")}
-                >
-                  Edit
-                </DropdownItem>
-                <DropdownItem key="signout" onClick={handleSignOut}>
-                  Sign Out
-                </DropdownItem>
+              <DropdownMenu aria-label="Premium options">
+                <DropdownSection title="Trials" showDivider>
+                  <DropdownItem
+                    description="Free Trial Premium Features for 14 days"
+                    key="public"
+                  >
+                    Free Trial
+                  </DropdownItem>
+                </DropdownSection>
+                <DropdownSection title="Limited Events" showDivider>
+                  <DropdownItem
+                    description="Content Creators with 1000+ Followers"
+                    key="creator"
+                  >
+                    For Creator
+                  </DropdownItem>
+                  <DropdownItem
+                    description="Business with reputable brand"
+                    key="business"
+                  >
+                    For Business Owner
+                  </DropdownItem>
+                </DropdownSection>
               </DropdownMenu>
             </Dropdown>
-          ) : (
-            <Link href="/login">
-              <Button
-                className={`flex bg-transparent font-bold ${
-                  isScrolled ? "text-blue-500" : "text-white"
-                }`}
-                endContent={<LogInIcon className="md:ml-2" />}
-              >
-                <span className="hidden md:inline">Login</span>
-              </Button>
-            </Link>
-          )}
+
+            {session ? (
+              <Dropdown className="bg-black text-white">
+                <DropdownTrigger>
+                  <Button
+                    className={`font-bold bg-transparent border-none ${
+                      isScrolled ? "text-blue-500" : "text-white"
+                    } rounded-full`}
+                    endContent={<MdArrowDropDown />}
+                    startContent={<User />}
+                  >
+                    <span className="hidden sm:inline">Account</span>
+                  </Button>
+                </DropdownTrigger>
+                <DropdownMenu aria-label="Account options">
+                  <DropdownItem
+                    key="signout"
+                    onClick={() => router.push("/edit")}
+                  >
+                    Edit
+                  </DropdownItem>
+                  <DropdownItem key="signout" onClick={handleSignOut}>
+                    Sign Out
+                  </DropdownItem>
+                  <DropdownItem key="theme">
+                    <SimpleThemeSwitcher />
+                  </DropdownItem>
+                </DropdownMenu>
+              </Dropdown>
+            ) : (
+              <Link href="/login">
+                <Button
+                  className={`flex bg-transparent font-bold ${
+                    isScrolled ? "text-blue-500" : "text-white"
+                  } rounded-full`}
+                  endContent={<LogInIcon className="md:ml-2" />}
+                >
+                  <span className="hidden md:inline">Login</span>
+                </Button>
+              </Link>
+            )}
+            {/* <ThemeSwitcher /> */}
+          </div>
         </div>
       </div>
     </motion.header>
