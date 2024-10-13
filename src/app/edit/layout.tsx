@@ -36,7 +36,7 @@ export default async function EditLayout({ children }: EditLayoutProps) {
         <div className="flex-1 overflow-hidden flex flex-col md:flex-row md:ml-16 ">
           {/* Main content area */}
           <div className="w-full md:w-2/3 overflow-hidden z-20">
-            <div className="h-full overflow-y-auto scrollbar-hide">
+            <div className="h-full overflow-y-auto scrollbar-hide dark:bg-gray-900 bg-gray-100">
               {children}
             </div>
             {/* PreviewOverlay for mobile view */}
@@ -48,7 +48,7 @@ export default async function EditLayout({ children }: EditLayoutProps) {
           </div>
 
           {/* Preview section - only visible on desktop */}
-          <div className="hidden md:flex w-1/3 bg-white dark:bg-gray-800 flex-col items-center justify-start p-4">
+          <div className="hidden md:flex w-1/3 dark:bg-gray-900 bg-gray-100 flex-col items-center justify-start ">
             <div className="w-full h-[calc(100vh-2rem)] flex items-center justify-center  overflow-y-auto scrollbar-hide">
               <div className="relative" style={{ width: '20vw', height: '40vw' }}>
                 <MobileMockup>

@@ -1,18 +1,19 @@
 "use client";
-import React, { useState, useCallback, useMemo } from "react";
-import { Card, CardBody, Input } from "@nextui-org/react";
+import React, { useState, useCallback, useMemo, useEffect } from "react";
+import { Card, CardBody, Input, Spinner } from "@nextui-org/react";
 import { updateProfile, removeImage } from "@/app/edit/appearance/actions";
 import { z } from "zod";
 import { debounce } from "lodash";
 import { ImageUploader } from "./ImageUploader";
 import { toast } from "sonner";
 import { censoredString } from "@/lib/cencored/zodProvanity";
+import { CheckCircle } from "lucide-react";
 
 const usernameSchema = censoredString(
   z
     .string()
     .min(3, "Username must be at least 3 characters long")
-    .max(20, "Username must be at most 20 characters long")
+    .max(10, "Username must be at most 10 characters long")
     .regex(
       /^[a-zA-Z0-9_]+$/,
       "Username can only contain letters, numbers, and underscores"
@@ -53,10 +54,11 @@ export type EditProfileProps = {
 export const EditProfile: React.FC<EditProfileProps> = ({ profile }) => {
   const {
     errors,
-    updatedFields,
     handleChange,
     handleImageUploadComplete,
     handleRemoveImage,
+    isLoading,
+    isSuccess,
   } = useProfileForm(profile);
 
   return (
@@ -69,6 +71,9 @@ export const EditProfile: React.FC<EditProfileProps> = ({ profile }) => {
             defaultValue={profile.username}
             error={errors.username}
             onChange={(value) => handleChange("username", value)}
+            isLoading={isLoading.username || false}
+            isSuccess={isSuccess.username || false}
+            maxLength={10} // Assuming max length for username is 20
           />
           <ProfileInput
             name="bio"
@@ -76,6 +81,9 @@ export const EditProfile: React.FC<EditProfileProps> = ({ profile }) => {
             defaultValue={profile.bio}
             error={errors.bio}
             onChange={(value) => handleChange("bio", value)}
+            isLoading={isLoading.bio || false}
+            isSuccess={isSuccess.bio || false}
+            maxLength={100} // As per your bio schema
           />
           {IMAGE_TYPES.map((type) => (
             <ImageUploader
@@ -106,6 +114,12 @@ function useProfileForm(initialProfile: EditProfileProps["profile"]) {
   const [updatedFields, setUpdatedFields] = useState<
     Partial<typeof initialProfile>
   >({});
+  const [isLoading, setIsLoading] = useState<
+    Partial<Record<ProfileField, boolean>>
+  >({});
+  const [isSuccess, setIsSuccess] = useState<
+    Partial<Record<ProfileField, boolean>>
+  >({});
 
   const validateField = useCallback((field: ProfileField, value: string) => {
     try {
@@ -128,20 +142,34 @@ function useProfileForm(initialProfile: EditProfileProps["profile"]) {
         return;
       }
 
+      setIsLoading((prev) => ({ ...prev, [field]: true }));
+      setIsSuccess((prev) => ({ ...prev, [field]: false }));
       try {
         await updateProfile({ [field]: value });
         setErrors((prev) => ({ ...prev, [field]: undefined }));
+        setIsSuccess((prev) => ({ ...prev, [field]: true }));
+        toast.success(`${field} updated successfully`);
+
+        // Reset success state after 3 seconds
+        setTimeout(() => {
+          setIsSuccess((prev) => ({ ...prev, [field]: false }));
+        }, 3000);
       } catch (error) {
         if (error instanceof Error) {
           setErrors((prev) => ({ ...prev, [field]: error.message }));
+          toast.error(`Failed to update ${field}: ${error.message}`);
+        } else {
+          toast.error(`An unexpected error occurred while updating ${field}`);
         }
+      } finally {
+        setIsLoading((prev) => ({ ...prev, [field]: false }));
       }
     },
     [validateField]
   );
 
   const debouncedUpdate = useMemo(
-    () => debounce(handleUpdate, 500),
+    () => debounce(handleUpdate, 3000),
     [handleUpdate]
   );
 
@@ -190,6 +218,8 @@ function useProfileForm(initialProfile: EditProfileProps["profile"]) {
     handleChange,
     handleImageUploadComplete,
     handleRemoveImage,
+    isLoading,
+    isSuccess,
   };
 }
 
@@ -200,20 +230,82 @@ const ProfileInput: React.FC<{
   isDisabled?: boolean;
   error?: string;
   onChange: (value: string) => void;
-}> = ({ name, label, defaultValue, error, onChange, isDisabled }) => (
-  <Input
-    name={name}
-    label={label}
-    defaultValue={defaultValue}
-    isDisabled={isDisabled}
-    className="w-full"
-    isInvalid={!!error}
-    isClearable
-    errorMessage={error}
-    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-      onChange(e.target.value)
-    }
-  />
-);
+  isLoading: boolean;
+  isSuccess: boolean;
+  maxLength?: number;
+}> = ({
+  name,
+  label,
+  defaultValue,
+  error,
+  onChange,
+  isDisabled,
+  isLoading,
+  isSuccess,
+  maxLength,
+}) => {
+  const [value, setValue] = useState(defaultValue || "");
+
+  const getInputColor = ():
+    | "default"
+    | "primary"
+    | "secondary"
+    | "success"
+    | "warning"
+    | "danger" => {
+    if (isLoading) return "warning";
+    if (isSuccess) return "success";
+    if (error) return "danger";
+    return "default";
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    setValue(newValue);
+    onChange(newValue);
+  };
+
+  const handleClear = () => {
+    setValue("");
+    onChange("");
+  };
+
+  return (
+    <div>
+      <Input
+        name={name}
+        label={label}
+        value={value}
+        isDisabled={isDisabled}
+        className="w-full"
+        color={getInputColor()}
+        isInvalid={!!error}
+        isClearable
+        onClear={handleClear}
+        errorMessage={error}
+        onChange={handleInputChange}
+        // maxLength={maxLength}
+        endContent={
+          isLoading ? (
+            <Spinner size="sm" color="warning" />
+          ) : isSuccess ? (
+            <CheckCircle className="h-5 w-5 text-success" />
+          ) : null
+        }
+      />
+      {maxLength && (
+        <div
+          className={`text-xs mt-1 text-right ${
+            value.length > maxLength
+              ? "text-red-500 font-bold"
+              : "text-gray-500"
+          }`}
+        >
+          {value.length}/{maxLength}
+        </div>
+      )}
+    </div>
+  );
+};
 
 const IMAGE_TYPES = ["image", "hero", "background"] as const;

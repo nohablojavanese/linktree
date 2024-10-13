@@ -12,7 +12,7 @@ export default async function PricingPage() {
   ]);
 
   return (
-    <div className="w-full mx-auto text-blue-500 space-y-10">
+    <div className="w-full h-full mx-auto p-4 min-h-screen ">
       {/* <h1 className="text-2xl font-bold mb-4">Our Products</h1> */}
       <CustomerPortalForm subscription={subscription} />
       <Pricing

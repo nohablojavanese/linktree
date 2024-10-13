@@ -19,14 +19,13 @@ const FeaturesSection = () => {
           className="flex flex-col items-center text-center space-y-4 mb-8"
         >
           <div className="flex rounded-xl bg-[#0070f3] px-3 py-1 text-sm dark:bg-[#2c2d30]  dark:text-[#b3b3b3]">
-            <p>Produk Gratis</p>
+            <p>Exclusive Offer</p>
           </div>
           <h2 className="text-3xl md:text-4xl font-bold tracking-tighter text-[#0070f3]">
-            Explore Our Offerings
+            Unlock Your Digital Potential
           </h2>
           <p className="max-w-[600px] text-[#6b7280] dark:text-[#b3b3b3]">
-            Temukan fitur dan produk secara gratis untuk mempermudah kinerja
-            kamu!
+            Discover our suite of powerful, complimentary tools designed to elevate your online presence and streamline your workflow.
           </p>
         </motion.div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
@@ -74,20 +73,20 @@ const features = [
   {
     title: "Template",
     description:
-      "Tersedia berbagai opsi pilihan template dan warna untuk profil link yang bisa digunakan.",
+      "Various template options and colors are available for profile links that can be used.",
     image: "https://mobirise.com/bio/assets/images/linkbios-1.jpg",
   },
   {
-    title: "Loading Instant",
+    title: "Instant Loading",
     description:
-      "Jangan sampai pengguna link-mu menunggu lama hanya untuk menampilkan profil link kamu!",
+      "Don't let your link users wait long just to display your profile link!",
     image:
       "https://uploads-ssl.webflow.com/5fd39cde89a3b6b667f26497/5fd665e7a6df4279cc7c39b8_linkinbio-thumbnail.jpg",
   },
   {
-    title: "SEO dan Share",
+    title: "SEO and Share",
     description:
-      "Bagikan link profil kamu dengan informasi detail yang memudahkan pengunjung.",
+      "Share your profile link with detailed information that makes it easy for visitors.",
     image:
       "https://embedsocial.com/wp-content/uploads/2022/04/link-in-bio-page-customization.jpg",
   },

@@ -149,7 +149,7 @@ export default async function Image({
     if (process.env.NODE_ENV === "production") {
       image.headers.set(
         "Cache-Control",
-        "public, max-age=3600, must-revalidate"
+        "public, max-age=900, s-maxage=900, stale-while-revalidate=86400"
       );
     } else {
       image.headers.set("Cache-Control", "no-store, max-age=0");

@@ -63,7 +63,9 @@ export async function generateMetadata(
 
   const { firstLink } = await fetchUserData(profile.id);
 
-  const ogImage = `/${profile.username}/opengraph-image`;
+  // Add a version query parameter
+  const ogImage = `/${profile.username}/opengraph-image?v=${Date.now()}`;
+
   const description = firstLink
     ? `Find ${profile.username}'s Wisp and Find ${firstLink.title}`
     : `Find ${profile.username}'s Wisp and Check out ${profile.bio}`;

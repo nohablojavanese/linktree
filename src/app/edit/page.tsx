@@ -75,7 +75,7 @@ export default async function EditPage() {
   }
 
   return (
-    <div className="mx-auto p-4 dark:bg-gray-900 bg-white min-h-screen overflow-hidden">
+    <div className="mx-auto p-4 min-h-screen overflow-hidden ">
       <div className="max-w-md mx-auto space-y-6">
         <AddLink links={links || []} />
         <AddHeader />

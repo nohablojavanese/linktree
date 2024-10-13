@@ -2,9 +2,9 @@
 import { TextGenerateEffect } from "../ui/text-generation-effect";
 import { hero } from "@/lib/fonts/fonts";
 const words = `Create a customable Link-in-Bio for Free! `;
-const wordsChild = `Services like Wisp Bio allow users to create a profile page
-that gathers all important links in one place
-with a simple and responsive design.`;
+const wordsChild = `Wisp Bio empowers professionals to create a centralized, 
+customizable profile that consolidates essential links and information, 
+presented through an elegant and responsive interface.`;
 
 export function TextGenerateHeadline() {
   return (
