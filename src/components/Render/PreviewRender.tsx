@@ -41,7 +41,7 @@ const PreviewUserPageReturn: React.FC<UserPageProp> = ({
 
           
           {/* Hero Image */}
-          <div className={`w-full max-w-3xl ${
+          <div className={`w-full max-w-3xl mx-auto ${
             profile.hero_url ? "h-60" : "h-20"
           } relative overflow-hidden md:rounded-b-3xl`}>
             {profile.hero_url && (
@@ -60,7 +60,7 @@ const PreviewUserPageReturn: React.FC<UserPageProp> = ({
           </div>
 
           {/* Profile section */}
-          <div className={`w-full max-w-3xl px-4 ${
+          <div className={`w-full max-w-3xl mx-auto px-4 relative ${
             profile.hero_url ? "-mt-20" : "mt-4"
           }`}>
             <UserProfile

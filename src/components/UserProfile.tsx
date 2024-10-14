@@ -17,7 +17,7 @@ const UserProfile: React.FC<Profile> = ({
   const [imageLoaded, setImageLoaded] = React.useState(false);
 
   return (
-    <div className="flex flex-col items-center text-center">
+    <div className="flex flex-col items-center text-center z-50">
       <ProfileImage
         username={username}
         imageUrl={image_url}
