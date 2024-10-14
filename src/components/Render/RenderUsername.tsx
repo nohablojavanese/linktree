@@ -54,7 +54,7 @@ const UserPageReturn: React.FC<UserPageProp> = ({
 
         {/* Profile section */}
         <div
-          className={`w-full max-w-3xl px-4 ${
+          className={`w-full max-w-3xl px-4 z-40 ${
             profile.hero_url ? "-mt-20" : "mt-4"
           }`}
         >
