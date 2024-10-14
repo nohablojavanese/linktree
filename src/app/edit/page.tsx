@@ -94,7 +94,7 @@ export default async function EditPage() {
             />
           ))}
         </div> */}
-        <SignOutButton />
+        {/* <SignOutButton /> */}
       </div>
     </div>
   );

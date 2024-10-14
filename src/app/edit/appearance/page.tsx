@@ -73,7 +73,7 @@ export default async function EditPage() {
         <Suspense fallback={<a>Loading...</a>}>
           <UpdateTheme
             currentTheme={theme?.theme || "default"}
-            currentFontFamily={theme?.font_family || ""}
+            // currentFontFamily={theme?.font_family || ""}
           />
         </Suspense>
       </div>

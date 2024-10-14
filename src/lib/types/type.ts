@@ -52,6 +52,9 @@ export const AppInputConfig = {
   Instagram: ['title', 'url', 'description'],
   Tiktok: ['title', 'url', 'description'],
   Header: ['title'],
+  Spotify: ['title', 'url'],
+  Twitter: ['title', 'url'],
+  Youtube: ['title', 'url', 'description'],
   // Add more app types as needed
 };
 

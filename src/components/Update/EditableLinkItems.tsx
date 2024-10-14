@@ -6,6 +6,7 @@ import {
   BiTrash,
   BiEdit,
   BiSolidPaste,
+  BiHeading,
 } from "react-icons/bi";
 import {
   Card,
@@ -29,6 +30,14 @@ import { Link, ChevronDown, ChevronUp } from "lucide-react";
 import { AppInputType, AppInputConfig, defaultApp } from "@/lib/types/type";
 import { toast } from "sonner";
 import { censoredString, censoredUrl } from "@/lib/cencored/zodProvanity";
+import {
+  FaInstagram,
+  FaTiktok,
+  FaSpotify,
+  FaTwitter,
+  FaYoutube,
+} from "react-icons/fa";
+import { BiLink } from "react-icons/bi";
 
 const getAppSchema = (app: AppInputType | null | undefined) => {
   const defaultApp: AppInputType = "Link";
@@ -162,7 +171,9 @@ export const EditableLinkItem = ({
         if (!isVisible) {
           // Turning visibility on
           toast.success(`${title ? title : "Link"} visibility turned on`, {
-            description: `Link${description ? ` for "${description}"` : ""} is now visible to visitors.`
+            description: `Link${
+              description ? ` for "${description}"` : ""
+            } is now visible to visitors.`,
           });
         } else {
           // Turning visibility off
@@ -184,6 +195,27 @@ export const EditableLinkItem = ({
 
   const truncatedDescription =
     description?.length > 40 ? `${description.slice(0, 40)}...` : description;
+
+  const getAppIcon = (app: AppInputType) => {
+    const iconClass =
+      "text-gray-900 dark:text-gray-100 group-hover:text-blue-500";
+    switch (app) {
+      case "Instagram":
+        return <FaInstagram size={16} className={iconClass} />;
+      case "Header":
+        return <BiHeading size={16} className={iconClass} />;
+      case "Tiktok":
+        return <FaTiktok size={16} className={iconClass} />;
+      case "Spotify":
+        return <FaSpotify size={16} className={iconClass} />;
+      case "Twitter":
+        return <FaTwitter size={16} className={iconClass} />;
+      case "Youtube":
+        return <FaYoutube size={16} className={iconClass} />;
+      default:
+        return <BiLink size={16} className={iconClass} />;
+    }
+  };
 
   const AppInput = () => {
     return AppInputConfig[validApp].map((inputType) => {
@@ -239,10 +271,7 @@ export const EditableLinkItem = ({
           <div className="flex flex-col justify-center text-center">
             <div className=" group">
               <a href={formattedUrl} target="_blank" rel="noopener noreferrer">
-                <Link
-                  size={16}
-                  className="text-gray-900 dark:text-gray-100 group-hover:text-blue-500"
-                />
+                {getAppIcon(validApp)}
               </a>
               <h3 className="text-md md:text-lg font-semibold text-gray-900 dark:text-gray-100 break-all">
                 {title}

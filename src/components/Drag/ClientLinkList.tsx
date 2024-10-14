@@ -78,7 +78,6 @@ export const ClientDraggableLinkList: React.FC<
                       <div className="flex-grow  ">
                         <EditableLinkItem
                           {...link}
-                          // app={link.app as AppInputType}
                           onUpdate={updateLink}
                           onDelete={deleteLink}
                           onVisible={updateLinkVisibility}
